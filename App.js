@@ -25,9 +25,14 @@ import EnterPhone from './SRC/Screens/EnterPhone';
 import Profile from './SRC/Screens/Profile';
 import AppNavigator from './SRC/appNavigation';
 import PaymentScreen from './SRC/Screens/PaymentScreen';
-import EnterLocationScreen from './SRC/Screens/EnterLocationScreen';
+import EnterLocationScreen from './SRC/Screens/BoardingPointScreen';
 import TaxiAvailability from './SRC/Screens/TaxiAvailability';
 import HomeScreen from './SRC/Screens/HomeScreen';
+// import ChatScreen from './SRC/Screens/ChatScreen';
+import BoardingPointScreen from './SRC/Screens/BoardingPointScreen';
+import BoardingPointSearchScreen from './SRC/Screens/BoardingPointSearchScreen';
+import BoardingPointDetails from './SRC/Screens/BoardingPointDetails';
+import RideAcceptance from './SRC/Screens/RideAcceptance';
 
 
 
@@ -77,11 +82,15 @@ const MainContainer = () => {
   if (isloading == true) {
     return <SplashScreen />;
   }
-  // return <AppNavigator />
+  // // return <AppNavigator />
+  // return <ChatScreen/>
   // return <TaxiAvailability/>
   // return <HomeScreen/>
-
-  return <EnterLocationScreen/>
+  // return <BoardingPointScreen/>
+  // return <BoardingPointDetails/>
+  return <RideAcceptance/>
+  // return <BoardingPointSearchScreen/>
+  // return <EnterLocationScreen/>
   
 };
 

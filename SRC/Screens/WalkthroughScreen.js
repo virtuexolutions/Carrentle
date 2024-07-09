@@ -36,7 +36,7 @@ const WalkThroughScreen = props => {
     {
       key: '2',
       image: require('../Assets/Images/car2.png'),
-      image1: require('../Assets/Images/Group 13.png'),
+      image1: require('../Assets/Images/Group13.png'),
       title: 'LOREM IPSUM DOLOR SIT',
       text: `Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit. Pellentesque Eu Pulvinar Metus, Fringilla Semper Enim. Etiam Viverra Porttitor Nunc Laoreet Faucibus. Fusce Accumsan Mauris At Sem Finibus Gravida. Donec Cursus Tincidunt Eros In Efficitur. Maecenas Cursus Pretium Dui, In Tristique Turpis Finibus Nec. Class Aptent.`,
     },

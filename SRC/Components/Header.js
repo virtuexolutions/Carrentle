@@ -77,10 +77,11 @@ const Header = props => {
 
   return (
     <LinearGradient
-      style={styles.header2}
+      style={[styles.header2]}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 1}}
-      colors={headerColor ? headerColor : Color.themeBgColor}>
+      
+      colors={headerColor ?  headerColor  :  Color.themeBgColor}>
       
 
       <View
@@ -190,12 +191,18 @@ const Header = props => {
           />
         </View>
       ) : (
-        <View
-          style={{
-            width: moderateScale(40, 0.3),
-          }}>
-            <CustomText>mg</CustomText>
-          </View>
+        <View style={{
+          width: windowHeight * 0.045, 
+          justifyContent:'center',
+          alignItems:'center',
+          elevation:12,
+          height:windowHeight * 0.045, 
+          // overflow:'hidden',
+          backgroundColor:'#dedbdbc8', borderRadius: (windowHeight * 0.045) / 2}}>
+          <CustomImage source={require('../Assets/Images/Group13.png')} 
+            style={{width:windowHeight * 0.04, height: windowHeight * 0.04}}
+          />
+        </View>
       )}
     </LinearGradient>
   );

@@ -10,9 +10,9 @@ import CustomButton from '../Components/CustomButton';
 const TaxiAvailability = () => {
   return (
     <LinearGradient
-      colors={['#3464eb', '#7d9dc7']}
-      start={{x: 0.5, y: 0}}
-      end={{x: 1, y: 1}}
+      colors={['#00309E', '#79B9F6']}
+      start={{x: 0.45, y: 0.3}}
+      end={{x: 0.2, y: 0.75}}
       style={{
         width: windowWidth,
         height: windowHeight,
@@ -92,8 +92,9 @@ const TaxiAvailability = () => {
           style={{
             marginTop: moderateScale(14, 0.2),
             width: windowWidth * 0.8,
+            fontSize:moderateScale(10,0.3),
             textAlign: 'center',
-            color: '#96aece',
+            color: '#FFFFFF',
           }}
           numberOfLines={1}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit
@@ -103,7 +104,8 @@ const TaxiAvailability = () => {
             // marginTop: moderateScale(14,0.2),
             width: windowWidth * 0.7,
             textAlign: 'center',
-            color: '#96aece',
+            color: '#FFFFFF',
+            fontSize:moderateScale(10,0.3),
           }}
           numberOfLines={1}>
           sed do eiusmod tempor incididunt labore.
