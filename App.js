@@ -25,6 +25,9 @@ import EnterPhone from './SRC/Screens/EnterPhone';
 import Profile from './SRC/Screens/Profile';
 import AppNavigator from './SRC/appNavigation';
 import PaymentScreen from './SRC/Screens/PaymentScreen';
+import EnterLocationScreen from './SRC/Screens/EnterLocationScreen';
+import TaxiAvailability from './SRC/Screens/TaxiAvailability';
+import HomeScreen from './SRC/Screens/HomeScreen';
 
 
 
@@ -74,9 +77,11 @@ const MainContainer = () => {
   if (isloading == true) {
     return <SplashScreen />;
   }
-  return <AppNavigator />
+  // return <AppNavigator />
+  // return <TaxiAvailability/>
+  // return <HomeScreen/>
 
-  // return <PaymentScreen/>
+  return <EnterLocationScreen/>
   
 };
 

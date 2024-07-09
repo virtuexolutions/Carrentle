@@ -204,7 +204,7 @@ export const MyDrawer = () => {
       screenOptions={{
         headerShown: false,
       }}>
-      {/* <DrawerNavigation.Screen name="HomeScreen" component={HomeScreen} /> */}
+      <DrawerNavigation.Screen name="HomeScreen" component={HomeScreen} />
       <DrawerNavigation.Screen name="PaymentScreen" component={PaymentScreen} />
       {/* <DrawerNavigation.Screen name="MessagesScreen" component={MessagesScreen}/> */}
       {/* <DrawerNavigation.Screen name="ChangePassword"  component={ChangePassword}/> */}

@@ -140,7 +140,9 @@ const LoginScreen = props => {
 
             <CustomButton
               onPress={() => {
-                navigation.navigate('EnterLocationScreen')
+                // navigation.navigate('EnterLocationScreen')
+                dispatch(setUserToken({token:'abc'}))
+
                 // navigation.navigate('PaymentScreen')
                 // navigation.navigate('HomeScreen')
               }}
