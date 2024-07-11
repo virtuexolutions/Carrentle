@@ -10,14 +10,14 @@ import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import {View, RefreshControl, ScrollView, FlatList} from 'react-native';
 import CustomText from '../Components/CustomText';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {useIsFocused, } from '@react-navigation/native';
 import Header from '../Components/Header';
 import BookYourCapComponent from '../Components/BookYourCapComponent';
 
 const HomeScreen = props => {
   // const
-  const isFocused = useIsFocused();
-  const navigation = useNavigation();
+  // const isFocused = useIsFocused();
+  // const navigation = useNavigation();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -100,9 +100,9 @@ const HomeScreen = props => {
 
   return (
     <ScreenBoiler
-      showHeader
+      // showHeader
       title={'book your cap '}
-      headerColor={['white', 'white']}
+      // headerColor={['white', 'white']}
       hideUser={false}
       statusBarBackgroundColor={'white'}
       statusBarContentStyle={'dark-content'}>

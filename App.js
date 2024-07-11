@@ -33,6 +33,8 @@ import BoardingPointScreen from './SRC/Screens/BoardingPointScreen';
 import BoardingPointSearchScreen from './SRC/Screens/BoardingPointSearchScreen';
 import BoardingPointDetails from './SRC/Screens/BoardingPointDetails';
 import RideAcceptance from './SRC/Screens/RideAcceptance';
+import RideBookingScreen from './SRC/Screens/RideBokkingScreen';
+import RideBookingScreen2 from './SRC/Screens/RideBookingScreen2';
 
 
 
@@ -83,12 +85,14 @@ const MainContainer = () => {
     return <SplashScreen />;
   }
   // // return <AppNavigator />
-  // return <ChatScreen/>
+  
   // return <TaxiAvailability/>
   // return <HomeScreen/>
-  // return <BoardingPointScreen/>
+  return <BoardingPointScreen/>
   // return <BoardingPointDetails/>
-  return <RideAcceptance/>
+  // return <RideAcceptance/>
+  // return <RideBookingScreen/>
+  // return <RideBookingScreen2/>
   // return <BoardingPointSearchScreen/>
   // return <EnterLocationScreen/>
   

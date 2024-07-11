@@ -8,13 +8,17 @@ import CustomText from '../Components/CustomText';
 import {Divider, Icon} from 'native-base';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Feather from 'react-native-vector-icons/Feather';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomImage from '../Components/CustomImage';
 import CustomButton from '../Components/CustomButton';
+import Fontisto from 'react-native-vector-icons/Fontisto';
+
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import Foundation from 'react-native-vector-icons/Foundation';
+import { Rating } from 'react-native-ratings';
+import LinearGradient from 'react-native-linear-gradient';
 
-const RideAcceptance = () => {
+const RideBookingScreen2 = () => {
   const origin = {latitude: 37.3285792, longitude: -122.0356209};
   const destination = {latitude: 37.3320305, longitude: -122.0355326};
   return (
@@ -72,53 +76,100 @@ const RideAcceptance = () => {
         <Marker coordinate={destination} />
       </MapView>
       <View style={styles.bottomContainer}>
-        <TextInputWithTitle
-          iconName={'marker'}
-          foundation={true}
-          iconColor={'#FF8A00'}
-          // iconType={Foundation}
-          // iconHeight={0.01}
-          // LeftIcon={true}
-          elevation
-          titleText={'Password'}
-          placeholder={'Fannie Street San Angelo, Texas'}
-          setText={() => {}}
-          value={'Fannie Street San Angelo, Texas'}
-          viewHeight={0.065}
-          viewWidth={0.77}
-          inputWidth={0.55}
-          border={2}
-          borderRadius={moderateScale(25, 0.3)}
-          borderColor={'#000'}
-          backgroundColor={'#ffffff'}
-          marginTop={moderateScale(10, 0.3)}
-          color={"878786"}
-          placeholderColor={'#878786'}
-          // elevation
-        />
+        <View style={{ flexDirection:'row', justifyContent:'space-between'}}>
 
-        <TextInputWithTitle
-          iconName={'marker'}
-          foundation={true}
-          iconColor={'#72AFED'}
-          //   LeftIcon={true}
-          elevation
-          titleText={'Password'}
-          placeholder={'Drop on'}
-          setText={() => {}}
-          value={''}
-          viewHeight={0.06}
-          viewWidth={0.77}
-          inputWidth={0.55}
-          border={2}
-          borderRadius={moderateScale(25, 0.3)}
-          borderColor={'#000'}
-          backgroundColor={'#ffffff'}
-          marginTop={moderateScale(10, 0.3)}
-          color={Color.black}
-          placeholderColor={'#878786'}
-          // elevation
-        />
+      <View style={styles.profile}>
+            <View style={{width: windowWidth * 0.1, height:windowWidth * 0.1, overflow: 'hidden', borderRadius: (windowWidth * 0.19)/2}}>
+              <CustomImage source={require('../Assets/Images/user2.png') } style={{width: "100%", height:'100%'}}/>
+            </View>
+            <View style={{justifyContent:'flex-start', alignItems:'flex-start'}}>
+              <CustomText style={{fontSize:moderateScale(12,0.2)}}>Theodora J. Gardner</CustomText>
+            <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center',gap:moderateScale(12,0.2)}}>
+            <Rating imageSize={14}/>
+            <CustomText style={{fontSize: moderateScale(11,0.2), color:"#98A5B4"}}>(4.2)</CustomText>
+
+            </View>
+            </View>
+            </View>
+            <View style={{flexDirection:'row', gap:moderateScale(10,0.2)}}>
+
+            <LinearGradient colors={['#79B9F6', '#00309E']} style={{width: windowWidth * 0.08, height: windowWidth * 0.08, 
+                alignItems:'center',
+                justifyContent:'center',
+                borderRadius:(windowWidth * 0.08)/2}}>
+                <Icon as={FontAwesome} name='phone' color ={'white'}/>
+
+            </LinearGradient>
+            <LinearGradient colors={['#79B9F6', '#00309E']} style={{width: windowWidth * 0.08, height: windowWidth * 0.08, 
+                alignItems:'center',
+                justifyContent:'center',
+                borderRadius:(windowWidth * 0.08)/2}}>
+                <Icon as={Fontisto} name='whatsapp' color ={'white'}/>
+
+            </LinearGradient>
+                    </View>
+          
+          </View>
+          <View style={styles.LocationView}>
+            <View style={styles.marker}>
+              <Fontisto name='map-marker-alt' size={moderateScale(17,0.2)} color="#FF8A00"/>
+              <CustomText style={{
+                width: windowWidth * 0.1,
+                marginTop:moderateScale(10,0.2),
+                textAlign:'center',
+            //  borderColor:'red',
+            //  borderWidth:1,
+                marginLeft:moderateScale(2,0.2),
+                transform: [{ rotate: '90deg' }]}}>- - - - -</CustomText>
+
+              <Fontisto name='map-marker-alt' size={moderateScale(17,0.2)} color="#72AFED" style={{marginTop:moderateScale(12,0.2)}}/>
+            </View>
+            <View
+              style={{
+                paddingHorizontal: moderateScale(8, 0.6),
+                justifyContent:'space-between',
+                // borderWidth:2,
+                // borderColor:'red'
+              }}>
+           
+              <CustomText style={styles.text}>
+                fannie street san angelo, texas{' '}
+              </CustomText>
+              
+              <CustomText
+                style={[
+                  styles.text,
+                  {
+                    paddingHorizontal: moderateScale(5, 0.6),
+                  },
+                ]}>
+                navile street salem colorado
+              </CustomText>
+            </View>
+          </View>
+{/* ride details i.e. time , distance .... */}
+          <View style={styles.rideDetails}>
+            <View style={{flexDirection:'row', alignItems:'center',gap: moderateScale(10,0.2)}}>
+            <CustomImage source={require('../Assets/Images/caricon.png')}/>
+              {/* <Icon as={Ionicons} name='car-sport' color={'black'} size={moderateScale(22,0.2)}/> */}
+              <View style={{ alignItems:'center'}}>
+                <CustomText isBpld>Car 2</CustomText>
+                <CustomText style={{color:'grey'}}>$10.0</CustomText>
+             </View>
+            </View>
+            <View style={{gap: moderateScale(2,0.2), alignItems:'center'}}>
+            
+                <CustomText isBpld>Distance</CustomText>
+                <CustomText style={{color:'grey'}}>2.5 km</CustomText>
+            
+            </View>
+            <View style={{gap: moderateScale(2,0.2), alignItems:'center'}}>
+         
+                <CustomText isBpld>Time</CustomText>
+                <CustomText style={{color:'grey'}}>2 Mins</CustomText>
+            </View>
+
+          </View>
       </View>
       <View style={styles.actions}>
         <CustomButton
@@ -126,7 +177,7 @@ const RideAcceptance = () => {
             // navigation.navigate('HomeScreen')
           }}
           isGradient
-          text={'Yes'}
+          text={'Book Now'}
           fontSize={moderateScale(14, 0.3)}
           textColor={Color.white}
           borderWidth={2}
@@ -147,7 +198,7 @@ const RideAcceptance = () => {
   );
 };
 
-export default RideAcceptance;
+export default RideBookingScreen2;
 
 const styles = StyleSheet.create({
   container: {
@@ -172,7 +223,7 @@ const styles = StyleSheet.create({
     // backgroundColor:'red'
   },
   bottomContainer: {
-    width: windowWidth * 0.85,
+    width: windowWidth * 0.94,
     // height: windowHeight * 0.5,
 
     //   zIndex:1,
@@ -182,7 +233,7 @@ const styles = StyleSheet.create({
     borderColor: '#29478A',
     borderWidth: moderateScale(1, 0.2),
     bottom: moderateScale(100, 0.2),
-    paddingVertical: moderateScale(20, 0.2),
+    paddingVertical: moderateScale(17, 0.2),
     paddingHorizontal: moderateScale(10, 0.2),
     // padding:moderateScale(20,0.2)
   },
@@ -197,13 +248,13 @@ const styles = StyleSheet.create({
       flexDirection:'row', justifyContent:'space-between', alignItems:'center'
   },
   profile: {
-    //   flexDirection:'row',
+      flexDirection:'row',
     alignItems: 'center',
     gap: moderateScale(5, 0.2),
   },
   rideDetails: {
     flexDirection: 'row',
-
+    marginTop:moderateScale(11,0.2),
     justifyContent: 'space-between',
     paddingVertical: moderateScale(2, 0.2),
     paddingHorizontal: moderateScale(22, 0.2),
@@ -211,5 +262,16 @@ const styles = StyleSheet.create({
   actions: {
     position: 'absolute',
     bottom: 40,
+  },
+  LocationView: {
+    flexDirection: 'row',
+    paddingHorizontal: moderateScale(15, 0.6),
+    paddingVertical: moderateScale(15, 0.6),
+  },
+  marker: {
+    height: windowHeight * 0.1,
+    width: windowWidth * 0.06,
+    alignItems:'center',    
+    // backgroundColor: 'pink',
   },
 });
