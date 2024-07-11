@@ -91,11 +91,11 @@ const Signup = () => {
           }
         }>
         <LinearGradient
-          start={{x: 0.1, y: 0.2}}
-          end={{x: 1.5, y: 0.4}}
-          colors={Color.themeBgColor}
+          start={{x: 0, y: 2.1}}
+          end={{x: 4, y: 2}}
+          colors={['#00309E', '#79B9F6', '#FFFFFF']}
           style={styles.container}>
-          <View
+          {/* <View
             style={{
               height: windowHeight * 0.13,
               width: windowHeight * 0.13,
@@ -130,25 +130,40 @@ const Signup = () => {
                 }}
               />
             </TouchableOpacity>
-          </View>
-          
-            <CustomText
-              style={{
-                color: Color.white,
-                fontSize: moderateScale(12, 0.6),
-                width: windowWidth * 0.8,
+          </View> */}
 
-                paddingTop: moderateScale(15, 0.6),
-                textAlign: 'justify',
+          <View
+            style={{
+              height: windowHeight * 0.15,
+              width: windowHeight * 0.3,
+              // backgroundColor :'red'
+            }}>
+            <CustomImage
+              resizeMode="contain"
+              source={require('../Assets/Images/logo.png')}
+              style={{
+                width: '100%',
+                height: '100%',
               }}
-              numberOfLines={2}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
-              suscipit gravida tellus, eu ullamcorper.
-            </CustomText>
+            />
+          </View>
+          <CustomText
+            style={{
+              color: Color.white,
+              fontSize: moderateScale(12, 0.6),
+              width: windowWidth * 0.8,
+
+              paddingTop: moderateScale(15, 0.6),
+              textAlign: 'justify',
+            }}
+            numberOfLines={2}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
+            suscipit gravida tellus, eu ullamcorper.
+          </CustomText>
           <View
             style={{
               alignItems: 'center',
-             marginTop: moderateScale(10, 0.3),
+              marginTop: moderateScale(10, 0.3),
             }}>
             <TextInputWithTitle
               iconHeigth={windowHeight * 0.00005}
@@ -288,10 +303,10 @@ const Signup = () => {
             </TouchableOpacity> */}
             <CustomButton
               onPress={() => {
-                dispatch(setUserToken({token:'abc'}))
-                navigation.goBack()
+                dispatch(setUserToken({token: 'abc'}));
+                navigation.goBack();
               }}
-              text={'Log in'}
+              text={'sign in'}
               fontSize={moderateScale(14, 0.3)}
               textColor={Color.white}
               borderWidth={2}
@@ -299,7 +314,7 @@ const Signup = () => {
               borderRadius={moderateScale(8, 0.3)}
               width={windowWidth * 0.4}
               height={windowHeight * 0.06}
-              marginTop={moderateScale(30, 0.3)}
+              marginTop={moderateScale(35, 0.3)}
               bgColor={'transparent'}
               isBold
               // isGradient
@@ -311,7 +326,7 @@ const Signup = () => {
               fontSize: moderateScale(12, 0.6),
               width: windowWidth * 0.85,
               position: 'absolute',
-              bottom: 25,
+              bottom: 30,
             }}
             numberOfLines={2}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras

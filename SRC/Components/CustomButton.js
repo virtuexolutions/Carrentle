@@ -102,8 +102,14 @@ const CustomButton = props => {
             justifyContent: 'center',
             borderRadius: moderateScale(30, 0.3),
           }}
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 0}}
+          // start={{ x: 0.5, y: 0.0 }}  // Start from the top
+          // end={{ x: 0.5, y: 1.0 }} 
+
+
+          start={{ x: 0.5, y: 0.0 }}
+          end={{ x: 0.5, y: 1.0 }}
+          // start={{x: 1.0, y:1.9}}
+          // end={{x: 0.9, y: 4}}
           colors={bgColor}>
           {loader && (
             <ActivityIndicator

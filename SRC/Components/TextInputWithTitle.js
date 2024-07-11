@@ -96,7 +96,7 @@ const TextInputWithTitle = props => {
             as={props.iconType}
             style={[
               {
-                // backgroundColor :'red',
+                // backgroundColor :'green',
                 textAlign: 'center',
                 width : windowWidth*0.07,
                 paddingTop :moderateScale(10,.6),
@@ -117,6 +117,7 @@ const TextInputWithTitle = props => {
             ]}
             size={moderateScale(17, 0.3)}
             onPress={props.onPressLeft}
+            // color={props.iconColor ? props.iconColor :'black'}
           />
         )}
 

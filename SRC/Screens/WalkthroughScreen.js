@@ -29,21 +29,22 @@ const WalkThroughScreen = props => {
   const slides = [
     {
       key: '1',
-      image: require('../Assets/Images/car4.png'),
+      image: require('../Assets/Images/walk1.jpg'),
       title: 'CHEVY CRUZ',
       text: `Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit. Pellentesque Eu Pulvinar Metus, Fringilla Semper Enim. Etiam Viverra Porttitor Nunc Laoreet Faucibus. Fusce Accumsan Mauris At Sem Finibus Gravida. Donec Cursus Tincidunt Eros In Efficitur. Maecenas Cursus Pretium Dui, In Tristique Turpis Finibus Nec. Class Aptent. `,
     },
     {
       key: '2',
-      image: require('../Assets/Images/car2.png'),
-      image1: require('../Assets/Images/Group 13.png'),
+      image: require('../Assets/Images/walk2.jpg'),
+      image1: require('../Assets/Images/icon2.png'),
       title: 'LOREM IPSUM DOLOR SIT',
       text: `Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit. Pellentesque Eu Pulvinar Metus, Fringilla Semper Enim. Etiam Viverra Porttitor Nunc Laoreet Faucibus. Fusce Accumsan Mauris At Sem Finibus Gravida. Donec Cursus Tincidunt Eros In Efficitur. Maecenas Cursus Pretium Dui, In Tristique Turpis Finibus Nec. Class Aptent.`,
     },
     {
       key: '3',
-      image: require('../Assets/Images/car3.png'),
-      title: 'Lorem Ipsum Dolor',
+      image: require('../Assets/Images/walk3.jpg'),
+      image1: require('../Assets/Images/icon2.png'),
+      title: 'DODGE CARAVAN',
       text: `Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit. Pellentesque Eu Pulvinar Metus, Fringilla Semper Enim. Etiam Viverra Porttitor Nunc Laoreet Faucibus. Fusce Accumsan Mauris At Sem Finibus Gravida. Donec Cursus Tincidunt Eros In Efficitur. Maecenas Cursus Pretium Dui, In Tristique Turpis Finibus Nec. Class Aptent.`,
     },
   ];
@@ -51,43 +52,57 @@ const WalkThroughScreen = props => {
   const RenderSlider = ({item}) => {
     return (
       <View style={styles.SliderContainer}>
-        {/* <ImageBackground
+        <ImageBackground
           style={{
             width: windowWidth,
             minHeight: windowHeight,
             paddingBottom: moderateScale(40, 0.6),
             justifyContent: 'center',
-            // backgroundColor:'red',
-            // height: windowHeight*0.8,
             alignItems: 'center',
           }}
-          source={item?.image}> */}
-        <LinearGradient
-          start={{x: 0.1, y: 0.2}}
-          end={{x: 1.5, y: 0.4}}
-          colors={Color.themeBgColor}
-          style={styles.container}>
+          source={item?.image}>
+       
           <View
             style={{
               width: windowWidth * 0.9,
               borderRadius: moderateScale(20, 0.6),
               paddingTop: moderateScale(26, 0.6),
-              // backgroundColor :'blue',
               height :windowHeight,
               alignItems: 'center',
             }}>
+               <View
+              style={{
+                // marginTop:item?.key == 2? moderateScale(100, 0.6):moderateScale(140, 0.6),
+                // height:  item?.key == 2 ? windowHeight*0.9 : windowHeight * 0.45,
+                width: windowWidth*0.18,
+                height:windowHeight*0.13,
+                position: 'absolute',
+                bottom: item?.key == 2 ? 280 :400,
+                left:item.key == 3 && 5,
+              }}>
+              <CustomImage
+                source={item?.image1}
+                resizeMode={item?.key == 2 ?'cover' :'contain'}
+                style={{
+                  height: '100%',
+                   width: '100%',
+                }}
+              />
+            </View>
             <CustomText
               style={{
                 color: Color.white,
-                fontSize: moderateScale(50, 0.6),
-                width: windowWidth * 0.5,
+                fontSize: item?.key != 2 ? moderateScale(50, 0.6) :moderateScale(40, 0.6),
+                width: windowWidth * 0.8,
                 padding: moderateScale(10, 0.6),
                 lineHeight: moderateScale(44, 0.6),
-                backgroundColor: 'green',
+                // backgroundColor: 'green',
                 position: 'absolute',
-                top: 155,
-                // transform:[{ rotate: '-90deg'}] ,
-                left: 50,
+                top: item?.key == 3 ?windowHeight*0.37 : windowHeight*0.24,
+                transform:[{rotate: item?.key == 2 ? '-90deg' :'-0deg'}] ,
+                left: item?.key != 3 ? 50 :55,
+                letterSpacing:0.6,
+                textTransform:'upperCase'
               }}
               numberOfLines={2}
               isBold>
@@ -115,57 +130,25 @@ const WalkThroughScreen = props => {
 
             </View> */}
 
-            {/* <View
-              style={{
-                marginTop:item?.key == 2? moderateScale(100, 0.6):moderateScale(140, 0.6),
-                height:  item?.key == 2 ? windowHeight*0.9 : windowHeight * 0.45,
-                width: windowWidth,
-                position: 'absolute',
-                // backgroundColor :'red',
-                // marginLeft :moderateScale(-50,.3)
-                left: item?.key == 2 ? -120 :0,
-                top:  item?.key == 2 ? -45 :90,
-              }}>
-              <CustomImage
-                source={item?.image}
-                resizeMode={item?.key == 2 ?'cover' :'contain'}
-                style={{
-                  height: '100%',
-                  // height:windowHeight*0.3,
-                  width: '100%',
-                }}
-              />
-            </View> */}
+           
 
             <CustomText
               style={{
-                // marginTop: moderateScale(-50, 0.3),
                 color: Color.white,
                 fontSize: moderateScale(11, 0.6),
-                width: windowWidth * 0.9,
+                width:  item?.key == 2 ? windowWidth*0.63 :item?.key == 3 ? windowWidth*0.8 :windowWidth * 0.9,
                 lineHeight: moderateScale(15, 0.3),
                 textAlign: 'left',
                 paddingVertical: moderateScale(5, 0.6),
-                backgroundColor :'red'
+                position: 'absolute',
+                top:  item?.key == 2 ? windowHeight*0.63 :item?.key ==3 ? windowHeight*0.5  : windowHeight*0.69,
+               left:  item?.key == 2 ? 125: 0,
               }}
               numberOfLines={15}>
               {item?.text}
             </CustomText>
           </View>
-          {/* <View
-            style={{
-              alignItems: 'center',
-            }}>
-            <Text numberOfLines={1} style={styles.title}>
-              {item.title}
-            </Text>
-            <Text numberOfLines={4} style={styles.subText}>
-              {item.text}
-            </Text>
-          </View> */}
-        </LinearGradient>
-
-        {/* </ImageBackground> */}
+        </ImageBackground>
       </View>
     );
   };
@@ -239,6 +222,7 @@ const WalkThroughScreen = props => {
           // showDoneButton={false}
           // showSkipButton={true}
           // showPrevButton={true}
+          showNextButton={true}
           // activeDotStyle={{backgroundColor: Color.themeColor2}}
           // dotStyle={{
           //   backgroundColor: 'transparent',
@@ -262,7 +246,7 @@ const styles = StyleSheet.create({
     height: windowHeight,
     width: windowWidth,
     alignItems: 'center',
-    backgroundColor: '#cc5200',
+    // backgroundColor: '#cc5200',
   },
   container1: {
     flex: 1,

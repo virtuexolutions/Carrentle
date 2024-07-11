@@ -26,11 +26,11 @@ export default Color = {
   theme2 :'#FF000A',
   
   purple: '#0D668E',
-
   // theme colors
   themeColor: '#000000',
   themeColor2: '#FF1717',
-
+  
+  cartheme:['#79B9F6','#00309E', ],
   btnColor:['#565657',"#000000"],
   tabBarGradient : ['#000000','#464646'],
   themePink : '#F84569',

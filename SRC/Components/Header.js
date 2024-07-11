@@ -81,8 +81,6 @@ const Header = props => {
       start={{x: 0, y: 0}}
       end={{x: 1, y: 1}}
       colors={headerColor ? headerColor : Color.themeBgColor}>
-      
-
       <View
         style={{
           height: moderateScale(30, 0.3),
@@ -104,16 +102,16 @@ const Header = props => {
           />
         ) : (
           <Icon
+            style={[styles.menu ,styles.shadowporp]}
             name={'menu'}
             as={Feather}
             size={moderateScale(25, 0.3)}
             color={Color.black}
             onPress={() => {
-              console.log('hello mg ')
-              navigation.toggleDrawer();
-              // navigation.t
-              // navigationN.dispatch(DrawerActions.toggleDrawer())
-              
+              console.log('hello mg ');
+              // navigation.toggleDrawer();
+              // navigation.openDrawer()
+              navigationN.dispatch(DrawerActions.toggleDrawer());
             }}
           />
         )}
@@ -123,7 +121,8 @@ const Header = props => {
           style={{
             fontSize: moderateScale(18, 0.6),
             color: Color.black,
-          }}isBold>
+          }}
+          isBold>
           {title}
         </CustomText>
       ) : (
@@ -192,10 +191,18 @@ const Header = props => {
       ) : (
         <View
           style={{
-            width: moderateScale(40, 0.3),
+            width: windowWidth * 0.08,
+            height: windowHeight * 0.05,
+            // backgroundColor :'red',
           }}>
-            <CustomText>mg</CustomText>
-          </View>
+          <CustomImage
+            source={require('../Assets/Images/icon2.png')}
+            style={{
+              height: '100%',
+              width: '100%',
+            }}
+          />
+        </View>
       )}
     </LinearGradient>
   );
@@ -217,14 +224,28 @@ const styles = ScaledSheet.create({
 
     elevation: 11,
   },
+  menu:{
+    height :windowHeight*0.05,
+    width :windowHeight*0.05,
+    borderRadius :windowHeight*0.05/2,
+    textAlign:'center',
+    backgroundColor :'white',
+    paddingTop :moderateScale(7,.6)
+  },
+  shadowporp: {shadowColor: '#000',
+  shadowOffset: {
+    width: 0,
+    height: 5,
+  },
+  shadowOpacity: 0.36,
+  shadowRadius: 6.68,
+  elevation: 11,},
   statusModal: {
     alignSelf: 'flex-end',
     paddingVertical: moderateScale(15, 0.3),
     paddingHorizontal: moderateScale(10, 0.3),
     backgroundColor: Color.white,
-    // borderRadius: moderateScale(5, 0.3),
     marginTop: moderateScale(60, 0.3),
-    // borderWidth: 1,
     borderColor: Color.green,
     shadowColor: '#000',
     shadowOffset: {
@@ -238,15 +259,12 @@ const styles = ScaledSheet.create({
   },
   header2: {
     width: windowWidth,
-    // height: windowHeight * 0.13,
     backgroundColor: Color.themeColor,
-    // justifyContent: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: moderateScale(20, 0.3),
     paddingVertical: moderateScale(15, 0.3),
     alignItems: 'center',
-    // backgroundColor: 'red',
   },
   notificationCircle: {
     position: 'absolute',
@@ -255,7 +273,6 @@ const styles = ScaledSheet.create({
     borderRadius: moderateScale(5, 0.3),
     backgroundColor: Color.green,
     right: moderateScale(5, 0.3),
-    // marginTop : moderateScale(10,0.3)
   },
 });
 export default Header;
