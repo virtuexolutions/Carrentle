@@ -77,7 +77,7 @@ const Header = props => {
 
   return (
     <LinearGradient
-      style={styles.header2}
+      style={[styles.header2]}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 1}}
       colors={headerColor ? headerColor : Color.themeBgColor}>
@@ -102,7 +102,7 @@ const Header = props => {
           />
         ) : (
           <Icon
-            style={[styles.menu ,styles.shadowporp]}
+            style={[styles.menu, styles.shadowporp]}
             name={'menu'}
             as={Feather}
             size={moderateScale(25, 0.3)}
@@ -191,16 +191,18 @@ const Header = props => {
       ) : (
         <View
           style={{
-            width: windowWidth * 0.08,
-            height: windowHeight * 0.05,
-            // backgroundColor :'red',
+            width: windowHeight * 0.045,
+            justifyContent: 'center',
+            alignItems: 'center',
+            elevation: 12,
+            height: windowHeight * 0.045,
+            // overflow:'hidden',
+            backgroundColor: '#dedbdbc8',
+            borderRadius: (windowHeight * 0.045) / 2,
           }}>
           <CustomImage
-            source={require('../Assets/Images/icon2.png')}
-            style={{
-              height: '100%',
-              width: '100%',
-            }}
+            source={require('../Assets/Images/Group13.png')}
+            style={{width: windowHeight * 0.04, height: windowHeight * 0.04}}
           />
         </View>
       )}
@@ -224,22 +226,24 @@ const styles = ScaledSheet.create({
 
     elevation: 11,
   },
-  menu:{
-    height :windowHeight*0.05,
-    width :windowHeight*0.05,
-    borderRadius :windowHeight*0.05/2,
-    textAlign:'center',
-    backgroundColor :'white',
-    paddingTop :moderateScale(7,.6)
+  menu: {
+    height: windowHeight * 0.05,
+    width: windowHeight * 0.05,
+    borderRadius: (windowHeight * 0.05) / 2,
+    textAlign: 'center',
+    backgroundColor: 'white',
+    paddingTop: moderateScale(7, 0.6),
   },
-  shadowporp: {shadowColor: '#000',
-  shadowOffset: {
-    width: 0,
-    height: 5,
+  shadowporp: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.36,
+    shadowRadius: 6.68,
+    elevation: 11,
   },
-  shadowOpacity: 0.36,
-  shadowRadius: 6.68,
-  elevation: 11,},
   statusModal: {
     alignSelf: 'flex-end',
     paddingVertical: moderateScale(15, 0.3),

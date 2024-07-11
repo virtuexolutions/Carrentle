@@ -15,6 +15,7 @@ import {useState} from 'react';
 import {moderateScale, scale, ScaledSheet} from 'react-native-size-matters';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Foundation from 'react-native-vector-icons/Foundation';
 
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import CustomText from './CustomText';
@@ -60,7 +61,7 @@ const TextInputWithTitle = props => {
             shadowOpacity: 0.32,
             shadowRadius: 5.46,
 
-            elevation: 9,
+            elevation: 5,
           },
           props.marginBottom && {
             marginBottom: props.marginBottom,
@@ -90,7 +91,8 @@ const TextInputWithTitle = props => {
               paddingLeft: moderateScale(15, 0.3),
             },
         ]}>
-        {props.iconName && (
+          {props.foundation && (<Foundation color={props.iconColor} name={props.iconName} size={moderateScale(20,0.2)}/>)}
+        {props.iconName && !props.foundation && (
           <Icon
             name={props.iconName}
             as={props.iconType}
@@ -99,16 +101,16 @@ const TextInputWithTitle = props => {
                 // backgroundColor :'green',
                 textAlign: 'center',
                 width : windowWidth*0.07,
-                paddingTop :moderateScale(10,.6),
+                // paddingTop :moderateScale(10,.6),
                 color: (props.color && !props.disable) ? props.color : Color.veryLightGray,
-                fontSize: moderateScale(20, 0.6),
+                fontSize: moderateScale(18, 0.6),
                 // paddingLeft: Dimensions.get("window").width * 0.0175,
               },
               props.numberOfLines > 1 && {
                 paddingTop: Dimensions.get('window').height * 0.005,
               },
-              props.iconHeigth && {
-                height: windowHeight * props.iconHeigth,
+              props.iconHeight && {
+                height: windowHeight * props.iconHeight,
               },
               props.rightIcon && {
                 position: 'absolute',

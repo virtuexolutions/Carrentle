@@ -33,7 +33,8 @@ import PaymentScreen from './Screens/PaymentScreen';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import Drawer from './Drawer/Drawer';
 import MessagesScreen from './Screens/MessagesScreen';
-import EnterLocationScreen from './Screens/EnterLocationScreen';
+import EnterLocationScreen from './Screens/BoardingPointScreen';
+import BoardingPointScreen from './Screens/BoardingPointScreen';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -74,7 +75,7 @@ const AppNavigator = () => {
           <RootNav.Screen name="Signup" component={Signup} />
           <RootNav.Screen name="PaymentScreen" component={PaymentScreen} />
           <RootNav.Screen name="MessagesScreen" component={MessagesScreen} />
-          <RootNav.Screen name="EnterLocationScreen" component={EnterLocationScreen} />
+          <RootNav.Screen name="EnterLocationScreen" component={BoardingPointScreen} />
 
 
           {/* <RootNav.Screen name="TabNavigation" component={TabNavigation} /> */}
@@ -204,7 +205,7 @@ export const MyDrawer = () => {
       screenOptions={{
         headerShown: false,
       }}>
-      {/* <DrawerNavigation.Screen name="HomeScreen" component={HomeScreen} /> */}
+      <DrawerNavigation.Screen name="HomeScreen" component={HomeScreen} />
       <DrawerNavigation.Screen name="PaymentScreen" component={PaymentScreen} />
       {/* <DrawerNavigation.Screen name="MessagesScreen" component={MessagesScreen}/> */}
       {/* <DrawerNavigation.Screen name="ChangePassword"  component={ChangePassword}/> */}

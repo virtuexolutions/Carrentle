@@ -8,14 +8,9 @@ import {
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
-import {
-  View,
-  RefreshControl,
-  ScrollView,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {View, RefreshControl, ScrollView, FlatList} from 'react-native';
+import CustomText from '../Components/CustomText';
+import {useIsFocused, } from '@react-navigation/native';
 import Header from '../Components/Header';
 import BookYourCapComponent from '../Components/BookYourCapComponent';
 import CustomButton from '../Components/CustomButton';
@@ -25,8 +20,8 @@ import BookingCard from '../Components/BookingCard';
 
 const HomeScreen = props => {
   // const
-  const isFocused = useIsFocused();
-  const navigation = useNavigation();
+  // const isFocused = useIsFocused();
+  // const navigation = useNavigation();
 
   const [isLoading, setIsLoading] = useState(false);
   const [rbref, setRbRef] = useState(null);

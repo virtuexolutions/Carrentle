@@ -1,32 +1,69 @@
-import {StyleSheet, Text, View, ScrollView} from 'react-native';
+import {StyleSheet, Text, View, ScrollView, TouchableOpacity} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import Color from '../Assets/Utilities/Color';
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import {Rating} from 'react-native-ratings';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import {Icon} from 'native-base';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CustomButton from '../Components/CustomButton';
 
-const PaymentScreen = () => {
+const PaymentScreen = ({ navigation }) => {
   return (
     <ScreenBoiler
-      showHeader
-      title={'confrim your payment'}
-      headerColor={['white', 'white']}
-      hideUser={false}
+      // showHeader
+      // headerTransparent={true}
+      // title={'confrim your payment'}
+      // headerColor={['white', 'white']}
+      // hideUser={false}
       statusBarBackgroundColor={'white'}
       statusBarContentStyle={'dark-content'}>
+        <View style={{width: windowWidth, 
+          paddingHorizontal:moderateScale(12,0.3),
+          paddingVertical:moderateScale(12,0.2),
+          flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+          <TouchableOpacity
+          style={{width: windowWidth * 0.09, 
+            backgroundColor:'white',
+            height: windowWidth * 0.09,
+            justifyContent:'center',
+            elevation:12,
+            alignItems:'center',
+            borderRadius: (windowWidth * 0.09)/2
+          }}
+          onPress={()=>{
+            navigation.toggleDrawer()
+          }}
+          >
+
+          <Icon as={Ionicons} name="menu" size={moderateScale(20,0.2)} />
+          </TouchableOpacity>
+          <CustomText>Confirm your payment</CustomText>
+          <View style={{
+          width: windowHeight * 0.045, 
+          justifyContent:'center',
+          alignItems:'center',
+          elevation:12,
+          height:windowHeight * 0.045, 
+          // overflow:'hidden',
+          backgroundColor:'#dedbdbc8', borderRadius: (windowHeight * 0.045) / 2}}>
+          <CustomImage source={require('../Assets/Images/Group13.png')} 
+            style={{width:windowHeight * 0.04, height: windowHeight * 0.04}}
+          />
+        </View>
+        </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           alignItems: 'center',
         }}
         style={{
-          minHeight: windowHeight,
+          height: windowHeight *0.65,
           paddingTop: moderateScale(10, 0.6),
           //   backgroundColor: 'green',
         }}>
@@ -87,7 +124,19 @@ const PaymentScreen = () => {
           </View>
 
           <View style={styles.LocationView}>
-            <View style={styles.marker}></View>
+            <View style={styles.marker}>
+              <Fontisto name='map-marker-alt' size={moderateScale(17,0.2)} color="#FF8A00"/>
+              <CustomText style={{
+                width: windowWidth * 0.1,
+                marginTop:moderateScale(10,0.2),
+                textAlign:'center',
+            //  borderColor:'red',
+            //  borderWidth:1,
+                marginLeft:moderateScale(2,0.2),
+                transform: [{ rotate: '90deg' }]}}>- - - - -</CustomText>
+
+              <Fontisto name='map-marker-alt' size={moderateScale(17,0.2)} color="#72AFED" style={{marginTop:moderateScale(12,0.2)}}/>
+            </View>
             <View
               style={{
                 paddingHorizontal: moderateScale(8, 0.6),
@@ -160,7 +209,7 @@ const PaymentScreen = () => {
             <CustomText isBold style={styles.dollar}>
               $10.00{' '}
             </CustomText>
-            <CustomText isBold style={styles.dollar}>
+            <CustomText isBold style={[styles.dollar, { color:'#193075' }]}>
               visa
             </CustomText>
           </View>
@@ -202,7 +251,12 @@ const PaymentScreen = () => {
             }}>
             promo code
           </CustomText>
-          <CustomText>$10.00</CustomText>
+          <CustomText
+               style={{
+                color: '#fac60a',
+                fontSize: moderateScale(12, 0.6),
+              }}
+          >$10.00</CustomText>
         </View>
         <View style={styles.Textrow}>
           <CustomText isBold style={{fontSize: moderateScale(14, 0.6)}}>
@@ -214,6 +268,7 @@ const PaymentScreen = () => {
           onPress={() => {
             // navigation.navigate('HomeScreen')
           }}
+          isGradient
           text={'pay $45.00'}
           fontSize={moderateScale(14, 0.3)}
           textColor={Color.white}
@@ -223,7 +278,7 @@ const PaymentScreen = () => {
           width={windowWidth * 0.9}
           height={windowHeight * 0.07}
           marginTop={moderateScale(30, 0.3)}
-          bgColor={'black'}
+          bgColor={['#79B9F6', '#00309E']}
           isBold
           // isGradient
         />
@@ -290,7 +345,8 @@ const styles = StyleSheet.create({
   marker: {
     height: windowHeight * 0.1,
     width: windowWidth * 0.06,
-    backgroundColor: 'pink',
+    alignItems:'center',    
+    // backgroundColor: 'pink',
   },
   LocationView: {
     flexDirection: 'row',
