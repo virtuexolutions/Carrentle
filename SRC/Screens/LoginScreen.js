@@ -142,9 +142,9 @@ const LoginScreen = props => {
 
               <CustomButton
                 onPress={() => {
-                  navigation.navigate('EnterLocationScreen');
+                  // navigation.navigate('EnterLocationScreen');
                   // navigation.navigate('PaymentScreen')
-                  navigation.navigate('HomeScreen');
+                  navigation.navigate('TaxiAvailability');
                 }}
                 text={'Log in'}
                 fontSize={moderateScale(14, 0.3)}

@@ -18,23 +18,9 @@ import {
   requestWritePermission,
 } from './SRC/Utillity/utils';
 import SplashScreen from './SRC/Screens/SplashScreen';
-import LoginScreen from './SRC/Screens/LoginScreen';
-import Signup from './SRC/Screens/Signup';
-import WalkThroughScreen from './SRC/Screens/WalkthroughScreen';
-import EnterPhone from './SRC/Screens/EnterPhone';
-import Profile from './SRC/Screens/Profile';
+
+import TestScreen from './SRC/Screens/TestScreen';
 import AppNavigator from './SRC/appNavigation';
-import PaymentScreen from './SRC/Screens/PaymentScreen';
-import EnterLocationScreen from './SRC/Screens/BoardingPointScreen';
-import TaxiAvailability from './SRC/Screens/TaxiAvailability';
-import HomeScreen from './SRC/Screens/HomeScreen';
-// import ChatScreen from './SRC/Screens/ChatScreen';
-import BoardingPointScreen from './SRC/Screens/BoardingPointScreen';
-import BoardingPointSearchScreen from './SRC/Screens/BoardingPointSearchScreen';
-import BoardingPointDetails from './SRC/Screens/BoardingPointDetails';
-import RideAcceptance from './SRC/Screens/RideAcceptance';
-import RideBookingScreen from './SRC/Screens/RideBokkingScreen';
-import RideBookingScreen2 from './SRC/Screens/RideBookingScreen2';
 
 
 
@@ -84,16 +70,16 @@ const MainContainer = () => {
   if (isloading == true) {
     return <SplashScreen />;
   }
-  // // return <AppNavigator />
+  return <AppNavigator />
+  // return <BoardingPointSearchScreen/>
   
   // return <TaxiAvailability/>
   // return <HomeScreen/>
-  return <BoardingPointScreen/>
+  // return <SplashScreen/>
   // return <BoardingPointDetails/>
-  // return <RideAcceptance/>
-  // return <RideBookingScreen/>
+  
   // return <RideBookingScreen2/>
-  // return <BoardingPointSearchScreen/>
+  // return <PaymentScreen/>
   // return <EnterLocationScreen/>
   
 };

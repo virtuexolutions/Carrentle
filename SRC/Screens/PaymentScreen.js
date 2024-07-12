@@ -1,4 +1,12 @@
-import {StyleSheet, Text, View, ScrollView, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  PermissionsAndroid,
+  ToastAndroid,
+} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import Color from '../Assets/Utilities/Color';
 import {windowHeight, windowWidth} from '../Utillity/utils';
@@ -13,7 +21,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CustomButton from '../Components/CustomButton';
 
-const PaymentScreen = ({ navigation }) => {
+const PaymentScreen = ({navigation}) => {
+  console.log("🚀 ~ PaymentScreen ~ navigation:", navigation)
   return (
     <ScreenBoiler
       // showHeader
@@ -23,49 +32,33 @@ const PaymentScreen = ({ navigation }) => {
       // hideUser={false}
       statusBarBackgroundColor={'white'}
       statusBarContentStyle={'dark-content'}>
-        <View style={{width: windowWidth, 
-          paddingHorizontal:moderateScale(12,0.3),
-          paddingVertical:moderateScale(12,0.2),
-          flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-          <TouchableOpacity
-          style={{width: windowWidth * 0.09, 
-            backgroundColor:'white',
-            height: windowWidth * 0.09,
-            justifyContent:'center',
-            elevation:12,
-            alignItems:'center',
-            borderRadius: (windowWidth * 0.09)/2
-          }}
-          onPress={()=>{
-            navigation.toggleDrawer()
-          }}
-          >
-
-          <Icon as={Ionicons} name="menu" size={moderateScale(20,0.2)} />
-          </TouchableOpacity>
-          <CustomText>Confirm your payment</CustomText>
-          <View style={{
-          width: windowHeight * 0.045, 
-          justifyContent:'center',
-          alignItems:'center',
-          elevation:12,
-          height:windowHeight * 0.045, 
-          // overflow:'hidden',
-          backgroundColor:'#dedbdbc8', borderRadius: (windowHeight * 0.045) / 2}}>
-          <CustomImage source={require('../Assets/Images/Group13.png')} 
-            style={{width:windowHeight * 0.04, height: windowHeight * 0.04}}
+      <View
+        style={styles.header}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => {
+            console.log('helloooooo===== >>>>>>> >>>>')
+            // navigation.toggleDrawer()
+          }}>
+          <Icon as={Ionicons} name="menu" size={moderateScale(20, 0.2)} />
+        </TouchableOpacity>
+        <CustomText>Confirm your payment</CustomText>
+        <View
+          style={styles.logo}>
+          <CustomImage
+            source={require('../Assets/Images/Group13.png')}
+            style={{width: windowHeight * 0.04, height: windowHeight * 0.04}}
           />
         </View>
-        </View>
+      </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           alignItems: 'center',
         }}
         style={{
-          height: windowHeight *0.65,
+          height: windowHeight * 0.65,
           paddingTop: moderateScale(10, 0.6),
-          //   backgroundColor: 'green',
         }}>
         <View style={[styles.mainContainer, styles.shadowprops]}>
           <View style={styles.row}>
@@ -125,17 +118,19 @@ const PaymentScreen = ({ navigation }) => {
 
           <View style={styles.LocationView}>
             <View style={styles.marker}>
-              <Fontisto name='map-marker-alt' size={moderateScale(17,0.2)} color="#FF8A00"/>
-              <CustomText style={{
-                width: windowWidth * 0.1,
-                marginTop:moderateScale(10,0.2),
-                textAlign:'center',
-            //  borderColor:'red',
-            //  borderWidth:1,
-                marginLeft:moderateScale(2,0.2),
-                transform: [{ rotate: '90deg' }]}}>- - - - -</CustomText>
+              <Fontisto
+                name="map-marker-alt"
+                size={moderateScale(17, 0.2)}
+                color="#FF8A00"
+              />
+              <CustomText style={styles.dot}>- - - - -</CustomText>
 
-              <Fontisto name='map-marker-alt' size={moderateScale(17,0.2)} color="#72AFED" style={{marginTop:moderateScale(12,0.2)}}/>
+              <Fontisto
+                name="map-marker-alt"
+                size={moderateScale(17, 0.2)}
+                color="#72AFED"
+                style={{marginTop: moderateScale(12, 0.2)}}
+              />
             </View>
             <View
               style={{
@@ -209,7 +204,7 @@ const PaymentScreen = ({ navigation }) => {
             <CustomText isBold style={styles.dollar}>
               $10.00{' '}
             </CustomText>
-            <CustomText isBold style={[styles.dollar, { color:'#193075' }]}>
+            <CustomText isBold style={[styles.dollar, {color: '#193075'}]}>
               visa
             </CustomText>
           </View>
@@ -220,7 +215,7 @@ const PaymentScreen = ({ navigation }) => {
           </CustomText>
           <View style={styles.promoView}>
             <CustomText style={{fontSize: moderateScale(11, 0.6)}}>
-              asdasdasdas
+            DJ248JN245
             </CustomText>
             <Icon
               name="keyboard-arrow-right"
@@ -252,11 +247,12 @@ const PaymentScreen = ({ navigation }) => {
             promo code
           </CustomText>
           <CustomText
-               style={{
-                color: '#fac60a',
-                fontSize: moderateScale(12, 0.6),
-              }}
-          >$10.00</CustomText>
+            style={{
+              color: '#fac60a',
+              fontSize: moderateScale(12, 0.6),
+            }}>
+            $10.00
+          </CustomText>
         </View>
         <View style={styles.Textrow}>
           <CustomText isBold style={{fontSize: moderateScale(14, 0.6)}}>
@@ -266,7 +262,11 @@ const PaymentScreen = ({ navigation }) => {
         </View>
         <CustomButton
           onPress={() => {
-            // navigation.navigate('HomeScreen')
+            ToastAndroid.show('Booking succeed . Rider is on the way' , ToastAndroid.SHORT)
+            setTimeout(() => {
+              
+              navigation.navigate('TaxiAvailability')
+            }, 500);
           }}
           isGradient
           text={'pay $45.00'}
@@ -277,7 +277,7 @@ const PaymentScreen = ({ navigation }) => {
           borderRadius={moderateScale(30, 0.3)}
           width={windowWidth * 0.9}
           height={windowHeight * 0.07}
-          marginTop={moderateScale(30, 0.3)}
+          marginTop={moderateScale(20, 0.3)}
           bgColor={['#79B9F6', '#00309E']}
           isBold
           // isGradient
@@ -297,6 +297,40 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: moderateScale(20, 0.6),
     marginBottom: moderateScale(10, 0.3),
+  },
+  header:{
+    width: windowWidth,
+    paddingHorizontal: moderateScale(12, 0.3),
+    paddingVertical: moderateScale(12, 0.2),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  logo:{
+    width: windowHeight * 0.045,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 12,
+    height: windowHeight * 0.045,
+    backgroundColor: '#dedbdbc8',
+    borderRadius: (windowHeight * 0.045) / 2,
+  },
+  btn:{
+    width: windowWidth * 0.09,
+    backgroundColor: 'white',
+    height: windowWidth * 0.09,
+    justifyContent: 'center',
+    elevation: 12,
+    alignItems: 'center',
+    borderRadius: (windowWidth * 0.09) / 2,
+    zIndex :1
+  },
+  dot: {
+    width: windowWidth * 0.1,
+    marginTop: moderateScale(10, 0.2),
+    textAlign: 'center',
+    marginLeft: moderateScale(2, 0.2),
+    transform: [{rotate: '90deg'}],
   },
   shadowprops: {
     elevation: 7,
@@ -345,7 +379,7 @@ const styles = StyleSheet.create({
   marker: {
     height: windowHeight * 0.1,
     width: windowWidth * 0.06,
-    alignItems:'center',    
+    alignItems: 'center',
     // backgroundColor: 'pink',
   },
   LocationView: {

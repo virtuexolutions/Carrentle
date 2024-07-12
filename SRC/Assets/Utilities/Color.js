@@ -27,7 +27,7 @@ export default Color = {
   
   purple: '#0D668E',
   // theme colors
-  themeColor: '#000000',
+  themeColor: '#00309E',
   themeColor2: '#FF1717',
   
   cartheme:['#79B9F6','#00309E', ],

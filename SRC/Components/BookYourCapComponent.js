@@ -11,9 +11,10 @@ import {Rating} from 'react-native-ratings';
 import Color from '../Assets/Utilities/Color';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {background, color, position} from 'native-base/lib/typescript/theme/styled-system';
+import { useNavigation } from '@react-navigation/native';
 
 const BookYourCapComponent = ({item}) => {
-  console.log('🚀 ~ BookYourCapComponent ~ item :', item?.carN0);
+  const navigation = useNavigation()
   return (
     <View style={[styles.container, styles.shadowProp]}>
       <View style={styles.imageContainer}>
@@ -167,7 +168,7 @@ const BookYourCapComponent = ({item}) => {
       </View>
       <CustomButton
         onPress={() => {
-          // navigation.navigate('HomeScreen')
+          navigation.navigate('BoardingPointScreen')
         }}
         text={'Book your cab'}
         fontSize={moderateScale(14, 0.3)}

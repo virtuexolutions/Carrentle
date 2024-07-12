@@ -30,7 +30,7 @@ const Header = props => {
   const notification = useSelector(state => state.commonReducer.notification);
   const cartData = useSelector(state => state.commonReducer.cart);
   const navigationN = useNavigation();
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
 
   const [isModalVisible, setModalVisible] = useState(false);
   const {
@@ -41,10 +41,11 @@ const Header = props => {
     titleColor,
     close,
     navigateTO,
-    headerType,
+    index,
     cart,
     Notify,
     hideUser,
+    navigation,
   } = props;
 
   const [searchText, setSearchText] = useState('');
@@ -77,7 +78,7 @@ const Header = props => {
 
   return (
     <LinearGradient
-      style={[styles.header2]}
+      style={[styles.header2 , index && {zIndex : 1}]}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 1}}
       colors={headerColor ? headerColor : Color.themeBgColor}>
@@ -109,9 +110,9 @@ const Header = props => {
             color={Color.black}
             onPress={() => {
               console.log('hello mg ');
-              // navigation.toggleDrawer();
+              navigation.toggleDrawer();
               // navigation.openDrawer()
-              navigationN.dispatch(DrawerActions.toggleDrawer());
+              // navigationN.dispatch(DrawerActions.toggleDrawer());
             }}
           />
         )}
@@ -269,6 +270,7 @@ const styles = ScaledSheet.create({
     paddingHorizontal: moderateScale(20, 0.3),
     paddingVertical: moderateScale(15, 0.3),
     alignItems: 'center',
+   
   },
   notificationCircle: {
     position: 'absolute',

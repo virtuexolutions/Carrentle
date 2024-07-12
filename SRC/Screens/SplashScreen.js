@@ -9,25 +9,25 @@ import {View} from 'native-base';
 import FastImage from 'react-native-fast-image';
 
 const SplashScreen = () => {
-  const backgroundImage = require("../Assets/Images/splash.mp4");
+  const backgroundImage = require("../Assets/Images/splash.gif");
   return (
-    <ScreenBoiler
-      statusBarBackgroundColor={'white'}
-      statusBarContentStyle={'dark-content'}>
+    // <ScreenBoiler
+    //   statusBarBackgroundColor={'white'}
+    //   statusBarContentStyle={'dark-content'}>
         <View style={styles.container}>
         <FastImage
           source={backgroundImage}
           style={{width: '100%', height: '100%'}}
           resizeMode={FastImage.resizeMode.cover}
           // animated
-          onLoadEnd={(e) =>console.log(e)}
-          onProgress={e => console.log('==============>',e)}
-          onLoad={e => console.log(e)}
-          autoplay
+          // onLoadEnd={(e) =>console.log(e)}
+          // onProgress={e => }
+          // onLoad={e => console.log(e)}
+          // autoplay
         />
         </View>
       
-    </ScreenBoiler>
+    // </ScreenBoiler>
   );
 };
 

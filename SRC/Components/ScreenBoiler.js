@@ -3,10 +3,12 @@ import {View} from 'react-native';
 import {windowHeight} from '../Utillity/utils';
 import CustomStatusBar from './CustomStatusBar';
 import Header from './Header';
+import { useNavigation } from '@react-navigation/native';
 
 const ScreenBoiler = props => {
+  const navigation = useNavigation()
   const {
-    navigation,
+    // navigation,
     showHeader,
     statusBarBackgroundColor,
     statusBarContentStyle,

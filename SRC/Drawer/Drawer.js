@@ -11,7 +11,7 @@ import {Icon} from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -47,7 +47,7 @@ const Drawer = () => {
       iconName: 'car',
       iconType: AntDesign,
       onPress: () => {
-        // navigation.navigate('HomeScreen');
+        navigation.navigate('HomeScreen');
       },
     },
     {
@@ -87,7 +87,7 @@ const Drawer = () => {
       iconName: 'shield',
       iconType: Feather,
       onPress: () => {
-        // navigation.navigate('HomeScreen');
+        navigation.navigate('TermsAndConditions');
       },
     },
 
@@ -103,54 +103,62 @@ const Drawer = () => {
     },
   ];
 
- 
   return (
     <ScreenBoiler
       statusBarBackgroundColor={'white'}
       statusBarContentStyle={'dark-content'}>
- <View
- style={{height: windowHeight,
+      <View
+        style={{
+          height: windowHeight,
 
-  backgroundColor:'#F8F8F8'}}
- >
-{/* back buttons */}
-<View style={{width:'100%',
-paddingVertical:moderateScale(16,0.2),
-// borderWidth:1,borderColor:'red', 
-paddingHorizontal:moderateScale(10,0.2),
-flexDirection:'row', justifyContent:'space-between', alignItems:'center' }}>
-  <Icon 
-  onPress={()=>{
-    navigation.goBack()
-  }}
-  as={AntDesign} name="arrowleft" color={'#636363'}/>
-  <CustomText style={{width: windowWidth * 0.12}}>Menu</CustomText>
-  <TouchableOpacity 
-  onPress={()=>{
-    navigation.goBack()
-  }}
-  style={{backgroundColor:'white', 
-  padding:moderateScale(6,0.2),
-  borderRadius:moderateScale(7,0.3)}} >
-  <Icon 
-  
-  as={Entypo} name="cross" color={'#636363'}/>
-  </TouchableOpacity>
-</View>
+          backgroundColor: '#F8F8F8',
+        }}>
+        {/* back buttons */}
+        <View
+          style={{
+            width: '100%',
+            paddingVertical: moderateScale(16, 0.2),
+            // borderWidth:1,borderColor:'red',
+            paddingHorizontal: moderateScale(10, 0.2),
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          <Icon
+            onPress={() => {
+              navigation.goBack();
+            }}
+            as={AntDesign}
+            name="arrowleft"
+            color={'#636363'}
+          />
+          <CustomText style={{width: windowWidth * 0.12}}>Menu</CustomText>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.goBack();
+            }}
+            style={{
+              backgroundColor: '#F8F8F8',
+              padding: moderateScale(6, 0.2),
+              borderRadius: moderateScale(7, 0.3),
+            }}>
+            <Icon as={Entypo} name="cross" color={'#636363'} />
+          </TouchableOpacity>
+        </View>
         <View
           style={{
             height: windowHeight * 0.2,
             width: '100%',
-            paddingVertical:moderateScale(12,0.2),
+            paddingVertical: moderateScale(12, 0.2),
             // backgroundColor: '#D2E4E4',
           }}>
           {token == null ? (
             <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              // backgroundColor: 'black',
-              height: windowHeight * 0.2,
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: 'white',
+                height: windowHeight * 0.2,
               }}>
               <View style={styles.Profile}>
                 <CustomImage
@@ -176,13 +184,13 @@ flexDirection:'row', justifyContent:'space-between', alignItems:'center' }}>
             </View>
           ) : (
             <View
-            style={{
-              flexDirection: 'row',
-              backgroundColor:'#FFFFFF',
-              marginTop: moderateScale(20, 0.3),
-              alignItems: 'center',
-              paddingVertical:moderateScale(10,0.2),
-              paddingHorizontal:moderateScale(6,0.2)
+              style={{
+                flexDirection: 'row',
+                backgroundColor: '#FFFFFF',
+                marginTop: moderateScale(20, 0.3),
+                alignItems: 'center',
+                paddingVertical: moderateScale(10, 0.2),
+                paddingHorizontal: moderateScale(6, 0.2),
                 // marginLeft: moderateScale(10, 0.3),
               }}>
               <View style={styles.Profile}>
@@ -190,7 +198,7 @@ flexDirection:'row', justifyContent:'space-between', alignItems:'center' }}>
                   resizeMode={'cover'}
                   source={require('../Assets/Images/men.png')}
                   style={{width: '100%', height: '100%'}}
-                  />
+                />
               </View>
 
               <View style={{marginLeft: moderateScale(10, 0.3)}}>
@@ -198,27 +206,36 @@ flexDirection:'row', justifyContent:'space-between', alignItems:'center' }}>
                   style={{fontSize: moderateScale(16, 0.6), color: Color.black}}
                   isBold>
                   {/* {userData?.name} */}
-                  {"Parsely Montana"}
+                  {'Parsely Montana'}
                 </CustomText>
 
                 <CustomText
                   style={{
                     width: windowWidth * 0.4,
                     fontSize: moderateScale(11, 0.6),
-                    color:' #989898',
+                    color: ' #989898',
                   }}>
                   {/* {userData?.email}
                    */}
-                   San Fransisco
+                  San Fransisco
                 </CustomText>
               </View>
-              <View style={{width: windowHeight * 0.025, 
-                justifyContent:'center',
-                alignItems:'center',
-                elevation:12,
-                height:windowHeight * 0.025, backgroundColor:'#dedbdbc8', borderRadius: (windowHeight * 0.02) / 2}}>
-                <CustomImage source={require('../Assets/Images/Group13.png')} 
-                  style={{width: windowHeight * 0.021, height: windowHeight * 0.021}}
+              <View
+                style={{
+                  width: windowHeight * 0.025,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  elevation: 12,
+                  height: windowHeight * 0.025,
+                  backgroundColor: '#dedbdbc8',
+                  borderRadius: (windowHeight * 0.02) / 2,
+                }}>
+                <CustomImage
+                  source={require('../Assets/Images/Group13.png')}
+                  style={{
+                    width: windowHeight * 0.021,
+                    height: windowHeight * 0.021,
+                  }}
                 />
               </View>
             </View>
@@ -240,32 +257,31 @@ flexDirection:'row', justifyContent:'space-between', alignItems:'center' }}>
                   margin: moderateScale(15, 0.3),
                   flexDirection: 'row',
                   alignItems: 'center',
-                  justifyContent:'space-between'
+                  justifyContent: 'space-between',
                 }}>
-              <View style={{flexDirection:'row', width:'90%'}}>
-
-                <Icon
-                  name={item?.iconName}
-                  as={item?.iconType}
-                  size={moderateScale(20, 0.3)}
-                  color={'#00309E'}
-                  onPress={item?.onPress}
+                <View style={{flexDirection: 'row', width: '90%'}}>
+                  <Icon
+                    name={item?.iconName}
+                    as={item?.iconType}
+                    size={moderateScale(20, 0.3)}
+                    color={'#00309E'}
+                    onPress={item?.onPress}
                   />
-                <CustomText
-                  style={{
-                    fontSize: moderateScale(14, 0.6),
-                    color: '#404040',
-                    marginLeft: moderateScale(10, 0.3),
-                  }}>
-                  {item.name}
-                </CustomText>
+                  <CustomText
+                    style={{
+                      fontSize: moderateScale(14, 0.6),
+                      color: '#404040',
+                      marginLeft: moderateScale(10, 0.3),
+                    }}>
+                    {item.name}
+                  </CustomText>
                 </View>
                 <Icon
-                name={'arrow-forward-ios'}
-                size={moderateScale(20,0.3)}
-                as={MaterialIcons}
-                color={'#79B9F6'}
-                style={{position:'absolute', right:0}}
+                  name={'arrow-forward-ios'}
+                  size={moderateScale(20, 0.3)}
+                  as={MaterialIcons}
+                  color={'#79B9F6'}
+                  style={{position: 'absolute', right: 0}}
                 />
               </TouchableOpacity>
             </>
@@ -295,8 +311,8 @@ flexDirection:'row', justifyContent:'space-between', alignItems:'center' }}>
             color={Color.black}
             />
         </View> */}
-      {/* </LinearGradient> */}
-</View>
+        {/* </LinearGradient> */}
+      </View>
     </ScreenBoiler>
   );
 };

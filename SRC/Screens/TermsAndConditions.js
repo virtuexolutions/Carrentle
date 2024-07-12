@@ -14,60 +14,38 @@ import {useNavigation} from '@react-navigation/native';
 import {Icon} from 'native-base';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Color from '../Assets/Utilities/Color';
+import Header from '../Components/Header';
 
-const TermsAndConditions = () => {
-  const navigation = useNavigation();
+const TermsAndConditions = ({navigation}) => {
+  // const navigation = useNavigation();
 
   return (
-    <ImageBackground
-      style={{
-        width: windowWidth,
-        minHeight: windowHeight,
-        paddingBottom: moderateScale(40, 0.6),
-      }}
-      source={require('../Assets/Images/customerservice.png')}>
-      <TouchableOpacity
-        activeOpacity={0.8}
-        onPress={() => {
-          navigation.goBack();
-        }}
-        style={styles.back}>
-        <Icon
-          name="arrowleft"
-          as={AntDesign}
-          style={styles.icon2}
-          color={Color.white}
-          size={moderateScale(20, 0.3)}
-          onPress={() => {
-            navigation.goBack();
-          }}
-        />
-      </TouchableOpacity>
+    <>
+      <Header
+        navigation={navigation}
+        title={'Terms & conditions'}
+        headerColor={['white', 'white']}
+        hideUser={false}
+      />
+ 
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{
-          marginTop: windowHeight * 0.1,
+          backgroundColor :'white'
+          // marginTop: windowHeight * 0.1,
+        
         }}
         contentContainerStyle={
           {
             // padding : moderateScale(10,0.6),
           }
         }>
-        <CustomText
-          isBold
-          style={{
-            color: Color.white,
-            width: windowWidth,
-            textAlign: 'center',
-            fontSize: moderateScale(20, 0.6),
-          }}>
-          Terms & conditions
-        </CustomText>
+      
         <CustomText
           style={{
             marginTop: moderateScale(30, 0.3),
             marginHorizontal: moderateScale(10, 0.3),
-            color: Color.white,
+            color: Color.black,
             // width : windowWidth ,
             textAlign: 'justify',
             fontSize: moderateScale(12, 0.6),
@@ -77,7 +55,7 @@ const TermsAndConditions = () => {
           }
         </CustomText>
       </ScrollView>
-    </ImageBackground>
+    </>
   );
 };
 

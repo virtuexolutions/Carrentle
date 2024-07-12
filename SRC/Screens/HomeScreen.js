@@ -18,7 +18,7 @@ import BottomSheet from '../Components/BottomSheet';
 import CardComponent from '../Components/CardComponent';
 import BookingCard from '../Components/BookingCard';
 
-const HomeScreen = props => {
+const HomeScreen = ({navigation})=> {
   // const
   // const isFocused = useIsFocused();
   // const navigation = useNavigation();
@@ -106,11 +106,13 @@ const HomeScreen = props => {
   return (
     <ScreenBoiler
       showHeader
+      navigation={navigation}
       title={'book your cap'}
       headerColor={['white', 'white']}
       hideUser={false}
       statusBarBackgroundColor={'white'}
       statusBarContentStyle={'dark-content'}>
+   
       <ScrollView
         contentContainerStyle={{
           paddingBottom: moderateScale(150, 0.6),
@@ -135,8 +137,7 @@ const HomeScreen = props => {
             return <BookYourCapComponent item={item?.item} />;
           }}
         />
-        <CardComponent/>
-        <BookingCard/>
+    
          </ScrollView>
     </ScreenBoiler>
   );

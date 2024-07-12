@@ -6,6 +6,7 @@ import CustomImage from '../Components/CustomImage';
 import {moderateScale} from 'react-native-size-matters';
 import CustomText from '../Components/CustomText';
 import CustomButton from '../Components/CustomButton';
+import navigationService from '../navigationService';
 
 const TaxiAvailability = () => {
   return (
@@ -58,7 +59,7 @@ const TaxiAvailability = () => {
           }}
           numberOfLines={3}>
           Lorem ipsum dolor sit amet, do eiusmod tempor incididunt ut, eiusmod
-          tempor incididunt ut labore et dolore magna aliqua.{' '}
+          tempor incididunt ut labore et dolore magna aliqua.
         </CustomText>
       </View>
       <CustomButton
@@ -66,6 +67,9 @@ const TaxiAvailability = () => {
         textColor={'#050537'}
         text={'City'}
         textTransform={'none'}
+        onPress={()=>{
+          navigationService.navigate('MyDrawer')
+        }}
         isBold
         marginTop={moderateScale(24, 0.3)}
         fontSize={moderateScale(26, 0.3)}
@@ -81,7 +85,9 @@ const TaxiAvailability = () => {
         textTransform={'none'}
         borderColor={'white'}
         borderWidth={1}
-        // isBold
+        onPress={()=>{
+          navigationService.navigate('MyDrawer')
+        }}
         fontSize={moderateScale(26, 0.3)}
         width={windowWidth * 0.8}
         height={windowHeight * 0.11}

@@ -35,6 +35,12 @@ import Drawer from './Drawer/Drawer';
 import MessagesScreen from './Screens/MessagesScreen';
 import EnterLocationScreen from './Screens/BoardingPointScreen';
 import BoardingPointScreen from './Screens/BoardingPointScreen';
+import RideBookingScreen2 from './Screens/RideBookingScreen2';
+import RideBookingScreen from './Screens/RideBokkingScreen';
+import RideAcceptance from './Screens/RideAcceptance';
+import BoardingPointDetails from './Screens/BoardingPointDetails';
+import TaxiAvailability from './Screens/TaxiAvailability';
+import BoardingPointSearchScreen from './Screens/BoardingPointSearchScreen';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -47,12 +53,14 @@ const AppNavigator = () => {
   const RootNavLogged = createNativeStackNavigator();
 
   const AppNavigatorContainer = () => {
-    const firstScreen =
-      walkThrough == false
-        ? 'WalkThroughScreen'
-        : token == null
-        ? 'LoginScreen'
-        : 'MyDrawer';
+    const firstScreen = 'LoginScreen'
+   
+   
+    // walkThrough == false
+      //   ? 'WalkThroughScreen'
+      //   : token == null
+      //   ? 'LoginScreen'
+      //   : 'MyDrawer';
 
     return (
       <NavigationContainer ref={navigationService.navigationRef}>
@@ -64,25 +72,43 @@ const AppNavigator = () => {
             name="WalkThroughScreen"
             component={WalkThroughScreen}
           />
-          <RootNav.Screen name="HomeScreen" component={HomeScreen} />
+          {/* <RootNav.Screen name="HomeScreen" component={HomeScreen} /> */}
           <RootNav.Screen name="LoginScreen" component={LoginScreen} />
           <RootNav.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
-          <RootNav.Screen
+          {/* <RootNav.Screen
             name="TermsAndConditions"
             component={TermsAndConditions}
-          />
+          /> */}
           <RootNav.Screen name="Profile" component={Profile} />
           <RootNav.Screen name="Signup" component={Signup} />
           <RootNav.Screen name="PaymentScreen" component={PaymentScreen} />
           <RootNav.Screen name="MessagesScreen" component={MessagesScreen} />
-          <RootNav.Screen name="EnterLocationScreen" component={BoardingPointScreen} />
-
-
-          {/* <RootNav.Screen name="TabNavigation" component={TabNavigation} /> */}
           <RootNav.Screen
-            name="ChangePasswordScreen"
-            component={ChangePassword}
+            name="BoardingPointScreen"
+            component={BoardingPointScreen}
           />
+          <RootNav.Screen
+            name="RideBookingScreen2"
+            component={RideBookingScreen2}
+          />
+          <RootNav.Screen
+            name="RideBookingScreen"
+            component={RideBookingScreen}
+          />
+          <RootNav.Screen
+            name="BoardingPointSearchScreen"
+            component={BoardingPointSearchScreen}
+          />
+          <RootNav.Screen name="RideAcceptance" component={RideAcceptance} />
+          <RootNav.Screen
+            name="BoardingPointDetails"
+            component={BoardingPointDetails}
+          />
+          <RootNav.Screen
+            name="TaxiAvailability"
+            component={TaxiAvailability}
+          />
+
         </RootNav.Navigator>
       </NavigationContainer>
     );
@@ -201,14 +227,24 @@ export const MyDrawer = () => {
   return (
     <DrawerNavigation.Navigator
       drawerContent={props => <Drawer {...props} />}
-      initialRouteName={'PaymentScreen'}
+      initialRouteName={'HomeScreen'}
       screenOptions={{
         headerShown: false,
       }}>
       <DrawerNavigation.Screen name="HomeScreen" component={HomeScreen} />
       <DrawerNavigation.Screen name="PaymentScreen" component={PaymentScreen} />
-      {/* <DrawerNavigation.Screen name="MessagesScreen" component={MessagesScreen}/> */}
-      {/* <DrawerNavigation.Screen name="ChangePassword"  component={ChangePassword}/> */}
+      <DrawerNavigation.Screen
+        name="BoardingPointSearchScreen"
+        component={BoardingPointSearchScreen}
+      />
+      <DrawerNavigation.Screen
+        name="BoardingPointScreen"
+        component={BoardingPointScreen}
+      />
+      <DrawerNavigation.Screen
+        name="TermsAndConditions"
+        component={TermsAndConditions}
+      />
     </DrawerNavigation.Navigator>
   );
 };
