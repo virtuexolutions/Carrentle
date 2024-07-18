@@ -16,7 +16,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 
 const RideBookingScreen2 = () => {
-  const navigation =useNavigation()
+  // const navigation =useNavigation()
   const origin = {latitude: 37.3285792, longitude: -122.0356209};
   const destination = {latitude: 37.3320305, longitude: -122.0355326};
 
@@ -88,18 +88,21 @@ const RideBookingScreen2 = () => {
         </View>
         <View style={styles.LocationView}>
           <View style={styles.marker}>
-            <Fontisto
+            <Icon
+            as={Fontisto}
               name="map-marker-alt"
               size={moderateScale(17, 0.2)}
               color="#FF8A00"
+              style={{ textAlign:'center'}}
+
             />
             <CustomText style={styles.dot}>- - - - -</CustomText>
-
-            <Fontisto
+            <Icon
+            as={Fontisto}
               name="map-marker-alt"
               size={moderateScale(17, 0.2)}
               color="#72AFED"
-              style={{marginTop: moderateScale(12, 0.2)}}
+              style={{marginTop: moderateScale(12, 0.2), textAlign:'center'}}
             />
           </View>
           <View style={styles.box}>
@@ -194,7 +197,7 @@ fontSize :moderateScale(13,.6)
   dot: {
     width: windowWidth * 0.1,
     // backgroundColor:'red',
-    marginTop: moderateScale(10, 0.2),
+    marginTop: moderateScale(11, 0.2),
     textAlign: 'center',
     marginLeft: moderateScale(2, 0.2),
     transform: [{rotate: '90deg'}],
@@ -289,5 +292,6 @@ fontSize :moderateScale(13,.6)
     height: windowHeight * 0.1,
     width: windowWidth * 0.06,
     alignItems: 'center',
+    
   },
 });

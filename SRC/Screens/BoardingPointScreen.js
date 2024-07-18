@@ -1,4 +1,10 @@
-import {ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {useState} from 'react';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import {windowHeight, windowWidth} from '../Utillity/utils';
@@ -17,6 +23,7 @@ import {useNavigation} from '@react-navigation/native';
 import SearchLocationModal from '../Components/SearchLocationModal';
 import CustomButton from '../Components/CustomButton';
 import Color from '../Assets/Utilities/Color';
+import {Rating} from 'react-native-ratings';
 
 const BoardingPointScreen = () => {
   console.log('first');
@@ -37,146 +44,133 @@ const BoardingPointScreen = () => {
         hideUser={false}
       />
       <ImageBackground
- style={{width:windowWidth, height: windowHeight, alignItems:'center', paddingBottom:moderateScale(12,0.2)}} 
- source={require('../Assets/Images/map.png')}
- >
-      <View style={styles.locBox}>
-        <View
-          style={{
-            width: windowWidth * 0.85,
-            backgroundColor: 'white',
-            // borderWidth: 1,
-
-            borderRadius: moderateScale(10, 0.2),
-            padding: moderateScale(12, 0.2),
-          }}>
-          <CustomText>Where to go from here?</CustomText>
-        </View>
-        <View
-          style={{
-            width: windowWidth * 0.85,
-
-            flexDirection: 'row',
-            // marginTop: moderateScale(4, 0.2),
-            backgroundColor: '#f3f3f3f8',
-            // borderWidth:1,
-            borderRadius: moderateScale(10, 0.2),
-            padding: moderateScale(12, 0.2),
-          }}>
+        style={{
+          width: windowWidth,
+          height: windowHeight,
+          alignItems: 'center',
+          paddingBottom: moderateScale(12, 0.2),
+        }}
+        source={require('../Assets/Images/map.png')}>
+        <View style={styles.locBox}>
           <View
             style={{
-              width: '10%',
-              gap: moderateScale(6, 0.3),
-              alignItems: 'center',
-              marginTop: moderateScale(5, 0.2),
-              // backgroundColor : 'red'
+              width: windowWidth * 0.85,
+              backgroundColor: 'white',
+              // borderWidth: 1,
+
+              borderRadius: moderateScale(10, 0.2),
+              padding: moderateScale(12, 0.2),
             }}>
-            <Entypo
-              name="dot-single"
-              size={moderateScale(34, 0.2)}
-              style={{
-                position: 'absolute',
-                left: moderateScale(-1, 0.2),
-                top: moderateScale(-5, 0.2),
-              }}
-              color={'#ff0033'}
-            />
-            <Entypo
-              name="dots-two-vertical"
-              size={moderateScale(24, 0.2)}
-              style={{position: 'absolute', top: moderateScale(19, 0.2)}}
-              color={'#fcf36b'}
-            />
-
-            <Entypo
-              name="dots-two-vertical"
-              size={moderateScale(24, 0.2)}
-              style={{position: 'absolute', bottom: 9}}
-              color={'#fcf36b'}
-            />
-            <Entypo
-              name="dot-single"
-              size={moderateScale(34, 0.2)}
-              style={{
-                position: 'absolute',
-                left: moderateScale(-1, 0.2),
-                top: moderateScale(51, 0.2),
-              }}
-              color={'#ff0033'}
-            />
+            <CustomText>Where to go from here?</CustomText>
           </View>
-          <View style={{width: windowWidth * 0.7}}>
-            <TouchableOpacity
-              onPress={() => {
-                setLocationType('pickup');
-                setIsModalVisible(true);
-              }}
-              style={{
-                flexDirection: 'row',
-                padding: moderateScale(7, 0.6),
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <CustomText
-                numberOfLines={3}
-                style={{
-                  width: windowWidth * 0.6,
-                  // backgroundColor : 'red'
-                }}>
-                {Object.keys(pickupLocation).length > 0
-                  ? pickupLocation?.name
-                  : 'Pick Location'}
-              </CustomText>
-              <Icon
-                as={AntDesign}
-                name={
-                  Object.keys(pickupLocation).length == 0 ? 'plus' : 'close'
-                }
-              />
-            </TouchableOpacity>
-            <Divider
-              marginTop={moderateScale(4, 0.2)}
-              color={'black'}
-              width={'full'}
-              borderWidth={0.2}
-              borderColor={'#b0adad'}
-            />
-            <TouchableOpacity
-              onPress={() => {
-                setLocationType('dropOff');
-                setIsModalVisible(true);
-              }}
-              style={{
-                marginTop: moderateScale(6, 0.2),
-                // width: windowWidth * 0.8,
-                padding: moderateScale(7, 0.2),
 
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <CustomText
-                numberOfLines={3}
-                style={{
-                  width: windowWidth * 0.6,
-                  // backgroundColor : 'red'
-                }}>
-                {Object.keys(dropOffLocation).length > 0
-                  ? dropOffLocation?.name
-                  : 'Drop Location'}{' '}
-              </CustomText>
+          <View
+            style={{
+              width: windowWidth * 0.85,
+
+              gap: moderateScale(-7,0.1),
+              // flexDirection: 'row',
+              // marginTop: moderateScale(4, 0.2),
+              backgroundColor: '#f3f3f3f8',
+              // borderWidth:1,
+              borderRadius: moderateScale(10, 0.2),
+              padding: moderateScale(12, 0.2),
+            }}>
+            <View style={{flexDirection: 'row'}}>
               <Icon
-                as={AntDesign}
-                name={
-                  Object.keys(dropOffLocation).length == 0 ? 'plus' : 'close'
-                }
+                as={Entypo}
+                name="dot-single"
+                size={moderateScale(34, 0.2)}
+                style={{
+                  color: '#ff0033',
+                }}
               />
-            </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setLocationType('pickup');
+                  setIsModalVisible(true);
+                }}
+                style={styles.locationPickerBtn}>
+                <CustomText
+                  numberOfLines={3}
+                  style={{
+                    width: windowWidth * 0.6,
+                    // backgroundColor : 'red'
+                  }}>
+                  {Object.keys(pickupLocation).length > 0
+                    ? pickupLocation?.name
+                    : 'Pick Location'}
+                </CustomText>
+                <Icon
+                  as={AntDesign}
+                  name={
+                    Object.keys(pickupLocation).length == 0 ? 'plus' : 'close'
+                  }
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.dotView}>
+              <View style={{gap: -5}}>
+                <Icon
+                  as={Entypo}
+                  name="dots-two-vertical"
+                  size={moderateScale(24, 0.2)}
+                  style={{color: '#fcf36b'}}
+                  // color={}
+                />
+                <Icon
+                  as={Entypo}
+                  name="dots-two-vertical"
+                  size={moderateScale(24, 0.2)}
+                  style={{color: '#fcf36b'}}
+                  // color={}
+                />
+              </View>
+              <Divider
+                color={'black'}
+                width={'2xs'}
+                borderWidth={0.2}
+                marginLeft={2}
+                borderColor={'#b0adad'}
+              />
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Icon
+                as={Entypo}
+                name="dot-single"
+                size={moderateScale(34, 0.2)}
+                style={{
+                  color: '#ff0033',
+                }}
+              />
+              <TouchableOpacity
+                onPress={() => {
+                  setLocationType('dropOff');
+                  setIsModalVisible(true);
+                }}
+                style={styles.locationPickerBtn}>
+                <CustomText
+                  numberOfLines={3}
+                  style={{
+                    width: windowWidth * 0.6,
+                    // backgroundColor : 'red'
+                  }}>
+                  {Object.keys(dropOffLocation).length > 0
+                    ? dropOffLocation?.name
+                    : 'Drop Location'}{' '}
+                </CustomText>
+                <Icon
+                  as={AntDesign}
+                  name={
+                    Object.keys(dropOffLocation).length == 0 ? 'plus' : 'close'
+                  }
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
 
-      {/* <MapView
+        {/* <MapView
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         region={{
@@ -196,153 +190,127 @@ const BoardingPointScreen = () => {
         />
         <Marker coordinate={destination} />
       </MapView> */}
- 
-      <TouchableOpacity
-      
-        style={styles.bottomContainer}>
-        {/* <CustomImage
+
+        <TouchableOpacity style={styles.bottomContainer}>
+          {/* <CustomImage
           source={require('../Assets/Images/men.png')}
           style={{width: windowWidth * 0.12}}
           /> */}
-        <View style={styles.profile}>
-          <View
-            style={{
-              width: windowWidth * 0.19,
-              height: windowWidth * 0.19,
-              overflow: 'hidden',
-              borderRadius: (windowWidth * 0.19) / 2,
-            }}>
-            <CustomImage
-              source={require('../Assets/Images/men.png')}
-              style={{width: '100%', height: '100%'}}
-            />
-          </View>
-          <View>
-            <CustomText>2013 Dodge Caravan</CustomText>
-            <View style={{flexDirection: 'row', gap: moderateScale(12, 0.2)}}>
-              <CustomText>4.5 Stars </CustomText>
-              <CustomText>ID. 11587</CustomText>
-            </View>
-            {/* ratings */}
-            <View style={{flexDirection: 'row'}}>
-              <FontAwesome
-                name="star"
-                color={'#fee207'}
-                size={moderateScale(17, 0.2)}
-              />
-              <FontAwesome
-                name="star"
-                color={'#fee207'}
-                size={moderateScale(17, 0.2)}
-              />
-              <FontAwesome
-                name="star"
-                color={'#fee207'}
-                size={moderateScale(17, 0.2)}
-              />
-              <FontAwesome
-                name="star"
-                color={'#fee207'}
-                size={moderateScale(17, 0.2)}
-              />
-              <FontAwesome
-                name="star-o"
-                color={'grey'}
-                size={moderateScale(17, 0.2)}
+          <View style={styles.profile}>
+            <View
+              style={{
+                width: windowWidth * 0.19,
+                height: windowWidth * 0.19,
+                overflow: 'hidden',
+                borderRadius: (windowWidth * 0.19) / 2,
+              }}>
+              <CustomImage
+                source={require('../Assets/Images/men.png')}
+                style={{width: '100%', height: '100%'}}
               />
             </View>
+            <View>
+              <CustomText>2013 Dodge Caravan</CustomText>
+              <View style={{flexDirection: 'row', gap: moderateScale(12, 0.2)}}>
+                <CustomText>4.5 Stars </CustomText>
+                <CustomText>ID. 11587</CustomText>
+              </View>
+              {/* ratings */}
+              <View style={{flexDirection: 'row'}}>
+                <Rating startingValue={4.5} ratingCount={5} imageSize={moderateScale(15, 0.2)} />
+              </View>
+            </View>
           </View>
-        </View>
-        <Divider
-          marginTop={moderateScale(5, 0.2)}
-          marginX={moderateScale(15, 0.2)}
-          color={'black'}
-          width={'72'}
-          borderWidth={0.2}
-          borderColor={'#b0adad'}
-        />
-        <View style={styles.rideDetails}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: moderateScale(10, 0.2),
-            }}>
-            <Icon
-              as={Ionicons}
-              name="car-sport"
-              color={'black'}
-              size={moderateScale(22, 0.2)}
-            />
+          <Divider
+            marginTop={moderateScale(5, 0.2)}
+            marginX={moderateScale(15, 0.2)}
+            color={'black'}
+            width={'72'}
+            borderWidth={0.2}
+            borderColor={'#b0adad'}
+          />
+          <View style={styles.rideDetails}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: moderateScale(10, 0.2),
+              }}>
+              <Icon
+                as={Ionicons}
+                name="car-sport"
+                color={'black'}
+                size={moderateScale(22, 0.2)}
+              />
+              <View>
+                <CustomText isBpld>Car 2</CustomText>
+                <CustomText style={{color: 'grey'}}>$10.0</CustomText>
+              </View>
+            </View>
+            <View style={{gap: moderateScale(2, 0.2)}}>
+              <CustomText isBpld>Distance</CustomText>
+              <CustomText style={{color: 'grey'}}>2.5 km</CustomText>
+            </View>
             <View>
               <CustomText isBpld>Car 2</CustomText>
-              <CustomText style={{color: 'grey'}}>$10.0</CustomText>
+              <CustomText style={{color: 'grey'}}>10 Mins</CustomText>
             </View>
           </View>
-          <View style={{gap: moderateScale(2, 0.2)}}>
-            <CustomText isBpld>Distance</CustomText>
-            <CustomText style={{color: 'grey'}}>2.5 km</CustomText>
+          <Divider
+            marginTop={moderateScale(1, 0.2)}
+            marginX={moderateScale(15, 0.2)}
+            color={'black'}
+            width={'72'}
+            borderWidth={0.2}
+            borderColor={'#b0adad'}
+          />
+          <View style={styles.actions}>
+            <TouchableOpacity>
+              <Icon
+                as={Ionicons}
+                name="chatbubble-outline"
+                size={moderateScale(24, 0.2)}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Icon as={Feather} name="phone" size={moderateScale(24, 0.2)} />
+            </TouchableOpacity>
           </View>
-          <View>
-            <CustomText isBpld>Car 2</CustomText>
-            <CustomText style={{color: 'grey'}}>10 Mins</CustomText>
-          </View>
-        </View>
-        <Divider
-          marginTop={moderateScale(1, 0.2)}
-          marginX={moderateScale(15, 0.2)}
-          color={'black'}
-          width={'72'}
-          borderWidth={0.2}
-          borderColor={'#b0adad'}
+        </TouchableOpacity>
+        {Object.keys(pickupLocation).length > 0 &&
+          Object.keys(dropOffLocation).length > 0 && (
+            <View
+              style={{
+                alignSelf: 'center',
+                position: 'absolute',
+                // bottom: 50, old
+                bottom: 110,
+                zIndex: 1,
+              }}>
+              <CustomButton
+                text={'Proceed'}
+                textColor={Color.white}
+                width={windowWidth * 0.8}
+                height={windowHeight * 0.06}
+                marginTop={moderateScale(20, 0.3)}
+                onPress={() => {
+                  navigation.navigate('BoardingPointDetails');
+                }}
+                bgColor={Color.cartheme}
+                borderColor={Color.white}
+                borderWidth={1}
+                borderRadius={moderateScale(30, 0.3)}
+                isGradient
+              />
+            </View>
+          )}
+        <SearchLocationModal
+          isModalVisible={isModalVisible}
+          setIsModalVisible={setIsModalVisible}
+          setPickupLocation={setPickUpLocation}
+          setdropOffLocation={setDropOffLocation}
+          locationType={locationType}
         />
-        <View style={styles.actions}>
-          <TouchableOpacity>
-            <Icon
-              as={Ionicons}
-              name="chatbubble-outline"
-              size={moderateScale(24, 0.2)}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Icon as={Feather} name="phone" size={moderateScale(24, 0.2)} />
-          </TouchableOpacity>
-        </View>
-      </TouchableOpacity>
-      {Object.keys(pickupLocation).length > 0 &&
-        Object.keys(dropOffLocation).length > 0 && (
-          <View
-            style={{
-              alignSelf: 'center',
-              position: 'absolute',
-              // bottom: 50, old
-              bottom: 110,
-              zIndex : 1,
-            }}>
-            <CustomButton
-              text={'Proceed'}
-              textColor={Color.white}
-              width={windowWidth * 0.8}
-              height={windowHeight * 0.06}
-              marginTop={moderateScale(20, 0.3)}
-              onPress={() => {
-                navigation.navigate('BoardingPointDetails');
-              }}
-              bgColor={Color.cartheme}
-              borderColor={Color.white}
-              borderWidth={1}
-              borderRadius={moderateScale(30, 0.3)}
-              isGradient
-            />
-          </View>
-        )}
-      <SearchLocationModal
-        isModalVisible={isModalVisible}
-        setIsModalVisible={setIsModalVisible}
-        setPickupLocation={setPickUpLocation}
-        setdropOffLocation={setDropOffLocation}
-        locationType={locationType}
-      />
       </ImageBackground>
     </View>
   );
@@ -401,5 +369,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: moderateScale(20, 0.2),
     paddingVertical: moderateScale(7, 0.2),
+  },
+  dotView: {
+    flexDirection: 'row',
+    gap: moderateScale(1, 0.2),
+    alignItems: 'center',
+    paddingLeft: moderateScale(5, 0.2),
+  },
+  locationPickerBtn: {
+    // marginTop: moderateScale(6, 0.2),
+    // width: windowWidth * 0.8,
+    padding: moderateScale(7, 0.2),
+
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
