@@ -9,6 +9,7 @@ import CustomImage from '../Components/CustomImage';
 import CustomButton from '../Components/CustomButton';
 import Color from '../Assets/Utilities/Color';
 import { useNavigation } from '@react-navigation/native';
+import { FONTS } from '../Constant/theme';
 
 const BoardingPointDetails = () => {
   const navigation =useNavigation()
@@ -91,7 +92,7 @@ const BoardingPointDetails = () => {
             borderColor={Color.white}
             borderRadius={moderateScale(30, 0.3)}
             width={windowWidth * 0.9}
-            height={windowHeight * 0.07}
+            height={windowHeight * 0.06}
             marginTop={moderateScale(20, 0.3)}
             bgColor={['#79B9F6', '#00309E']}
             isBold
@@ -105,7 +106,7 @@ const BoardingPointDetails = () => {
             borderColor={'#ffffffba'}
             borderRadius={moderateScale(30, 0.3)}
             width={windowWidth * 0.9}
-            height={windowHeight * 0.07}
+            height={windowHeight * 0.06}
             marginTop={moderateScale(20, 0.3)}
             bgColor={'white'}
             isBold
@@ -185,7 +186,8 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(13, 0.6),
   },
   $: {
-    fontSize: moderateScale(16, 0.6),
+    // fontSize: moderateScale(16, 0.6),
+    ...FONTS.PoppinsBold16,
     color: 'red',
   },
 });

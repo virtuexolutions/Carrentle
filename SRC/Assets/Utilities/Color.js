@@ -1,9 +1,6 @@
 import { useSelector } from "react-redux";
 
 
-
-
-
 export default Color = {
   
   // Basic Colors
@@ -18,7 +15,7 @@ export default Color = {
   themeGreen: '#72A131',
   yellow:'#EBB645',
   // themeRed: '#FFCCCB',
-  red : 'red',
+  red : '#DA3029',
   blue : '#00ADEF',
   lightBlue :'#D2E4E4',
   orange:'#f79c00',
@@ -29,7 +26,7 @@ export default Color = {
   // theme colors
   themeColor: '#00309E',
   themeColor2: '#FF1717',
-  
+  grey : "#5D5D5D",
   cartheme:['#79B9F6','#00309E', ],
   btnColor:['#565657',"#000000"],
   tabBarGradient : ['#000000','#464646'],

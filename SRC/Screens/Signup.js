@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import * as Animatable from 'react-native-animatable';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import {
@@ -16,28 +16,26 @@ import {
 import CustomText from '../Components/CustomText';
 import CustomButton from '../Components/CustomButton';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import CountryPicker, {DARK_THEME} from 'react-native-country-picker-modal';
+import CountryPicker, { DARK_THEME } from 'react-native-country-picker-modal';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import navigationService from '../navigationService';
 // import CardContainer from '../Components/CardContainer';
 import DropDownSingleSelect from '../Components/DropDownSingleSelect';
-import {Post} from '../Axios/AxiosInterceptorFunction';
-import {useDispatch} from 'react-redux';
-import {setUserData} from '../Store/slices/common';
-import {SetUserRole, setUserToken} from '../Store/slices/auth';
-import {ToastAndroid} from 'react-native';
-import {Platform} from 'react-native';
-import {validateEmail} from '../Config';
-import {Icon} from 'native-base';
+import { Post } from '../Axios/AxiosInterceptorFunction';
+import { useDispatch } from 'react-redux';
+import { setUserData } from '../Store/slices/common';
+import { SetUserRole, setUserToken } from '../Store/slices/auth';
+import { ToastAndroid } from 'react-native';
+import { Platform } from 'react-native';
+import { validateEmail } from '../Config';
+import { Icon } from 'native-base';
 import ImagePickerModal from '../Components/ImagePickerModal';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { FONTS, SIZES } from '../Constant/theme';
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -91,8 +89,8 @@ const Signup = () => {
           }
         }>
         <LinearGradient
-          start={{x: 0, y: 2.1}}
-          end={{x: 4, y: 2}}
+          start={{ x: 0, y: 2.1 }}
+          end={{ x: 4, y: 2 }}
           colors={['#00309E', '#79B9F6', '#FFFFFF']}
           style={styles.container}>
           {/* <View
@@ -134,7 +132,7 @@ const Signup = () => {
 
           <View
             style={{
-              height: windowHeight * 0.15,
+              height: windowHeight * 0.12,
               width: windowHeight * 0.3,
               // backgroundColor :'red'
             }}>
@@ -152,9 +150,8 @@ const Signup = () => {
               color: Color.white,
               fontSize: moderateScale(12, 0.6),
               width: windowWidth * 0.8,
-
               paddingTop: moderateScale(15, 0.6),
-              textAlign: 'justify',
+              textAlign: 'center',
             }}
             numberOfLines={2}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
@@ -177,14 +174,14 @@ const Signup = () => {
               viewHeight={0.06}
               viewWidth={0.75}
               inputWidth={0.55}
-              borderBottomWidth={2}
+              borderBottomWidth={1}
               // borderRadius={moderateScale(30, 0.3)}
               backgroundColor={'transparent'}
               borderColor={Color.black}
               marginTop={moderateScale(10, 0.3)}
               color={Color.white}
-              placeholderColor={Color.white}
-              // elevation
+              placeholderColor={Color.lightGrey}
+            // elevation
             />
             <TextInputWithTitle
               iconHeigth={windowHeight * 0.00005}
@@ -198,14 +195,14 @@ const Signup = () => {
               viewHeight={0.06}
               viewWidth={0.75}
               inputWidth={0.55}
-              borderBottomWidth={2}
+              borderBottomWidth={1}
               // borderRadius={moderateScale(30, 0.3)}
               backgroundColor={'transparent'}
               borderColor={Color.black}
               marginTop={moderateScale(30, 0.3)}
               color={Color.white}
               placeholderColor={Color.white}
-              // elevation
+            // elevation
             />
 
             <TextInputWithTitle
@@ -221,14 +218,14 @@ const Signup = () => {
               viewHeight={0.06}
               viewWidth={0.75}
               inputWidth={0.55}
-              borderBottomWidth={2}
+              borderBottomWidth={1}
               // borderRadius={moderateScale(30, 0.3)}
               // borderColor={'#000'}
               backgroundColor={'transparent'}
               marginTop={moderateScale(30, 0.3)}
               color={Color.white}
               placeholderColor={Color.white}
-              // elevation
+            // elevation
             />
             <TextInputWithTitle
               iconHeigth={windowHeight * 0.00005}
@@ -243,14 +240,14 @@ const Signup = () => {
               viewHeight={0.06}
               viewWidth={0.75}
               inputWidth={0.55}
-              borderBottomWidth={2}
+              borderBottomWidth={1}
               // borderRadius={moderateScale(30, 0.3)}
               // borderColor={'#000'}
               backgroundColor={'transparent'}
               marginTop={moderateScale(30, 0.3)}
               color={Color.white}
               placeholderColor={Color.white}
-              // elevation
+            // elevation
             />
             {/* <TouchableOpacity
               onPress={() => {
@@ -301,15 +298,15 @@ const Signup = () => {
                 }}
               />
             </TouchableOpacity> */}
+            <View style={{ marginTop: SIZES.padding }} />
             <CustomButton
               onPress={() => {
-                dispatch(setUserToken({token: 'abc'}));
+                dispatch(setUserToken({ token: 'abc' }));
                 navigation.goBack();
               }}
               text={'sign in'}
-              fontSize={moderateScale(14, 0.3)}
               textColor={Color.white}
-              borderWidth={2}
+              borderWidth={1}
               borderColor={Color.white}
               borderRadius={moderateScale(8, 0.3)}
               width={windowWidth * 0.4}
@@ -317,21 +314,23 @@ const Signup = () => {
               marginTop={moderateScale(35, 0.3)}
               bgColor={'transparent'}
               isBold
-              // isGradient
+            // isGradient
             />
           </View>
-          <CustomText
-            style={{
-              color: Color.white,
-              fontSize: moderateScale(12, 0.6),
-              width: windowWidth * 0.85,
-              position: 'absolute',
-              bottom: 30,
-            }}
-            numberOfLines={2}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
-            suscipit gravida tellus, eu ullamcorper.
-          </CustomText>
+          <View style={styles.text_view}>
+            <CustomText
+              style={{
+                color: Color.lightGrey,
+                ...FONTS.Light10,
+                textAlign: 'center',
+                paddingHorizontal: SIZES.padding * 2.5
+              }}
+              numberOfLines={2}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
+              suscipit gravida tellus, eu ullamcorper.
+            </CustomText>
+          </View>
+
         </LinearGradient>
         <ImagePickerModal
           show={imagePicker}
@@ -351,6 +350,11 @@ const styles = ScaledSheet.create({
     width: windowWidth,
     alignItems: 'center',
     backgroundColor: '#cc5200',
+  },
+  text_view: {
+    justifyContent: 'flex-end',
+    flex: 1,
+    marginBottom: SIZES.padding * 2,
   },
   birthday: {
     width: windowWidth * 0.75,
@@ -405,6 +409,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     zIndex: 1,
   },
+
 });
 
 export default Signup;

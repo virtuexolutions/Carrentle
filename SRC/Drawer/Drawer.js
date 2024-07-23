@@ -1,13 +1,13 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React, {useState, useRef} from 'react';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useState, useRef } from 'react';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
+import { windowHeight, windowWidth } from '../Utillity/utils';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../Components/CustomText';
-import {Icon} from 'native-base';
+import { Divider, Icon } from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -15,12 +15,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {SetUserRole, setUserLogoutAuth} from '../Store/slices/auth';
-import {setUserLogOut} from '../Store/slices/common';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { SetUserRole, setUserLogoutAuth } from '../Store/slices/auth';
+import { setUserLogOut } from '../Store/slices/common';
 import navigationService from '../navigationService';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { FONTS, SIZES } from '../Constant/theme';
 // import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
 const Drawer = () => {
@@ -110,7 +110,6 @@ const Drawer = () => {
       <View
         style={{
           height: windowHeight,
-
           backgroundColor: '#F8F8F8',
         }}>
         {/* back buttons */}
@@ -132,7 +131,7 @@ const Drawer = () => {
             name="arrowleft"
             color={'#636363'}
           />
-          <CustomText style={{width: windowWidth * 0.12}}>Menu</CustomText>
+          <CustomText style={styles.menu_text}>Menu</CustomText>
           <TouchableOpacity
             onPress={() => {
               navigation.goBack();
@@ -164,7 +163,7 @@ const Drawer = () => {
                 <CustomImage
                   resizeMode={'cover'}
                   source={require('../Assets/Images/men.png')}
-                  style={{width: '100%', height: '100%'}}
+                  style={{ width: '100%', height: '100%' }}
                 />
               </View>
               <CustomText
@@ -197,13 +196,13 @@ const Drawer = () => {
                 <CustomImage
                   resizeMode={'cover'}
                   source={require('../Assets/Images/men.png')}
-                  style={{width: '100%', height: '100%'}}
+                  style={{ width: '100%', height: '100%' }}
                 />
               </View>
 
-              <View style={{marginLeft: moderateScale(10, 0.3)}}>
+              <View style={{ marginLeft: moderateScale(10, 0.3) }}>
                 <CustomText
-                  style={{fontSize: moderateScale(16, 0.6), color: Color.black}}
+                  style={{ fontSize: moderateScale(16, 0.6), color: Color.black }}
                   isBold>
                   {/* {userData?.name} */}
                   {'Parsely Montana'}
@@ -228,6 +227,7 @@ const Drawer = () => {
                   elevation: 12,
                   height: windowHeight * 0.025,
                   backgroundColor: '#dedbdbc8',
+                  marginLeft: SIZES.padding,
                   borderRadius: (windowHeight * 0.02) / 2,
                 }}>
                 <CustomImage
@@ -251,7 +251,7 @@ const Drawer = () => {
               <TouchableOpacity
                 onPress={item?.onPress}
                 style={{
-                  width: windowWidth * 0.6,
+                  width: windowWidth * 0.7,
                   // borderBottomWidth: 0.5,
                   borderColor: Color.black,
                   margin: moderateScale(15, 0.3),
@@ -259,7 +259,7 @@ const Drawer = () => {
                   alignItems: 'center',
                   justifyContent: 'space-between',
                 }}>
-                <View style={{flexDirection: 'row', width: '90%'}}>
+                <View style={{ flexDirection: 'row', width: '90%' }}>
                   <Icon
                     name={item?.iconName}
                     as={item?.iconType}
@@ -281,9 +281,17 @@ const Drawer = () => {
                   size={moderateScale(20, 0.3)}
                   as={MaterialIcons}
                   color={'#79B9F6'}
-                  style={{position: 'absolute', right: 0}}
+                  style={{ position: 'absolute', right: 0 }}
                 />
               </TouchableOpacity>
+              <Divider
+                marginTop={moderateScale(1, 0.2)}
+                marginX={moderateScale(15, 0.2)}
+                color={'#F0F0F0'}
+                width={'72'}
+                borderWidth={0.1}
+                borderColor={'#b0adad'}
+              />
             </>
           ))}
         </View>
@@ -328,4 +336,8 @@ const styles = StyleSheet.create({
     borderColor: Color.white,
     overflow: 'hidden',
   },
+  menu_text: {
+    ...FONTS.PoppinsBold13,
+    color: Color.darkGray
+  }
 });

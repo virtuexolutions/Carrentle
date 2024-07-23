@@ -18,11 +18,8 @@ import {
   requestWritePermission,
 } from './SRC/Utillity/utils';
 import SplashScreen from './SRC/Screens/SplashScreen';
-
 import TestScreen from './SRC/Screens/TestScreen';
 import AppNavigator from './SRC/appNavigation';
-
-
 
 const App = () => {
   const [publishableKey, setPublishableKey] = useState('');
@@ -32,16 +29,13 @@ const App = () => {
     setPublishableKey(key);
   };
 
-  
-
-
   console.reportErrorsAsExceptions = false;
   return (
-  //   <StripeProvider 
-  //   publishableKey={"pk_test_51NjQZRBqyObuQCkVVZujGGQ9w7PjZegPiZvL9MEH12KsxQmTsLpBxsXdeyN8Tu3mYkN8YZt8WutsTCEexDwIOxaB00a6zjjE12"}
-  //   // merchantIdentifier="merchant.identifier" // required for Apple Pay
-  //   // urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
-  // >
+    //   <StripeProvider
+    //   publishableKey={"pk_test_51NjQZRBqyObuQCkVVZujGGQ9w7PjZegPiZvL9MEH12KsxQmTsLpBxsXdeyN8Tu3mYkN8YZt8WutsTCEexDwIOxaB00a6zjjE12"}
+    //   // merchantIdentifier="merchant.identifier" // required for Apple Pay
+    //   // urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
+    // >
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <NativeBaseProvider>
@@ -56,7 +50,6 @@ const App = () => {
 const MainContainer = () => {
   const dispatch = useDispatch();
 
- 
   useEffect(() => {
     async function GetPermission() {
       await requestCameraPermission();
@@ -70,18 +63,17 @@ const MainContainer = () => {
   if (isloading == true) {
     return <SplashScreen />;
   }
-  return <AppNavigator />
+  return <AppNavigator />;
   // return <BoardingPointSearchScreen/>
-  
+
   // return <TaxiAvailability/>
   // return <HomeScreen/>
   // return <SplashScreen/>
   // return <BoardingPointDetails/>
-  
+
   // return <RideBookingScreen2/>
   // return <PaymentScreen/>
   // return <EnterLocationScreen/>
-  
 };
 
 const useloader = value => {
@@ -93,4 +85,3 @@ const useloader = value => {
   return [isloading];
 };
 export default App;
-                                                          

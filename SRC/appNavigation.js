@@ -226,10 +226,12 @@ export const MyDrawer = () => {
   const firstScreen = 'HomeScreen';
   return (
     <DrawerNavigation.Navigator
-      drawerContent={props => <Drawer {...props} />}
+      drawerContent={props => <Drawer {...props} /> }
       initialRouteName={'HomeScreen'}
       screenOptions={{
         headerShown: false,
+        
+        drawerStyle:{width: '80%'}
       }}>
       <DrawerNavigation.Screen name="HomeScreen" component={HomeScreen} />
       <DrawerNavigation.Screen name="PaymentScreen" component={PaymentScreen} />

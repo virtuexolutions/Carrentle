@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import * as Animatable from 'react-native-animatable';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -27,19 +27,20 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import navigationService from '../navigationService';
-import {useDispatch} from 'react-redux';
+import { useDispatch } from 'react-redux';
 // import CardContainer from '../Components/CardContainer';
-import {SetUserRole, setUserToken} from '../Store/slices/auth';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import { SetUserRole, setUserToken } from '../Store/slices/auth';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {setUserData} from '../Store/slices/common';
+import { setUserData } from '../Store/slices/common';
 import DropDownSingleSelect from '../Components/DropDownSingleSelect';
-import {useNavigation} from '@react-navigation/native';
-import {Icon} from 'native-base';
+import { useNavigation } from '@react-navigation/native';
+import { Icon } from 'native-base';
 // import LinearGradient from 'react-native-linear-gradient';
 import ImagePickerModal from '../Components/ImagePickerModal';
-import {position} from 'native-base/lib/typescript/theme/styled-system';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { position } from 'native-base/lib/typescript/theme/styled-system';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { FONTS, SIZES } from '../Constant/theme';
 
 const LoginScreen = props => {
   // const navigation =useNavigation()
@@ -54,14 +55,14 @@ const LoginScreen = props => {
   const dispatch = useDispatch();
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
       <ScreenBoiler
         statusBarBackgroundColor={'white'}
         statusBarContentStyle={'dark-content'}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={false} >
           <LinearGradient
-            start={{x: 0, y: 2.1}}
-            end={{x: 4, y: 2}}
+            start={{ x: 0, y: 2.1 }}
+            end={{ x: 4, y: 2 }}
             colors={['#00309E', '#79B9F6', '#FFFFFF']}
             style={styles.container}>
             <View
@@ -79,13 +80,7 @@ const LoginScreen = props => {
               />
             </View>
             <CustomText
-              style={{
-                color: Color.white,
-                fontSize: moderateScale(13, 0.6),
-                width: windowWidth * 0.8,
-                // textAlign: 'justify',
-                marginTop: moderateScale(-45, 0.3),
-              }}
+              style={styles.description}
               numberOfLines={2}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
               suscipit gravida tellus, eu ullamcorper.
@@ -105,16 +100,16 @@ const LoginScreen = props => {
                 setText={setUserName}
                 value={username}
                 viewHeight={0.06}
-                viewWidth={0.75}
+                viewWidth={0.85}
                 inputWidth={0.55}
-                borderBottomWidth={2}
-                // borderRadius={moderateScale(30, 0.3)}
+                borderBottomWidth={1}
+                borderRadius={moderateScale(30, 0.3)}
                 backgroundColor={'transparent'}
                 borderColor={Color.black}
                 marginTop={moderateScale(10, 0.3)}
                 color={Color.white}
-                placeholderColor={Color.white}
-                // elevation
+                placeholderColor={Color.lightGrey}
+              // elevation
               />
 
               <TextInputWithTitle
@@ -128,28 +123,28 @@ const LoginScreen = props => {
                 value={password}
                 secureText={true}
                 viewHeight={0.06}
-                viewWidth={0.75}
+                viewWidth={0.85}
                 inputWidth={0.55}
-                borderBottomWidth={2}
-                // borderRadius={moderateScale(30, 0.3)}
+                borderBottomWidth={1}
+                borderRadius={moderateScale(30, 0.3)}
                 // borderColor={'#000'}
                 backgroundColor={'transparent'}
                 marginTop={moderateScale(30, 0.3)}
                 color={Color.white}
-                placeholderColor={Color.white}
-                // elevation
+                placeholderColor={Color.lightGrey}
+              // elevation
               />
-
+              <View style={{ marginTop: SIZES.padding * 1.5 }} />
               <CustomButton
                 onPress={() => {
                   // navigation.navigate('EnterLocationScreen');
-                  // navigation.navigate('PaymentScreen')
+                  // navigation.navigate('PaymentScreen') 
                   navigation.navigate('TaxiAvailability');
                 }}
                 text={'Log in'}
                 fontSize={moderateScale(14, 0.3)}
                 textColor={Color.white}
-                borderWidth={2}
+                borderWidth={1.5}
                 borderColor={Color.white}
                 borderRadius={moderateScale(8, 0.3)}
                 width={windowWidth * 0.4}
@@ -157,33 +152,32 @@ const LoginScreen = props => {
                 marginTop={moderateScale(30, 0.3)}
                 bgColor={'transparent'}
                 isBold
-                // isGradient
               />
-
-              <CustomText style={styles.txt5}>
-                don't have an ancount ?
-              </CustomText>
             </View>
-
+            <CustomText style={styles.text}>
+              don't have an ancount ?
+            </CustomText>
             <CustomText
               isBold
               onPress={() => navigation.navigate('Signup')}
-              style={styles.txt6}>
+              style={styles.signup_btn}>
               Sign up
             </CustomText>
+            <View style={styles.text_view}>
+              <CustomText
+                style={{
+                  color: Color.lightGrey,
+                  ...FONTS.Light10,
+                  textAlign: 'center',
+                  fontSize: moderateScale(13, 0.6),
+                  width: windowWidth * 0.85,
+                }}
+                numberOfLines={2}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
+                suscipit gravida tellus, eu ullamcorper.
+              </CustomText>
+            </View>
 
-            <CustomText
-              style={{
-                color: Color.white,
-                fontSize: moderateScale(13, 0.6),
-                width: windowWidth * 0.85,
-                position: 'absolute',
-                bottom: 50,
-              }}
-              numberOfLines={2}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
-              suscipit gravida tellus, eu ullamcorper.
-            </CustomText>
           </LinearGradient>
           {/* </ImageBackground> */}
           <ImagePickerModal
@@ -204,14 +198,24 @@ const styles = StyleSheet.create({
     width: windowWidth,
     alignItems: 'center',
   },
-  txt5: {
+  description: {
+    color: Color.lightGrey,
+    ...FONTS.Light10,
+    // fontSize: moderateScale(13, 0.6),
+    paddingHorizontal: SIZES.padding * 1.25,
+    marginTop: moderateScale(-45, 0.3),
+    textAlign: 'center'
+  },
+  text: {
     color: 'white',
     marginTop: moderateScale(20, 0.3),
-    fontSize: moderateScale(13, 0.6),
+    ...FONTS.Regular10,
+    // fontSize: moderateScale(13, 0.6),
     paddingTop: moderateScale(10, 0.3),
   },
-  txt6: {
-    fontSize: moderateScale(16, 0.6),
+  signup_btn: {
+    // fontSize: moderateScale(16, 0.6),
+    ...FONTS.Bold16,
     color: 'white',
   },
   edit: {
@@ -236,6 +240,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  text_view: { justifyContent: 'flex-end', flex: 1, marginBottom: SIZES.padding * 2 }
 });
 
 export default LoginScreen;

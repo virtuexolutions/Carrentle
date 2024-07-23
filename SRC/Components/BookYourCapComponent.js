@@ -1,38 +1,39 @@
-import {View, Text, StyleSheet} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import React from 'react';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale} from 'react-native-size-matters';
+import { windowHeight, windowWidth } from '../Utillity/utils';
+import { moderateScale } from 'react-native-size-matters';
 import CustomImage from './CustomImage';
 import CustomText from './CustomText';
-import {Icon} from 'native-base';
+import { Divider, Icon } from 'native-base';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import CustomButton from './CustomButton';
-import {Rating} from 'react-native-ratings';
+import { Rating } from 'react-native-ratings';
 import Color from '../Assets/Utilities/Color';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {background, color, position} from 'native-base/lib/typescript/theme/styled-system';
+import { background, color, position } from 'native-base/lib/typescript/theme/styled-system';
 import { useNavigation } from '@react-navigation/native';
+import { FONTS, SIZES } from '../Constant/theme';
 
-const BookYourCapComponent = ({item}) => {
+const BookYourCapComponent = ({ item }) => {
   const navigation = useNavigation()
   return (
     <View style={[styles.container, styles.shadowProp]}>
       <View style={styles.imageContainer}>
         <CustomImage
-          style={{height: '100%', width: '100%'}}
+          style={{ height: '100%', width: '100%' }}
           source={item?.carimage}
         />
       </View>
       <View style={styles.row}>
         <View style={styles.userImage}>
           <CustomImage
-            style={{height: '100%', width: '100%', overflow: 'hidden'}}
+            style={{ height: '100%', width: '100%', overflow: 'hidden' }}
             source={item?.userImage}
           />
         </View>
         <View style={styles.rowInnerView}>
           <CustomText style={styles.text}>{item?.carN0}</CustomText>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Rating
               type="custom"
               startingValue={item?.ratings}
@@ -61,9 +62,9 @@ const BookYourCapComponent = ({item}) => {
       </CustomText>
 
       <View style={styles.distanceView}>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{ flexDirection: 'row' }}>
           <View
-            style={{height: windowHeight * 0.028, width: windowWidth * 0.1}}>
+            style={{ height: windowHeight * 0.028, width: windowWidth * 0.1 }}>
             <CustomImage
               style={{
                 height: '100%',
@@ -96,6 +97,7 @@ const BookYourCapComponent = ({item}) => {
           </CustomText>
           <CustomText style={styles.text1}>{item?.time}</CustomText>
         </View>
+
       </View>
       <View style={styles.seatView}>
         <View>
@@ -127,11 +129,11 @@ const BookYourCapComponent = ({item}) => {
               styles.text1,
               {
 
-                position :'absolute',
+                position: 'absolute',
                 color: 'black',
-                top:17,
-                marginLeft :moderateScale(-7,.6),
-                transform:[{ rotate: '-90deg'}] ,
+                top: 17,
+                marginLeft: moderateScale(-7, .6),
+                transform: [{ rotate: '-90deg' }],
               },
             ]}>
             -----
@@ -140,7 +142,7 @@ const BookYourCapComponent = ({item}) => {
           <View
             style={{
               flexDirection: 'row',
-              paddingVertical :moderateScale(10,.6)
+              paddingVertical: moderateScale(10, .6)
             }}>
             <Icon
               name="map-marker"
@@ -152,7 +154,7 @@ const BookYourCapComponent = ({item}) => {
           </View>
         </View>
         <View style={{
-          marginTop :moderateScale(20,.3)
+          marginTop: moderateScale(20, .3)
         }}>
           <CustomText style={styles.text2}>available seats</CustomText>
           <CustomText
@@ -170,8 +172,8 @@ const BookYourCapComponent = ({item}) => {
         onPress={() => {
           navigation.navigate('BoardingPointScreen')
         }}
+        textstyle={{ ...FONTS.poppinsRegular10 }}
         text={'Book your cab'}
-        fontSize={moderateScale(14, 0.3)}
         textColor={Color.white}
         borderWidth={2}
         borderColor={Color.white}
@@ -192,32 +194,31 @@ export default BookYourCapComponent;
 const styles = StyleSheet.create({
   container: {
     // backgroundColor :'red',
-    height: windowHeight * 0.63,
-    width: windowWidth * 0.9,
-    borderRadius: moderateScale(10, 6),
-    borderWidth: 1,
+    height: windowHeight * 0.52,
+    borderRadius: SIZES.padding,
+    // borderRadius: moderateScale(10, 6),
+    borderWidth: 1.5,
     borderColor: '#DA30296B',
-    marginBottom: moderateScale(20, 0.6),
+    marginVertical: SIZES.padding2
+    // marginBottom: moderateScale(20, 0.6),
+    // shadowColor: '#00000052',
+    // shadowOffset: {width: -2, height: 4},
+    // shadowOpacity: 0.5,
+    // shadowRadius: 30,
   },
-  // shadowprops :{
-  //   shadowColor: 'black',
-  //   shadowOffset: { width: 0, height: 1 },
-  //   shadowOpacity: 0.5,
-  //   shadowRadius: 2,
-  //   elevation: 5,
-
-  // },
-  shadowProp: {
-    shadowColor: '#00000052',
-    shadowOffset: {width: -2, height: 4},
+  shadowprops: {
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.5,
-    shadowRadius: 30,
-    // elevation: 0.01,
+    shadowRadius: 2,
+    elevation: 5,
   },
+
   imageContainer: {
-    height: windowHeight * 0.28,
+    height: windowHeight * 0.20,
     overflow: 'hidden',
-    width: '100%',
+    width: '80%',
+    alignSelf: 'center'
   },
   row: {
     flexDirection: 'row',
@@ -225,8 +226,8 @@ const styles = StyleSheet.create({
   },
   userImage: {
     overflow: 'hidden',
-    height: windowHeight * 0.06,
-    width: windowHeight * 0.06,
+    height: windowHeight * 0.05,
+    width: windowHeight * 0.05,
     borderRadius: (windowHeight * 0.06) / 2,
   },
   rowInnerView: {
@@ -234,17 +235,21 @@ const styles = StyleSheet.create({
     paddingVertical: moderateScale(5, 0.6),
   },
   text: {
-    fontSize: moderateScale(11, 0.6),
+    // fontSize: moderateScale(11, 0.6),
+    ...FONTS.PoppinsSemiBold8
   },
   text2: {
-    fontSize: moderateScale(10, 0.6),
+    // fontSize: moderateScale(10, 0.6),
+    ...FONTS.PoppinsMedium8
   },
   text1: {
-    fontSize: moderateScale(9, 0.6),
+    // fontSize: moderateScale(9, 0.6),
+    ...FONTS.PoppinsMedium8
   },
   heading: {
     paddingHorizontal: moderateScale(15, 0.6),
-    fontSize: moderateScale(17, 0.6),
+    // fontSize: moderateScale(17, 0.6),
+    ...FONTS.Bold16,
   },
   distanceView: {
     // backgroundColor:'red',
