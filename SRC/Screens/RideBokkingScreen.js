@@ -20,7 +20,7 @@ import Color from '../Assets/Utilities/Color';
 import { useNavigation } from '@react-navigation/native';
 
 const RideBookingScreen = () => {
-  const navigation =useNavigation()
+  // const navigation =useNavigation()
   const origin = {latitude: 37.3285792, longitude: -122.0356209};
   const destination = {latitude: 37.3320305, longitude: -122.0355326};
 
@@ -74,7 +74,20 @@ const RideBookingScreen = () => {
               <CustomText isBold style={{fontSize: moderateScale(13, 0.2)}}>
                 Car No 3
               </CustomText>
-              <Rating imageSize={13} />
+              <View style={styles.ratings}>
+                <Rating
+                  type="custom"
+                  startingValue={4}
+                  ratingCount={5}
+                  imageSize={moderateScale(10, 0.3)}
+                  style={{
+                    width: windowWidth * 0.1,
+                  }}
+                  ratingBackgroundColor={'white'}
+                />
+
+                <CustomText style={styles.totalRatings}>(4.5)</CustomText>
+              </View>
             </View>
           </View>
           <View style={{flexDirection: 'row', gap: moderateScale(10, 0.2)}}>
@@ -93,7 +106,7 @@ const RideBookingScreen = () => {
 
         <CustomText style={styles.heading}>2013 Dodge Caravan</CustomText>
         <View style={styles.row}>
-          <Foundation name="marker" color="#FF8A00" size={20} />
+          <Icon as={Foundation} name="marker" style={{color:"#FF8A00"}} size={moderateScale(20,0.2)} />
           <CustomText>Fannie Street San Angelo, Texas</CustomText>
         </View>
         <CustomText style={styles.text}>Available seats</CustomText>
@@ -151,6 +164,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+
   logo: {
     width: windowHeight * 0.045,
     justifyContent: 'center',
@@ -195,7 +209,7 @@ const styles = StyleSheet.create({
   row: {
     paddingHorizontal: moderateScale(5, 0.6),
     flexDirection: 'row',
-    gap: moderateScale(5, 0.2),
+    gap: moderateScale(3, 0.2),
   },
   heading: {
     marginTop: moderateScale(12, 0.2),
@@ -255,6 +269,18 @@ const styles = StyleSheet.create({
   actions: {
     position: 'absolute',
     bottom: 40,
+  },
+  ratings: {
+    flexDirection: 'row',
+    // width: windowWidth * 0.2,
+    justifyContent:'center',
+    alignItems:'center',
+    paddingHorizontal:moderateScale(6,0.2)
+    // paddingTop: moderateScale(5, 0.6),
+  },
+  totalRatings: {
+    paddingHorizontal: moderateScale(10, 0.6),
+    fontSize: moderateScale(9, 0.6),
   },
   cont: {flexDirection: 'row', justifyContent: 'space-between'},
 });

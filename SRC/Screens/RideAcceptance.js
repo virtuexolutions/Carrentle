@@ -36,8 +36,7 @@ const RideAcceptance = () => {
       
       <ImageBackground 
       source={require('../Assets/Images/map.png')}
-      style={{width:windowWidth,  height: windowHeight * 0.89, }
-    }>
+      style={{width:windowWidth,  height: windowHeight * 0.89}}>
 
       {/* 
       <MapView

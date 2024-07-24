@@ -20,9 +20,11 @@ import {Icon} from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CustomButton from '../Components/CustomButton';
+import { useNavigation } from '@react-navigation/native';
 
-const PaymentScreen = ({navigation}) => {
-  console.log("🚀 ~ PaymentScreen ~ navigation:", navigation)
+const PaymentScreen = () => {
+  const navigation = useNavigation();
+  console.log("🚀 ~ PaymentScreen ~ navigation:",  )
   return (
     <ScreenBoiler
       // showHeader
@@ -118,18 +120,20 @@ const PaymentScreen = ({navigation}) => {
 
           <View style={styles.LocationView}>
             <View style={styles.marker}>
-              <Fontisto
+              <Icon
+              as={Fontisto}
                 name="map-marker-alt"
                 size={moderateScale(17, 0.2)}
-                color="#FF8A00"
+                style={{color: "#FF8A00", textAlign:'center',}}
               />
               <CustomText style={styles.dot}>- - - - -</CustomText>
-
-              <Fontisto
+              <Icon
+              as={Fontisto}
                 name="map-marker-alt"
                 size={moderateScale(17, 0.2)}
-                color="#72AFED"
-                style={{marginTop: moderateScale(12, 0.2)}}
+                style={{color: "#72AFED", 
+                textAlign:'center',
+                marginTop: moderateScale(12,0.2)}}
               />
             </View>
             <View
@@ -326,9 +330,9 @@ const styles = StyleSheet.create({
   },
   dot: {
     width: windowWidth * 0.1,
-    marginTop: moderateScale(10, 0.2),
+    marginTop: moderateScale(11, 0.2),
     textAlign: 'center',
-    marginLeft: moderateScale(2, 0.2),
+    marginLeft: moderateScale(2.5, 0.2),
     transform: [{rotate: '90deg'}],
   },
   shadowprops: {
@@ -379,6 +383,7 @@ const styles = StyleSheet.create({
     height: windowHeight * 0.1,
     width: windowWidth * 0.06,
     alignItems: 'center',
+
     // backgroundColor: 'pink',
   },
   LocationView: {

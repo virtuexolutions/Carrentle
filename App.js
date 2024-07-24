@@ -20,6 +20,12 @@ import {
 import SplashScreen from './SRC/Screens/SplashScreen';
 import TestScreen from './SRC/Screens/TestScreen';
 import AppNavigator from './SRC/appNavigation';
+import RideBookingScreen from './SRC/Screens/RideBokkingScreen';
+import RideBookingScreen2 from './SRC/Screens/RideBookingScreen2';
+import BoardingPointDetails from './SRC/Screens/BoardingPointDetails';
+import BoardingPointSearchScreen from './SRC/Screens/BoardingPointSearchScreen';
+import PaymentScreen from './SRC/Screens/PaymentScreen';
+import BoardingPointScreen from './SRC/Screens/BoardingPointScreen';
 
 const App = () => {
   const [publishableKey, setPublishableKey] = useState('');
@@ -63,15 +69,15 @@ const MainContainer = () => {
   if (isloading == true) {
     return <SplashScreen />;
   }
-  return <AppNavigator />;
+  // return <AppNavigator />
   // return <BoardingPointSearchScreen/>
-
+  return <BoardingPointScreen/>
   // return <TaxiAvailability/>
   // return <HomeScreen/>
   // return <SplashScreen/>
   // return <BoardingPointDetails/>
-
-  // return <RideBookingScreen2/>
+  
+  // return <RideBookingScreen/>
   // return <PaymentScreen/>
   // return <EnterLocationScreen/>
 };
