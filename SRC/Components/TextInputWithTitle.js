@@ -22,6 +22,7 @@ import { FONTS } from '../Constant/theme';
 
 const TextInputWithTitle = props => {
   const [showPassword, setShowPassword] = useState(false);
+
   return (
     <>
       {props?.title && (

@@ -18,7 +18,7 @@ import {windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale} from 'react-native-size-matters';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
-import {setWalkThrough} from '../Store/slices/auth';
+import {setWalkThrough} from '../Store/slices/auth-slice';
 import LinearGradient from 'react-native-linear-gradient';
 import {position} from 'native-base/lib/typescript/theme/styled-system';
 import AntDesign from 'react-native-vector-icons/AntDesign'

@@ -10,7 +10,7 @@ import {Icon} from 'native-base';
 import navigationService from '../navigationService';
 import {setUserLogOut} from '../Store/slices/common';
 import {useDispatch, useSelector} from 'react-redux';
-import {SetUserRole, setUserLogoutAuth} from '../Store/slices/auth';
+// import {SetUserRole, setUserLogoutAuth} from '../Store/slices/auth';
 // import {setUserLogOut} from '../Store/slices/common';
 
 const Settings = () => {
@@ -78,10 +78,10 @@ const Settings = () => {
       name: 'Logout',
       next: '>',
       onPress: () => {
-        dispatch(setUserLogOut());
-        dispatch(setUserLogoutAuth());
         // dispatch(setUserLogOut());
-        dispatch(SetUserRole(''));
+        // dispatch(setUserLogoutAuth());
+        // dispatch(setUserLogOut());
+        // dispatch(SetUserRole(''));
         console.log('logout=======>')
         // navigationService.navigate('LoginScreen')
       },

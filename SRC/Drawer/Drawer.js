@@ -17,7 +17,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { SetUserRole, setUserLogoutAuth } from '../Store/slices/auth';
+import { SetUserRole, setUserLogoutAuth } from '../Store/slices/auth-slice';
 import { setUserLogOut } from '../Store/slices/common';
 import navigationService from '../navigationService';
 import { FONTS, SIZES } from '../Constant/theme';

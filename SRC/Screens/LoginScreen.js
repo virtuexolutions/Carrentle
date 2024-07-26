@@ -27,9 +27,9 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import navigationService from '../navigationService';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 // import CardContainer from '../Components/CardContainer';
-import { SetUserRole, setUserToken } from '../Store/slices/auth';
+import { SetUserRole, setUserToken } from '../Store/slices/auth-slice';
 import { Post } from '../Axios/AxiosInterceptorFunction';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { setUserData } from '../Store/slices/common';
@@ -43,6 +43,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { FONTS, SIZES } from '../Constant/theme';
 
 const LoginScreen = props => {
+  const dispatch = useDispatch();
   // const navigation =useNavigation()
   const [username, setUserName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -52,7 +53,8 @@ const LoginScreen = props => {
   const [image, setImage] = useState({});
   const navigation = useNavigation();
 
-  const dispatch = useDispatch();
+  const { user_type } = useSelector(state => state.authReducer);
+  console.log(user_type, 'userrtypeeeeee')
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -91,6 +93,7 @@ const LoginScreen = props => {
                 marginTop: moderateScale(20, 0.3),
               }}>
               <TextInputWithTitle
+
                 iconHeigth={windowHeight * 0.00005}
                 iconName={'user'}
                 iconType={FontAwesome}
@@ -109,9 +112,7 @@ const LoginScreen = props => {
                 marginTop={moderateScale(10, 0.3)}
                 color={Color.white}
                 placeholderColor={Color.lightGrey}
-              // elevation
               />
-
               <TextInputWithTitle
                 iconHeigth={windowHeight * 0.00005}
                 iconName={'key'}

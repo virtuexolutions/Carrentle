@@ -29,7 +29,7 @@ import CardContainer from '../Components/CardContainer';
 // import CustomHeader from '../Components/CustomHeader';
 import { Icon } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
-import { setUserToken } from '../Store/slices/auth';
+import { setUserToken } from '../Store/slices/auth-slice';
 import LinearGradient from 'react-native-linear-gradient';
 
 const width = Dimensions.get('window').width;

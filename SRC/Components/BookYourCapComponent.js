@@ -206,13 +206,13 @@ const styles = StyleSheet.create({
     // shadowOpacity: 0.5,
     // shadowRadius: 30,
   },
-  shadowprops: {
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
-    elevation: 5,
-  },
+  // shadowprops: {
+  //   shadowColor: 'black',
+  //   shadowOffset: { width: 0, height: 1 },
+  //   shadowOpacity: 0.5,
+  //   shadowRadius: 2,
+  //   elevation: 5,
+  // },
 
   imageContainer: {
     height: windowHeight * 0.20,

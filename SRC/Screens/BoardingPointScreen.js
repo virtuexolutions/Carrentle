@@ -29,12 +29,14 @@ import { getDistance } from 'geolib';
 import Geolocation, { getCurrentPosition } from 'react-native-geolocation-service';
 import Loader from '../Components/Loader';
 import { Polyline } from 'react-native-svg';
-import { MapViewNavigation } from 'react-native-maps-directions'
+import MapViewDirections from 'react-native-maps-directions'
+import BookingCard from '../Components/BookingCard';
 
 const BoardingPointScreen = () => {
   console.log('first');
   // const navigation = useNavigation();
-
+  const GOOGLE_MAPS_API_KEY = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc'
+  const mapRef = useRef < MapView > (null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pickupLocation, setPickUpLocation] = useState({});
   const [dropOffLocation, setDropOffLocation] = useState({});
@@ -47,10 +49,10 @@ const BoardingPointScreen = () => {
   const circleCenter = { latitude: 24.8607333, longitude: 67.001135 };
   const circleRadius = 15000;
   const [currentPossition, setcurrentPossition] = useState({})
-  const [distance, setDistance] = useState(null)
-  const origin = { latitude: pickupLocation?.lat || null, longitude: pickupLocation?.lng || null };
+  const [distance, setDistance] = useState(0)
+  const origin = { latitude: Number(pickupLocation?.lat) || null, longitude: Number(pickupLocation?.lng) || null };
   const destinations = { latitude: dropOffLocation?.lat || null, longitude: dropOffLocation?.lng || null };
-
+  console.log(currentPossition, 'cureeentPOsition')
   useEffect(() => {
     const checkIfMarkerInsideCircle = () => {
       const dropoffdistance = getDistance(circleCenter, dropOffLocation);
@@ -75,6 +77,28 @@ const BoardingPointScreen = () => {
   }, [])
 
   console.log(distance, 'distanceeee')
+
+  useEffect(() => {
+    if (!origin || !destinations) return;
+
+    mapRef.current?.fitToSuppliedMarkers(["origin", "destination"], {
+      edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+    });
+  }, [origin, destinations]);
+
+  useEffect(() => {
+    if (!origin || !destinations) return;
+
+    const getTravelTime = async () => {
+      const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin}&destinations=${destinations}&key=${GOOGLE_MAPS_API_KEY}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      console.log(data, 'dateaaaaaaaaa')
+      // dispatch(setTravelTimeInfo(data.rows[0].elements[0]));
+    };
+
+    getTravelTime();
+  }, [origin, destinations, GOOGLE_MAPS_API_KEY]);
 
   // const getCurrentLocation = async () => {
   //   try {
@@ -144,6 +168,18 @@ const BoardingPointScreen = () => {
     }
   };
 
+  const onPressProceed = () => {
+    const data = {
+      pickuplatitude: pickupLocation?.lat,
+      pickuplonglitude: pickupLocation?.lng,
+      dropoffLatitude: dropOffLocation?.lat,
+      dropoffLonglitude: dropOffLocation?.lng,
+      dropoffLocationName: dropOffLocation?.name,
+      pickupLocationName: pickupLocation?.name,
+    }
+    console.log(data, 'dataaaaaaaa')
+  }
+
   console.log(origin, 'origin', destinations, 'destinations')
   return (
     <View style={styles.container}>
@@ -207,7 +243,7 @@ const BoardingPointScreen = () => {
                   // backgroundColor : 'red'
                 }}>
                 {Object.keys(pickupLocation).length > 0
-                  ? pickupLocation?.name
+                  ? pickupLocation?.name || 'Your Live Location'
                   : 'Pick Location'}
               </CustomText>
               <Icon
@@ -301,26 +337,27 @@ const BoardingPointScreen = () => {
 
           {Object.keys(pickupLocation).length > 0 &&
             <Marker
-              coordinate={{ latitude: pickupLocation?.lat, longitude: pickupLocation?.lng }}
-              title="Pickup Location"
+              coordinate={{ latitude: isYourLocation ? pickupLocation?.latitude : pickupLocation?.lat, longitude: isYourLocation ? pickupLocation?.longitude : pickupLocation?.lng }}
+              title={isYourLocation ? "Your Location" : "Pickup Location"}
               pinColor="blue"
             />
           }
-          {/* {Object.keys(pickupLocation).length > 0 && Object.keys(dropOffLocation).length > 0 ?
-            // <MapViewNavigation
-            //   origin={origin}
-            //   destination={destinations}
-            //   apikey="AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc"
-            //   strokeWidth={3}
-            //   strokeColor="hotpink"
-            //   mode='DRIVING'
-            //   onStart={(params) => {
-            //     console.log(`Started routing between "${params.origin}" and "${params.destination}"`);
-            //   }}
-            // /> 
+          <Marker coordinate={currentPossition} title='Your Are Here Now' />
+          {Object.keys(pickupLocation).length > 0 && Object.keys(dropOffLocation).length > 0 ?
+            <MapViewDirections
+              origin={origin}
+              destination={destinations}
+              apikey="AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc"
+              strokeWidth={5}
+              strokeColor="hotpink"
+              mode='DRIVING'
+              onStart={(params) => {
+                console.log(`Started routing between "${params.origin}" and "${params.destination}"`);
+              }}
+              tappable={true}
+            />
             : null
-          } */}
-
+          }
           {Object.keys(dropOffLocation).length > 0 &&
             <Marker
               coordinate={{ latitude: dropOffLocation?.lat, longitude: dropOffLocation?.lng }}
@@ -501,31 +538,34 @@ const BoardingPointScreen = () => {
       </TouchableOpacity>
       {Object.keys(pickupLocation).length > 0 &&
         Object.keys(dropOffLocation).length > 0 && (
-          <View
-            style={{
-              alignSelf: 'center',
-              position: 'absolute',
-              // bottom: 50, old
-              bottom: 110,
-              zIndex: 1,
-            }}>
-            <CustomButton
-              text={'Proceed'}
-              textColor={Color.white}
-              width={windowWidth * 0.8}
-              height={windowHeight * 0.06}
-              marginTop={moderateScale(20, 0.3)}
-              onPress={() => {
-                // navigation.navigate('BoardingPointDetails');
-                // onpressProceed()
-              }}
-              bgColor={Color.cartheme}
-              borderColor={Color.white}
-              borderWidth={1}
-              borderRadius={moderateScale(30, 0.3)}
-              isGradient
-            />
-          </View>
+          <>
+            <BookingCard distance={distance} username={'Testing User'} isSentRequest={true} pickupLocation={pickupLocation?.name} dropoffLocation={dropOffLocation?.name} time={'20 mints'} />
+            <View
+              style={{
+                alignSelf: 'center',
+                position: 'absolute',
+                // bottom: 50, old
+                bottom: 70,
+                zIndex: 1,
+              }}>
+              <CustomButton
+                text={'Proceed'}
+                textColor={Color.white}
+                width={windowWidth * 0.8}
+                height={windowHeight * 0.06}
+                marginTop={moderateScale(20, 0.3)}
+                onPress={() => {
+                  onPressProceed()
+                }}
+                bgColor={Color.cartheme}
+                borderColor={Color.white}
+                borderWidth={1}
+                borderRadius={moderateScale(30, 0.3)}
+                isGradient
+              />
+            </View>
+          </>
+
         )}
       <SearchLocationModal
         isModalVisible={isModalVisible}
@@ -536,6 +576,7 @@ const BoardingPointScreen = () => {
         onPressCurrentLocation={() => {
           setIsyourLocation(true)
           setIsModalVisible(false)
+          setPickUpLocation(currentPossition)
         }}
       />
       {/* </ImageBackground> */}
@@ -611,5 +652,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  userImage: {
+    overflow: 'hidden',
+    height: windowHeight * 0.05,
+    width: windowHeight * 0.05,
+    borderRadius: (windowHeight * 0.06) / 2,
   },
 });

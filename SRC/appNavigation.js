@@ -41,6 +41,7 @@ import RideAcceptance from './Screens/RideAcceptance';
 import BoardingPointDetails from './Screens/BoardingPointDetails';
 import TaxiAvailability from './Screens/TaxiAvailability';
 import BoardingPointSearchScreen from './Screens/BoardingPointSearchScreen';
+import Start from './Screens/Start';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -53,7 +54,7 @@ const AppNavigator = () => {
   const RootNavLogged = createNativeStackNavigator();
 
   const AppNavigatorContainer = () => {
-    const firstScreen = 'LoginScreen'
+    const firstScreen = 'Start'
 
 
     // walkThrough == false
@@ -72,7 +73,7 @@ const AppNavigator = () => {
             name="WalkThroughScreen"
             component={WalkThroughScreen}
           />
-          {/* <RootNav.Screen name="HomeScreen" component={HomeScreen} /> */}
+          <RootNav.Screen name="Start" component={Start} />
           <RootNav.Screen name="LoginScreen" component={LoginScreen} />
           <RootNav.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
           {/* <RootNav.Screen

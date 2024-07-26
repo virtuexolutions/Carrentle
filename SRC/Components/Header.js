@@ -20,7 +20,7 @@ import Feather from 'react-native-vector-icons/Feather';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { imageUrl } from '../Config';
-import { setUserLogout, setUserLogoutAuth } from '../Store/slices/auth';
+import { setUserLogout, setUserLogoutAuth } from '../Store/slices/auth-slice';
 import LinearGradient from 'react-native-linear-gradient';
 import { setUserLogOut } from '../Store/slices/common';
 import navigationService from '../navigationService';

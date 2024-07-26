@@ -140,7 +140,6 @@ const HomeScreen = ({ navigation }) => {
             }}
           />
         </View>
-
       </ScrollView>
     </ScreenBoiler>
   );

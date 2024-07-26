@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Animatable from 'react-native-animatable';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
@@ -26,9 +26,9 @@ import navigationService from '../navigationService';
 // import CardContainer from '../Components/CardContainer';
 import DropDownSingleSelect from '../Components/DropDownSingleSelect';
 import { Post } from '../Axios/AxiosInterceptorFunction';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUserData } from '../Store/slices/common';
-import { SetUserRole, setUserToken } from '../Store/slices/auth';
+import { SetUserRole, setUserToken } from '../Store/slices/auth-slice';
 import { ToastAndroid } from 'react-native';
 import { Platform } from 'react-native';
 import { validateEmail } from '../Config';
@@ -36,6 +36,8 @@ import { Icon } from 'native-base';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import { useNavigation } from '@react-navigation/native';
 import { FONTS, SIZES } from '../Constant/theme';
+import localStorage from 'redux-persist/es/storage';
+import localStoreUtil from '../Utillity/localstoreUntil';
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -44,6 +46,7 @@ const Signup = () => {
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState(null)
   const [confirmPass, setconfirmPass] = useState('');
   const [showNumberModal, setShowNumberModal] = useState(false);
   console.log(
@@ -64,12 +67,11 @@ const Signup = () => {
     region: 'Americas',
     subregion: 'North America',
   });
-  const [userRole, setuserRole] = useState('seller');
   const [withCallingCode, setWithCallingCode] = useState(true);
   const [withFilter, setFilter] = useState(true);
-  const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
-  const UserRoleArray = ['seller', 'buyer'];
+  const { user_type } = useSelector(state => state.authReducer);
+  console.log(user_type, 'userrtypeeeeee')
 
   const onSelect = country => {
     // console.log('dasdasdasdads =>', country);
@@ -249,6 +251,31 @@ const Signup = () => {
               placeholderColor={Color.white}
             // elevation
             />
+            {user_type === 'Rider' &&
+              <TextInputWithTitle
+                iconHeigth={windowHeight * 0.00005}
+                iconName={'check'}
+                iconType={FontAwesome}
+                LeftIcon={true}
+                titleText={'Phone Number'}
+                placeholder={'Enter Your Phone Number Here'}
+                setText={setPhoneNumber}
+                value={phoneNumber}
+                secureText={true}
+                viewHeight={0.06}
+                viewWidth={0.75}
+                inputWidth={0.55}
+                borderBottomWidth={1}
+                // borderRadius={moderateScale(30, 0.3)}
+                // borderColor={'#000'}
+                backgroundColor={'transparent'}
+                marginTop={moderateScale(30, 0.3)}
+                color={Color.white}
+                placeholderColor={Color.white}
+                keyboardType={'numeric'}
+              // elevation
+              />
+            }
             {/* <TouchableOpacity
               onPress={() => {
                 setShowNumberModal(true);
