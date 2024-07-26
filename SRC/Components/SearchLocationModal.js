@@ -1,11 +1,11 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
 import Modal from 'react-native-modal';
 import CustomText from './CustomText';
-import {moderateScale} from 'react-native-size-matters';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import { moderateScale } from 'react-native-size-matters';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 const SearchLocationModal = ({
   isModalVisible,
@@ -14,6 +14,8 @@ const SearchLocationModal = ({
   locationType,
   setPickupLocation,
   setdropOffLocation,
+  onPressCurrentLocation,
+  isyourLocation = false
 }) => {
   return (
     <Modal
@@ -36,6 +38,20 @@ const SearchLocationModal = ({
           isBold>
           Select Location
         </CustomText>
+        {locationType == 'pickup' &&
+          <TouchableOpacity onPress={onPressCurrentLocation} style={{
+            width: windowWidth * 0.8,
+            height: windowHeight * 0.05,
+            backgroundColor: Color.white,
+            paddingHorizontal: moderateScale(10, 0.3),
+            marginVertical: moderateScale(12, 0.2),
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            flexDirection: 'row'
+          }}>
+            <CustomText>Use Your Current Location</CustomText>
+          </TouchableOpacity>
+        }
         <GooglePlacesAutocomplete
           placeholder="Search"
           textInputProps={{
@@ -63,8 +79,6 @@ const SearchLocationModal = ({
           }}
           query={{
             key: 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc',
-            // key: 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc',
-
             language: 'en',
           }}
           isRowScrollable={true}

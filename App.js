@@ -6,12 +6,12 @@
  * @flow strict-local
  */
 
-import React, {useEffect, useState} from 'react';
-import {PersistGate} from 'redux-persist/integration/react';
-import {Provider, useDispatch} from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { PersistGate } from 'redux-persist/integration/react';
+import { Provider, useDispatch } from 'react-redux';
 // import {StripeProvider} from '@stripe/stripe-react-native';
-import {NativeBaseProvider} from 'native-base';
-import {store, persistor} from './SRC/Store/index';
+import { NativeBaseProvider } from 'native-base';
+import { store, persistor } from './SRC/Store/index';
 import {
   requestCameraPermission,
   requestLocationPermission,
@@ -71,12 +71,12 @@ const MainContainer = () => {
   }
   // return <AppNavigator />
   // return <BoardingPointSearchScreen/>
-  return <BoardingPointScreen/>
+  return <BoardingPointScreen />
   // return <TaxiAvailability/>
   // return <HomeScreen/>
   // return <SplashScreen/>
   // return <BoardingPointDetails/>
-  
+
   // return <RideBookingScreen/>
   // return <PaymentScreen/>
   // return <EnterLocationScreen/>

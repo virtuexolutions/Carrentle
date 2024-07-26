@@ -17,7 +17,7 @@ import { FONTS, SIZES } from '../Constant/theme';
 const BookYourCapComponent = ({ item }) => {
   const navigation = useNavigation()
   return (
-    <View style={[styles.container, styles.shadowProp]}>
+    <View style={[styles.container, styles.shadowprops]}>
       <View style={styles.imageContainer}>
         <CustomImage
           style={{ height: '100%', width: '100%' }}
