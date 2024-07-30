@@ -36,21 +36,17 @@ const BoardingPointScreen = () => {
   console.log('first');
   // const navigation = useNavigation();
   const GOOGLE_MAPS_API_KEY = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc'
-  const mapRef = useRef < MapView > (null);
+  const mapRef = useRef(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pickupLocation, setPickUpLocation] = useState({});
   const [dropOffLocation, setDropOffLocation] = useState({});
   const [locationType, setLocationType] = useState('pickup');
-  const [markerPosition, setMarkerPosition] = useState({
-    latitude: 37.78840,
-    longitude: -122.4300,
-  })
   const [isYourLocation, setIsyourLocation] = useState(null)
   const circleCenter = { latitude: 24.8607333, longitude: 67.001135 };
   const circleRadius = 15000;
   const [currentPossition, setcurrentPossition] = useState({})
   const [distance, setDistance] = useState(0)
-  const origin = { latitude: Number(pickupLocation?.lat) || null, longitude: Number(pickupLocation?.lng) || null };
+  const origin = { latitude: isYourLocation ? currentPossition?.latitude : Number(pickupLocation?.lat), longitude: isYourLocation ? currentPossition?.latitude : Number(pickupLocation?.lng) };
   const destinations = { latitude: dropOffLocation?.lat || null, longitude: dropOffLocation?.lng || null };
   console.log(currentPossition, 'cureeentPOsition')
   useEffect(() => {
@@ -72,6 +68,7 @@ const BoardingPointScreen = () => {
     if (dropOffLocation && pickupLocation) {
       const checkDistanceBetween = getDistance(pickupLocation, dropOffLocation)
       let km = Math.round(checkDistanceBetween / 100) / 10;
+      console.log('distanceeeeeeee', km)
       setDistance(km)
     }
   }, [])
@@ -88,13 +85,10 @@ const BoardingPointScreen = () => {
 
   useEffect(() => {
     if (!origin || !destinations) return;
-
     const getTravelTime = async () => {
       const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin}&destinations=${destinations}&key=${GOOGLE_MAPS_API_KEY}`;
       const response = await fetch(url);
       const data = await response.json();
-      console.log(data, 'dateaaaaaaaaa')
-      // dispatch(setTravelTimeInfo(data.rows[0].elements[0]));
     };
 
     getTravelTime();
@@ -181,6 +175,7 @@ const BoardingPointScreen = () => {
   }
 
   console.log(origin, 'origin', destinations, 'destinations')
+
   return (
     <View style={styles.container}>
       {/* <Header
@@ -323,6 +318,7 @@ const BoardingPointScreen = () => {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
+          ref={mapRef}
         >
           <Circle
             // coordinates={origin}
@@ -349,7 +345,7 @@ const BoardingPointScreen = () => {
               destination={destinations}
               apikey="AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc"
               strokeWidth={5}
-              strokeColor="hotpink"
+              strokeColor={Color.blue}
               mode='DRIVING'
               onStart={(params) => {
                 console.log(`Started routing between "${params.origin}" and "${params.destination}"`);
@@ -539,7 +535,7 @@ const BoardingPointScreen = () => {
       {Object.keys(pickupLocation).length > 0 &&
         Object.keys(dropOffLocation).length > 0 && (
           <>
-            <BookingCard distance={distance} username={'Testing User'} isSentRequest={true} pickupLocation={pickupLocation?.name} dropoffLocation={dropOffLocation?.name} time={'20 mints'} />
+            <BookingCard distance={distance} username={'Testing User'} isSentRequest={true} pickupLocation={isYourLocation ? "Your Location" : pickupLocation?.name} dropoffLocation={dropOffLocation?.name} time={'20 mints'} />
             <View
               style={{
                 alignSelf: 'center',

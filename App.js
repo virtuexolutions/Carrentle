@@ -19,6 +19,7 @@ import {
 } from './SRC/Utillity/utils';
 import SplashScreen from './SRC/Screens/SplashScreen';
 import AppNavigator from './SRC/appNavigation';
+import MyJourney from './SRC/Screens/MyJourneys';
 
 
 const App = () => {
@@ -63,7 +64,8 @@ const MainContainer = () => {
   if (isloading == true) {
     return <SplashScreen />;
   }
-  return <AppNavigator />
+  return <MyJourney />
+  // <AppNavigator />
 };
 
 const useloader = value => {

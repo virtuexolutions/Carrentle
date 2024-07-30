@@ -42,6 +42,7 @@ import BoardingPointDetails from './Screens/BoardingPointDetails';
 import TaxiAvailability from './Screens/TaxiAvailability';
 import BoardingPointSearchScreen from './Screens/BoardingPointSearchScreen';
 import Start from './Screens/Start';
+import MyJourney from './Screens/MyJourneys';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -246,6 +247,10 @@ export const MyDrawer = () => {
       <DrawerNavigation.Screen
         name="TermsAndConditions"
         component={TermsAndConditions}
+      />
+      <DrawerNavigation.Screen
+        name="MyJourney"
+        component={MyJourney}
       />
     </DrawerNavigation.Navigator>
   );
