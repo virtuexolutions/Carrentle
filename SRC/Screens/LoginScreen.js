@@ -93,7 +93,6 @@ const LoginScreen = props => {
                 marginTop: moderateScale(20, 0.3),
               }}>
               <TextInputWithTitle
-
                 iconHeigth={windowHeight * 0.00005}
                 iconName={'user'}
                 iconType={FontAwesome}

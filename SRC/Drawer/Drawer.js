@@ -5,7 +5,6 @@ import CustomImage from '../Components/CustomImage';
 import { windowHeight, windowWidth } from '../Utillity/utils';
 import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
-import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../Components/CustomText';
 import { Divider, Icon } from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
@@ -14,7 +13,6 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { SetUserRole, setUserLogoutAuth } from '../Store/slices/auth-slice';
@@ -55,7 +53,7 @@ const Drawer = () => {
       iconName: 'compass-outline',
       iconType: Ionicons,
       onPress: () => {
-        // navigation.navigate('HomeScreen');
+        // navigation.navigate('Myjoruney');
       },
     },
     {

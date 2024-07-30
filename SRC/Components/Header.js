@@ -120,7 +120,7 @@ const Header = props => {
       </View>
       {title ? (
         <CustomText
-          style={[styles.text , textstyle]}
+          style={[styles.text, textstyle]}
           isBold>
           {title}
         </CustomText>

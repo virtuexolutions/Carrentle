@@ -42,7 +42,7 @@ import BoardingPointDetails from './Screens/BoardingPointDetails';
 import TaxiAvailability from './Screens/TaxiAvailability';
 import BoardingPointSearchScreen from './Screens/BoardingPointSearchScreen';
 import Start from './Screens/Start';
-import MyJourney from './Screens/MyJourneys';
+import MyWallet from './Screens/MyWallet';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -55,7 +55,7 @@ const AppNavigator = () => {
   const RootNavLogged = createNativeStackNavigator();
 
   const AppNavigatorContainer = () => {
-    const firstScreen = 'Start'
+    const firstScreen = 'MyWallet'
 
 
     // walkThrough == false
@@ -109,6 +109,10 @@ const AppNavigator = () => {
           <RootNav.Screen
             name="TaxiAvailability"
             component={TaxiAvailability}
+          />
+          <RootNav.Screen
+            name="MyWallet"
+            component={MyWallet}
           />
         </RootNav.Navigator>
       </NavigationContainer>
@@ -214,7 +218,6 @@ export const TabNavigation = () => {
       {/* <Tabs.Screen name={'HomeScreen'} component={HomeScreen} /> */}
       {/* <Tabs.Screen name={'Donation'} component={Donation} />
       <Tabs.Screen name={'Campaigns'} component={Campaigns} />
-
       {/* <Tabs.Screen name={'BibleCategories'} component={BibleCategories} /> */}
       {/* <Tabs.Screen name={'StoreScreen'} component={StoreScreen} /> */}
       <Tabs.Screen name={'Settings'} component={Settings} />
@@ -247,10 +250,6 @@ export const MyDrawer = () => {
       <DrawerNavigation.Screen
         name="TermsAndConditions"
         component={TermsAndConditions}
-      />
-      <DrawerNavigation.Screen
-        name="MyJourney"
-        component={MyJourney}
       />
     </DrawerNavigation.Navigator>
   );
