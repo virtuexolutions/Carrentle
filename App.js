@@ -19,6 +19,8 @@ import {
 } from './SRC/Utillity/utils';
 import SplashScreen from './SRC/Screens/SplashScreen';
 import AppNavigator from './SRC/appNavigation';
+import EditProfile from './SRC/Screens/EditProfile';
+import Help from './SRC/Screens/Help';
 
 
 const App = () => {
@@ -63,7 +65,9 @@ const MainContainer = () => {
   if (isloading == true) {
     return <SplashScreen />;
   }
-  return <AppNavigator />
+  // return <AppNavigator />
+  // return <EditProfile />
+  return <Help/>
 };
 
 const useloader = value => {
