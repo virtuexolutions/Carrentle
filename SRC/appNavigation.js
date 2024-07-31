@@ -41,6 +41,7 @@ import RideAcceptance from './Screens/RideAcceptance';
 import BoardingPointDetails from './Screens/BoardingPointDetails';
 import TaxiAvailability from './Screens/TaxiAvailability';
 import BoardingPointSearchScreen from './Screens/BoardingPointSearchScreen';
+import PaymentHistory from './Screens/PaymentHistory';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -83,6 +84,8 @@ const AppNavigator = () => {
           <RootNav.Screen name="Signup" component={Signup} />
           <RootNav.Screen name="PaymentScreen" component={PaymentScreen} />
           <RootNav.Screen name="MessagesScreen" component={MessagesScreen} />
+          <RootNav.Screen name="PaymentHistory" component={PaymentHistory} />
+
           <RootNav.Screen
             name="BoardingPointScreen"
             component={BoardingPointScreen}
@@ -232,7 +235,9 @@ export const MyDrawer = () => {
         headerShown: false,
       }}>
       <DrawerNavigation.Screen name="HomeScreen" component={HomeScreen} />
+      <DrawerNavigation.Screen name="PaymentHistory" component={PaymentHistory} />
       <DrawerNavigation.Screen name="PaymentScreen" component={PaymentScreen} />
+      
       <DrawerNavigation.Screen
         name="BoardingPointSearchScreen"
         component={BoardingPointSearchScreen}

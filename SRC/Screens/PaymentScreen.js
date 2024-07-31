@@ -325,6 +325,17 @@ const styles = StyleSheet.create({
     borderRadius: (windowWidth * 0.09) / 2,
     zIndex :1
   },
+  container: {
+    height: windowHeight * 0.12,
+    width: windowWidth * 0.94,
+    backgroundColor: 'white',
+    borderRadius: moderateScale(20, 0.6),
+    marginBottom: moderateScale(10, 0.3),
+    paddingHorizontal: moderateScale(15, 0.6),
+    paddingVertical: moderateScale(10, 0.6),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   dot: {
     width: windowWidth * 0.1,
     marginTop: moderateScale(10, 0.2),
@@ -386,17 +397,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: moderateScale(15, 0.6),
     paddingVertical: moderateScale(15, 0.6),
-  },
-  container: {
-    height: windowHeight * 0.12,
-    width: windowWidth * 0.94,
-    backgroundColor: 'white',
-    borderRadius: moderateScale(20, 0.6),
-    marginBottom: moderateScale(10, 0.3),
-    paddingHorizontal: moderateScale(15, 0.6),
-    paddingVertical: moderateScale(10, 0.6),
-    flexDirection: 'row',
-    justifyContent: 'space-between',
   },
   container2: {
     height: windowHeight * 0.12,

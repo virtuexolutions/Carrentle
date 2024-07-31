@@ -29,7 +29,7 @@ export default Color = {
   // theme colors
   themeColor: '#00309E',
   themeColor2: '#FF1717',
-  
+  cartheme1:'#00309E',
   cartheme:['#79B9F6','#00309E', ],
   btnColor:['#565657',"#000000"],
   tabBarGradient : ['#000000','#464646'],

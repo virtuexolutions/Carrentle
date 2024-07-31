@@ -15,8 +15,8 @@ import Header from '../Components/Header';
 import BookYourCapComponent from '../Components/BookYourCapComponent';
 import CustomButton from '../Components/CustomButton';
 import BottomSheet from '../Components/BottomSheet';
-import CardComponent from '../Components/CardComponent';
 import BookingCard from '../Components/BookingCard';
+import ReviewModal from '../Components/ReviewModal';
 
 const HomeScreen = ({navigation})=> {
   // const
@@ -24,7 +24,9 @@ const HomeScreen = ({navigation})=> {
   // const navigation = useNavigation();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [rbref, setRbRef] = useState(null);
+  const [rbRef, setRbRef] = useState(null);
+  const  [review ,setReview]=useState(false)
+  // const [rbRef,setRbRef]=useState(null)
 
   const dummyArray = [
     {
@@ -137,7 +139,8 @@ const HomeScreen = ({navigation})=> {
             return <BookYourCapComponent item={item?.item} />;
           }}
         />
-    
+          
+        
          </ScrollView>
     </ScreenBoiler>
   );

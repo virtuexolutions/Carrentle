@@ -51,6 +51,14 @@ const Drawer = () => {
       },
     },
     {
+      name: 'Payment history',
+      iconName: 'car',
+      iconType: AntDesign,
+      onPress: () => {
+        navigation.navigate('PaymentHistory');
+      },
+    },
+    {
       name: 'my journey ',
       iconName: 'compass-outline',
       iconType: Ionicons,
