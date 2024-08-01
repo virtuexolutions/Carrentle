@@ -13,7 +13,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import {moderateScale, scale} from 'react-native-size-matters';
 import CustomText from './CustomText';
 import Color from '../Assets/Utilities/Color';
-import { FONTS } from '../Constant/theme';
 
 const CustomButton = (props ) => {
   const {
@@ -195,7 +194,7 @@ const styles = StyleSheet.create({
     // fontWeight: 'bold',
     textTransform: 'uppercase',
     textAlign: 'center',
-    ...FONTS.Medium11
+    // ...FONTS.Medium11
   },
   indicatorStyle: {
     paddingRight: 5,

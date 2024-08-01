@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import * as Animatable from 'react-native-animatable';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
-import { moderateScale, ScaledSheet } from 'react-native-size-matters';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import {
@@ -20,24 +20,24 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import CountryPicker, { DARK_THEME } from 'react-native-country-picker-modal';
+import CountryPicker, {DARK_THEME} from 'react-native-country-picker-modal';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import navigationService from '../navigationService';
 // import CardContainer from '../Components/CardContainer';
 import DropDownSingleSelect from '../Components/DropDownSingleSelect';
-import { Post } from '../Axios/AxiosInterceptorFunction';
-import { useDispatch, useSelector } from 'react-redux';
-import { setUserData } from '../Store/slices/common';
-import { SetUserRole, setUserToken } from '../Store/slices/auth-slice';
-import { ToastAndroid } from 'react-native';
-import { Platform } from 'react-native';
-import { validateEmail } from '../Config';
-import { Icon } from 'native-base';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import {useDispatch, useSelector} from 'react-redux';
+import {setUserData} from '../Store/slices/common';
+import {SetUserRole, setUserToken} from '../Store/slices/auth-slice';
+import {ToastAndroid} from 'react-native';
+import {Platform} from 'react-native';
+import {validateEmail} from '../Config';
+import {Icon} from 'native-base';
 import ImagePickerModal from '../Components/ImagePickerModal';
-import { useNavigation } from '@react-navigation/native';
-import { FONTS, SIZES } from '../Constant/theme';
+import {useNavigation} from '@react-navigation/native';
 import localStorage from 'redux-persist/es/storage';
 import localStoreUtil from '../Utillity/localstoreUntil';
+import {mode} from 'native-base/lib/typescript/theme/tools';
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -46,7 +46,7 @@ const Signup = () => {
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState(null)
+  const [phoneNumber, setPhoneNumber] = useState(null);
   const [confirmPass, setconfirmPass] = useState('');
   const [showNumberModal, setShowNumberModal] = useState(false);
   console.log(
@@ -70,8 +70,8 @@ const Signup = () => {
   const [withCallingCode, setWithCallingCode] = useState(true);
   const [withFilter, setFilter] = useState(true);
   const [address, setAddress] = useState('');
-  const { user_type } = useSelector(state => state.authReducer);
-  console.log(user_type, 'userrtypeeeeee')
+  const {user_type} = useSelector(state => state.authReducer);
+  console.log(user_type, 'userrtypeeeeee');
 
   const onSelect = country => {
     // console.log('dasdasdasdads =>', country);
@@ -91,8 +91,8 @@ const Signup = () => {
           }
         }>
         <LinearGradient
-          start={{ x: 0, y: 2.1 }}
-          end={{ x: 4, y: 2 }}
+          start={{x: 0, y: 2.1}}
+          end={{x: 4, y: 2}}
           colors={['#00309E', '#79B9F6', '#FFFFFF']}
           style={styles.container}>
           {/* <View
@@ -183,7 +183,7 @@ const Signup = () => {
               marginTop={moderateScale(10, 0.3)}
               color={Color.white}
               placeholderColor={Color.lightGrey}
-            // elevation
+              // elevation
             />
             <TextInputWithTitle
               iconHeigth={windowHeight * 0.00005}
@@ -204,7 +204,7 @@ const Signup = () => {
               marginTop={moderateScale(30, 0.3)}
               color={Color.white}
               placeholderColor={Color.white}
-            // elevation
+              // elevation
             />
 
             <TextInputWithTitle
@@ -227,7 +227,7 @@ const Signup = () => {
               marginTop={moderateScale(30, 0.3)}
               color={Color.white}
               placeholderColor={Color.white}
-            // elevation
+              // elevation
             />
             <TextInputWithTitle
               iconHeigth={windowHeight * 0.00005}
@@ -249,9 +249,9 @@ const Signup = () => {
               marginTop={moderateScale(30, 0.3)}
               color={Color.white}
               placeholderColor={Color.white}
-            // elevation
+              // elevation
             />
-            {user_type === 'Rider' &&
+            {user_type === 'Rider' && (
               <TextInputWithTitle
                 iconHeigth={windowHeight * 0.00005}
                 iconName={'check'}
@@ -273,9 +273,9 @@ const Signup = () => {
                 color={Color.white}
                 placeholderColor={Color.white}
                 keyboardType={'numeric'}
-              // elevation
+                // elevation
               />
-            }
+            )}
             {/* <TouchableOpacity
               onPress={() => {
                 setShowNumberModal(true);
@@ -325,10 +325,10 @@ const Signup = () => {
                 }}
               />
             </TouchableOpacity> */}
-            <View style={{ marginTop: SIZES.padding }} />
+            <View style={{marginTop: moderateScale(20, 0.6)}} />
             <CustomButton
               onPress={() => {
-                dispatch(setUserToken({ token: 'abc' }));
+                dispatch(setUserToken({token: 'abc'}));
                 navigation.goBack();
               }}
               text={'sign in'}
@@ -341,23 +341,23 @@ const Signup = () => {
               marginTop={moderateScale(35, 0.3)}
               bgColor={'transparent'}
               isBold
-            // isGradient
+              // isGradient
             />
           </View>
           <View style={styles.text_view}>
             <CustomText
               style={{
                 color: Color.lightGrey,
-                ...FONTS.Light10,
+                fontSize: moderateScale(10, 0.6),
+                // ...FONTS.Light10,
                 textAlign: 'center',
-                paddingHorizontal: SIZES.padding * 2.5
+                paddingHorizontal: moderateScale(45, 0.6),
               }}
               numberOfLines={2}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
               suscipit gravida tellus, eu ullamcorper.
             </CustomText>
           </View>
-
         </LinearGradient>
         <ImagePickerModal
           show={imagePicker}
@@ -381,7 +381,7 @@ const styles = ScaledSheet.create({
   text_view: {
     justifyContent: 'flex-end',
     flex: 1,
-    marginBottom: SIZES.padding * 2,
+    marginBottom: moderateScale(40, 0.6),
   },
   birthday: {
     width: windowWidth * 0.75,
@@ -436,7 +436,6 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     zIndex: 1,
   },
-
 });
 
 export default Signup;

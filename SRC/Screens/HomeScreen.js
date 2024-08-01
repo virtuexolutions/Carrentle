@@ -1,25 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import Color from '../Assets/Utilities/Color';
 import {
   requestLocationPermission,
   windowHeight,
   windowWidth,
 } from '../Utillity/utils';
-import { moderateScale, ScaledSheet } from 'react-native-size-matters';
+import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
-import { View, RefreshControl, ScrollView, FlatList } from 'react-native';
+import {View, RefreshControl, ScrollView, FlatList} from 'react-native';
 import CustomText from '../Components/CustomText';
-import { useIsFocused, } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 import Header from '../Components/Header';
 import BookYourCapComponent from '../Components/BookYourCapComponent';
 import CustomButton from '../Components/CustomButton';
 import BottomSheet from '../Components/BottomSheet';
 import CardComponent from '../Components/CardComponent';
 import BookingCard from '../Components/BookingCard';
-import { FONTS, SIZES } from '../Constant/theme';
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({navigation}) => {
   // const
   // const isFocused = useIsFocused();
   // const navigation = useNavigation();
@@ -113,7 +112,7 @@ const HomeScreen = ({ navigation }) => {
       hideUser={false}
       statusBarBackgroundColor={'white'}
       statusBarContentStyle={'dark-content'}
-      headertextstyle={{ ...FONTS.PoppinsSemiBold13 }}
+      // headertextstyle={{ ...FONTS.PoppinsSemiBold13 }}
     >
       <ScrollView
         contentContainerStyle={{
@@ -124,7 +123,7 @@ const HomeScreen = ({ navigation }) => {
           minHeight: windowHeight,
           backgroundColor: 'white',
         }}>
-        <View style={{ paddingHorizontal: SIZES.padding * 0.5 }}>
+        <View style={{paddingHorizontal: moderateScale(18, 0.6)}}>
           <FlatList
             showsVerticalScrollIndicator={false}
             style={{

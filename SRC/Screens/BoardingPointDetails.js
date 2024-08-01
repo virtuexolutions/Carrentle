@@ -186,8 +186,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(13, 0.6),
   },
   $: {
-    // fontSize: moderateScale(16, 0.6),
-    ...FONTS.PoppinsBold16,
+    fontSize: moderateScale(16, 0.6),
     color: 'red',
   },
 });

@@ -6,12 +6,12 @@
  * @flow strict-local
  */
 
-import React, { useEffect, useState } from 'react';
-import { PersistGate } from 'redux-persist/integration/react';
-import { Provider, useDispatch } from 'react-redux';
+import React, {useEffect, useState} from 'react';
+import {PersistGate} from 'redux-persist/integration/react';
+import {Provider, useDispatch} from 'react-redux';
 // import {StripeProvider} from '@stripe/stripe-react-native';
-import { NativeBaseProvider } from 'native-base';
-import { store, persistor } from './SRC/Store/index';
+import {NativeBaseProvider} from 'native-base';
+import {store, persistor} from './SRC/Store/index';
 import {
   requestCameraPermission,
   requestLocationPermission,
@@ -21,7 +21,6 @@ import SplashScreen from './SRC/Screens/SplashScreen';
 import AppNavigator from './SRC/appNavigation';
 import EditProfile from './SRC/Screens/EditProfile';
 import Help from './SRC/Screens/Help';
-
 
 const App = () => {
   const [publishableKey, setPublishableKey] = useState('');
@@ -65,9 +64,7 @@ const MainContainer = () => {
   if (isloading == true) {
     return <SplashScreen />;
   }
-  // return <AppNavigator />
-  // return <EditProfile />
-  return <Help/>
+  return <AppNavigator />;
 };
 
 const useloader = value => {

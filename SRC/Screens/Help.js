@@ -72,14 +72,14 @@ const Help = () => {
       }}>
       <Header
         showBack={true}
-        title={'Edit Profile'}
+        title={'Help'}
         headerColor={['white', 'white']}
       />
       <View style={styles.main}>
         <View style={styles.container}>
           <View style={styles.firstRow}>
             <CustomText style={[FONTS.PoppinsLight10, {opacity: 0.6}]}>
-            Additional Question
+              Additional Question
             </CustomText>
 
             <Icon
@@ -169,28 +169,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   field: {
-    width: windowWidth * 0.85,
+    width: windowWidth * 0.9,
     borderColor: '#093AA429',
-    borderWidth: 0.7,
+    borderWidth: 0.3,
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderRadius: moderateScale(24, 0.3),
     paddingVertical: moderateScale(14, 0.2),
-    paddingHorizontal: moderateScale(10, 0.3),
+    paddingHorizontal: moderateScale(15, 0.3),
   },
   container: {
-    width: windowWidth * 0.85,
+    width: windowWidth * 0.9,
     borderRadius: moderateScale(20, 0.4),
-    paddingHorizontal: moderateScale(10, 0.2),
+    paddingHorizontal: moderateScale(15, 0.2),
     paddingVertical: moderateScale(7, 0.3),
-    borderColor: '#093AA429',
-    borderWidth: 0.7,
     backgroundColor: 'white',
-
-    elevation: 8,
+    // elevation: 8,
+    // shadowColor: '#093AA438',
+    // shadowOffset: {width: 0.5, height: 1},
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.25,
     shadowColor: '#093AA438',
-    shadowOffset: {width: 0.5, height: 1},
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
     shadowOpacity: 0.25,
-    shadowRadius: 3.25,
+    shadowRadius: 4.84,
+    elevation: 5,
   },
 });

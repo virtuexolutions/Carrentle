@@ -21,7 +21,7 @@ import CustomImage from '../Components/CustomImage';
 import {setWalkThrough} from '../Store/slices/auth-slice';
 import LinearGradient from 'react-native-linear-gradient';
 import {position} from 'native-base/lib/typescript/theme/styled-system';
-import AntDesign from 'react-native-vector-icons/AntDesign'
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const WalkThroughScreen = props => {
   const dispatch = useDispatch();
@@ -61,48 +61,50 @@ const WalkThroughScreen = props => {
             alignItems: 'center',
           }}
           source={item?.image}>
-       
           <View
             style={{
               width: windowWidth * 0.9,
               borderRadius: moderateScale(20, 0.6),
               paddingTop: moderateScale(26, 0.6),
-              height :windowHeight,
+              height: windowHeight,
               alignItems: 'center',
             }}>
-               <View
+            <View
               style={{
                 // marginTop:item?.key == 2? moderateScale(100, 0.6):moderateScale(140, 0.6),
                 // height:  item?.key == 2 ? windowHeight*0.9 : windowHeight * 0.45,
-                width: windowWidth*0.18,
-                height:windowHeight*0.13,
+                width: windowWidth * 0.18,
+                height: windowHeight * 0.13,
                 position: 'absolute',
-                bottom: item?.key == 2 ? 280 :400,
-                left:item.key == 3 && 5,
+                bottom: item?.key == 2 ? 280 : 400,
+                left: item.key == 3 && 5,
               }}>
               <CustomImage
                 source={item?.image1}
-                resizeMode={item?.key == 2 ?'cover' :'contain'}
+                resizeMode={item?.key == 2 ? 'cover' : 'contain'}
                 style={{
                   height: '100%',
-                   width: '100%',
+                  width: '100%',
                 }}
               />
             </View>
             <CustomText
               style={{
                 color: Color.white,
-                fontSize: item?.key != 2 ? moderateScale(50, 0.6) :moderateScale(40, 0.6),
+                fontSize:
+                  item?.key != 2
+                    ? moderateScale(50, 0.6)
+                    : moderateScale(40, 0.6),
                 width: windowWidth * 0.8,
                 padding: moderateScale(10, 0.6),
                 lineHeight: moderateScale(44, 0.6),
                 // backgroundColor: 'green',
                 position: 'absolute',
-                top: item?.key == 3 ?windowHeight*0.37 : windowHeight*0.24,
-                transform:[{rotate: item?.key == 2 ? '-90deg' :'-0deg'}] ,
-                left: item?.key != 3 ? 50 :55,
-                letterSpacing:0.6,
-                textTransform:'upperCase'
+                top: item?.key == 3 ? windowHeight * 0.37 : windowHeight * 0.24,
+                transform: [{rotate: item?.key == 2 ? '-90deg' : '-0deg'}],
+                left: item?.key != 3 ? 50 : 55,
+                letterSpacing: 0.6,
+                textTransform: 'upperCase',
               }}
               numberOfLines={2}
               isBold>
@@ -130,19 +132,27 @@ const WalkThroughScreen = props => {
 
             </View> */}
 
-           
-
             <CustomText
               style={{
                 color: Color.white,
                 fontSize: moderateScale(11, 0.6),
-                width:  item?.key == 2 ? windowWidth*0.63 :item?.key == 3 ? windowWidth*0.8 :windowWidth * 0.9,
+                width:
+                  item?.key == 2
+                    ? windowWidth * 0.63
+                    : item?.key == 3
+                    ? windowWidth * 0.8
+                    : windowWidth * 0.9,
                 lineHeight: moderateScale(15, 0.3),
                 textAlign: 'left',
                 paddingVertical: moderateScale(5, 0.6),
                 position: 'absolute',
-                top:  item?.key == 2 ? windowHeight*0.63 :item?.key ==3 ? windowHeight*0.5  : windowHeight*0.69,
-               left:  item?.key == 2 ? 125: 0,
+                top:
+                  item?.key == 2
+                    ? windowHeight * 0.63
+                    : item?.key == 3
+                    ? windowHeight * 0.5
+                    : windowHeight * 0.69,
+                left: item?.key == 2 ? 125 : 0,
               }}
               numberOfLines={15}>
               {item?.text}
@@ -165,9 +175,9 @@ const WalkThroughScreen = props => {
           alignItems: 'center',
           justifyContent: 'center',
           borderColor: Color.white,
-          position :'absolute',
-          bottom :10,
-        right  :150,
+          position: 'absolute',
+          bottom: 10,
+          right: 150,
         }}>
         <Icon
           name="arrowright"
@@ -189,17 +199,17 @@ const WalkThroughScreen = props => {
       </CustomText>
     );
   };
-  // const RenderSkipBtn = () => {
-  //   return (
-  //     <CustomText
-  //       onPress={() => {
-  //         dispatch(setWalkThrough(true));
-  //       }}
-  //       style={[styles.generalBtn, styles.btnLeft]}>
-  //       Skip
-  //     </CustomText>
-  //   );
-  // };
+  const RenderSkipBtn = () => {
+    return (
+      <CustomText
+        onPress={() => {
+          dispatch(setWalkThrough(true));
+        }}
+        style={[styles.generalBtn, styles.btnLeft]}>
+        Skip
+      </CustomText>
+    );
+  };
   // const RenderBackBtn = () => {
   //   return (
   //     <CustomText style={[styles.generalBtn, styles.btnLeft]}>Back</CustomText>
@@ -220,9 +230,9 @@ const WalkThroughScreen = props => {
           renderItem={RenderSlider}
           data={slides}
           // showDoneButton={false}
-          // showSkipButton={true}
+          showSkipButton={true}
           // showPrevButton={true}
-          showNextButton={true}
+          // showNextButton={true}
           // activeDotStyle={{backgroundColor: Color.themeColor2}}
           // dotStyle={{
           //   backgroundColor: 'transparent',
@@ -230,8 +240,8 @@ const WalkThroughScreen = props => {
           //   borderColor: Color.white,
           // }}
           renderDoneButton={RenderDoneBtn}
-          renderNextButton={RenderNextBtn}
-          // renderSkipButton={RenderSkipBtn}
+          // renderNextButton={RenderNextBtn}
+          renderSkipButton={RenderSkipBtn}
           // renderPrevButton={RenderBackBtn}
         />
       </View>
