@@ -21,7 +21,6 @@ const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 
 const MyJourneys = () => {
-  // console.log('in the screen')
   const journeyList = [
     {
       id: 1,
@@ -51,7 +50,6 @@ const MyJourneys = () => {
       image: require('../Assets/Images/car6.png'),
     },
   ];
-  // return <Text>hello</Text>
 
   return (
     <View style={styles.container}>
@@ -64,7 +62,6 @@ const MyJourneys = () => {
       <FlatList
         contentContainerStyle={{
           width: '100%',
-          // backgroundColor :'red',
           alignItems: 'center',
           paddingTop: moderateScale(20, 0.6),
           paddingBottom: moderateScale(100, 0.6),
@@ -77,7 +74,6 @@ const MyJourneys = () => {
               style={{
                 width: width * 0.87,
                 height: height * 0.24,
-                // backgroundColor : 'green',
                 borderWidth: 1,
                 borderRadius: 15,
                 overflow: 'visible',
@@ -88,7 +84,6 @@ const MyJourneys = () => {
                   style={{
                     height: '100%',
                     width: '110%',
-                    // backgroundColor: 'yellow',
                   }}
                   resizeMode={'contain'}
                   source={item.image}
@@ -119,7 +114,6 @@ const MyJourneys = () => {
                     {item.buttontext}
                   </CustomText>
                 </LinearGradient>
-                {/* <View style={styles.button}></View> */}
               </View>
             </View>
           );
@@ -161,11 +155,9 @@ const styles = StyleSheet.create({
   carImages: {
     height: moderateScale(100, 0.6),
     width: moderateScale(130, 0.6),
-    // backgroundColor : 'red',
     alignSelf: 'flex-end',
     position: 'absolute',
     top: moderateScale(-40, 0.6),
-    //  right : moderateScale(-,0.6),
   },
   container: {
     height: height,

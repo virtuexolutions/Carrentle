@@ -19,14 +19,9 @@ import BookingCard from '../Components/BookingCard';
 import ReviewModal from '../Components/ReviewModal';
 
 const HomeScreen = ({navigation}) => {
-  // const
-  // const isFocused = useIsFocused();
-  // const navigation = useNavigation();
-
   const [isLoading, setIsLoading] = useState(false);
   const [rbRef, setRbRef] = useState(null);
   const  [review ,setReview]=useState(false)
-  // const [rbRef,setRbRef]=useState(null)
 
   const dummyArray = [
     {
@@ -114,7 +109,6 @@ const HomeScreen = ({navigation}) => {
       hideUser={false}
       statusBarBackgroundColor={'white'}
       statusBarContentStyle={'dark-content'}
-      // headertextstyle={{ ...FONTS.PoppinsSemiBold13 }}
     >
       <ScrollView
         contentContainerStyle={{

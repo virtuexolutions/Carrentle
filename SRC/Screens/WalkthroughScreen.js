@@ -1,27 +1,22 @@
-import React, {useState, useEffect} from 'react';
+import {Icon} from 'native-base';
+import React from 'react';
 import {
   ImageBackground,
-  View,
   StyleSheet,
   Text,
-  Image,
-  Dimensions,
   TouchableOpacity,
-  PixelRatio,
+  View,
 } from 'react-native';
-import {Icon} from 'native-base';
 import AppIntroSlider from 'react-native-app-intro-slider';
-import Color from '../Assets/Utilities/Color';
-import {useSelector, useDispatch} from 'react-redux';
-import ScreenBoiler from '../Components/ScreenBoiler';
-import {windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale} from 'react-native-size-matters';
-import CustomText from '../Components/CustomText';
-import CustomImage from '../Components/CustomImage';
-import {setWalkThrough} from '../Store/slices/auth-slice';
-import LinearGradient from 'react-native-linear-gradient';
-import {position} from 'native-base/lib/typescript/theme/styled-system';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {useDispatch} from 'react-redux';
+import Color from '../Assets/Utilities/Color';
+import CustomImage from '../Components/CustomImage';
+import CustomText from '../Components/CustomText';
+import ScreenBoiler from '../Components/ScreenBoiler';
+import {setWalkThrough} from '../Store/slices/auth-slice';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 
 const WalkThroughScreen = props => {
   const dispatch = useDispatch();
@@ -71,8 +66,6 @@ const WalkThroughScreen = props => {
             }}>
             <View
               style={{
-                // marginTop:item?.key == 2? moderateScale(100, 0.6):moderateScale(140, 0.6),
-                // height:  item?.key == 2 ? windowHeight*0.9 : windowHeight * 0.45,
                 width: windowWidth * 0.18,
                 height: windowHeight * 0.13,
                 position: 'absolute',
@@ -98,7 +91,6 @@ const WalkThroughScreen = props => {
                 width: windowWidth * 0.8,
                 padding: moderateScale(10, 0.6),
                 lineHeight: moderateScale(44, 0.6),
-                // backgroundColor: 'green',
                 position: 'absolute',
                 top: item?.key == 3 ? windowHeight * 0.37 : windowHeight * 0.24,
                 transform: [{rotate: item?.key == 2 ? '-90deg' : '-0deg'}],
@@ -110,28 +102,6 @@ const WalkThroughScreen = props => {
               isBold>
               {item?.title}
             </CustomText>
-            {/*   */}
-            {/* <View>
-            <CustomText
-              style={{
-                color: Color.white,
-                fontSize: moderateScale(50, 0.6),
-                width: windowWidth * 0.5,
-                padding: moderateScale(10, 0.6),
-                lineHeight: moderateScale(44, 0.6),
-                // backgroundColor: 'green',
-                position: 'absolute',
-                top: 155,
-                // transform:[{ rotate: '-90deg'}] ,
-                left: 90,
-              }}
-              numberOfLines={2}
-              isBold>
-              {item?.title}
-            </CustomText>
-
-            </View> */}
-
             <CustomText
               style={{
                 color: Color.white,
@@ -251,12 +221,9 @@ const WalkThroughScreen = props => {
 
 const styles = StyleSheet.create({
   container: {
-    // paddingTop: windowHeight * 0.1,
-    // justifyContent: 'center',
     height: windowHeight,
     width: windowWidth,
     alignItems: 'center',
-    // backgroundColor: '#cc5200',
   },
   container1: {
     flex: 1,
@@ -265,7 +232,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   SliderContainer: {
-    // flex: 1,
     height: windowHeight,
     width: windowWidth,
     justifyContent: 'center',

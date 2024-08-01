@@ -17,7 +17,7 @@ import {Rating} from 'react-native-ratings';
 import LinearGradient from 'react-native-linear-gradient';
 import {color} from 'native-base/lib/typescript/theme/styled-system';
 import Color from '../Assets/Utilities/Color';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 const RideBookingScreen = () => {
   // const navigation =useNavigation()
@@ -106,7 +106,12 @@ const RideBookingScreen = () => {
 
         <CustomText style={styles.heading}>2013 Dodge Caravan</CustomText>
         <View style={styles.row}>
-          <Icon as={Foundation} name="marker" style={{color:"#FF8A00"}} size={moderateScale(20,0.2)} />
+          <Icon
+            as={Foundation}
+            name="marker"
+            style={{color: '#FF8A00'}}
+            size={moderateScale(20, 0.2)}
+          />
           <CustomText>Fannie Street San Angelo, Texas</CustomText>
         </View>
         <CustomText style={styles.text}>Available seats</CustomText>
@@ -132,7 +137,7 @@ const RideBookingScreen = () => {
       <View style={styles.actions}>
         <CustomButton
           onPress={() => {
-            navigation.navigate('RideBookingScreen2')
+            navigation.navigate('RideBookingScreen2');
           }}
           isGradient
           text={'Yes'}
@@ -150,7 +155,6 @@ const RideBookingScreen = () => {
         />
       </View>
     </View>
-  
   );
 };
 
@@ -272,11 +276,9 @@ const styles = StyleSheet.create({
   },
   ratings: {
     flexDirection: 'row',
-    // width: windowWidth * 0.2,
-    justifyContent:'center',
-    alignItems:'center',
-    paddingHorizontal:moderateScale(6,0.2)
-    // paddingTop: moderateScale(5, 0.6),
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: moderateScale(6, 0.2),
   },
   totalRatings: {
     paddingHorizontal: moderateScale(10, 0.6),

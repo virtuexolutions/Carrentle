@@ -1,19 +1,13 @@
 import React, {useState} from 'react';
 import {
-  Image,
-  Dimensions,
-  ImageBackground,
   Platform,
   ToastAndroid,
-  TouchableOpacity,
-  View,
 } from 'react-native';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import navigationService from '../navigationService';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import Color from '../Assets/Utilities/Color';
-import CustomStatusBar from '../Components/CustomStatusBar';
 import CustomText from '../Components/CustomText';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import CustomButton from '../Components/CustomButton';

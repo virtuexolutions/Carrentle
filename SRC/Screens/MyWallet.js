@@ -20,8 +20,6 @@ import PaymentCard from '../Components/PaymentCard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const MyWallet = ({navigation}) => {
-  const [payment_type, set_Payemnt_type] = useState('Cash');
-  console.log(payment_type, 'payment type');
   const paymentHistoryList = [
     {
       id: 1,
@@ -51,7 +49,6 @@ const MyWallet = ({navigation}) => {
       price: 250,
     },
   ];
-
   return (
     <ScreenBoiler
       showHeader
@@ -175,7 +172,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     position: 'absolute',
     top: moderateScale(120, 0.6),
-    // backgroundColor:'red',
     borderRadius: moderateScale(20, 0.3),
     shadowColor: Color.black,
     shadowOffset: {

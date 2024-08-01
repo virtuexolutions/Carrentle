@@ -1,43 +1,24 @@
-import React, {useEffect, useState} from 'react';
-import * as Animatable from 'react-native-animatable';
-import Color from '../Assets/Utilities/Color';
-import CustomImage from '../Components/CustomImage';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
-import ScreenBoiler from '../Components/ScreenBoiler';
-import LinearGradient from 'react-native-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
 import {
-  ActivityIndicator,
   ScrollView,
-  View,
-  TouchableOpacity,
-  ImageBackground,
+  View
 } from 'react-native';
-import CustomText from '../Components/CustomText';
-import CustomButton from '../Components/CustomButton';
-import TextInputWithTitle from '../Components/TextInputWithTitle';
+import LinearGradient from 'react-native-linear-gradient';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import CountryPicker, {DARK_THEME} from 'react-native-country-picker-modal';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-import navigationService from '../navigationService';
-// import CardContainer from '../Components/CardContainer';
-import DropDownSingleSelect from '../Components/DropDownSingleSelect';
-import {Post} from '../Axios/AxiosInterceptorFunction';
-import {useDispatch, useSelector} from 'react-redux';
-import {setUserData} from '../Store/slices/common';
-import {SetUserRole, setUserToken} from '../Store/slices/auth-slice';
-import {ToastAndroid} from 'react-native';
-import {Platform} from 'react-native';
-import {validateEmail} from '../Config';
-import {Icon} from 'native-base';
+import { useDispatch, useSelector } from 'react-redux';
+import Color from '../Assets/Utilities/Color';
+import CustomButton from '../Components/CustomButton';
+import CustomImage from '../Components/CustomImage';
+import CustomText from '../Components/CustomText';
 import ImagePickerModal from '../Components/ImagePickerModal';
-import {useNavigation} from '@react-navigation/native';
-import localStorage from 'redux-persist/es/storage';
-import localStoreUtil from '../Utillity/localstoreUntil';
-import {mode} from 'native-base/lib/typescript/theme/tools';
+import ScreenBoiler from '../Components/ScreenBoiler';
+import TextInputWithTitle from '../Components/TextInputWithTitle';
+import { setUserToken } from '../Store/slices/auth-slice';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 
 const Signup = () => {
   const dispatch = useDispatch();

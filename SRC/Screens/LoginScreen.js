@@ -1,49 +1,27 @@
-import React, {useState} from 'react';
-import * as Animatable from 'react-native-animatable';
-import Color from '../Assets/Utilities/Color';
-import CustomImage from '../Components/CustomImage';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
-import ScreenBoiler from '../Components/ScreenBoiler';
-import LinearGradient from 'react-native-linear-gradient';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
-import Zocial from 'react-native-vector-icons/Zocial';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
 import {
-  ActivityIndicator,
-  TouchableOpacity,
-  ImageBackground,
-  Platform,
   ScrollView,
-  ToastAndroid,
-  View,
   StyleSheet,
+  View
 } from 'react-native';
-import CustomText from '../Components/CustomText';
-import CustomButton from '../Components/CustomButton';
-import TextInputWithTitle from '../Components/TextInputWithTitle';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import navigationService from '../navigationService';
-import {useDispatch, useSelector} from 'react-redux';
-// import CardContainer from '../Components/CardContainer';
-import {SetUserRole, setUserToken} from '../Store/slices/auth-slice';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import LinearGradient from 'react-native-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { moderateScale } from 'react-native-size-matters';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {setUserData} from '../Store/slices/common';
-import DropDownSingleSelect from '../Components/DropDownSingleSelect';
-import {useNavigation} from '@react-navigation/native';
-import {Icon} from 'native-base';
-// import LinearGradient from 'react-native-linear-gradient';
+import { useDispatch, useSelector } from 'react-redux';
+import Color from '../Assets/Utilities/Color';
+import CustomButton from '../Components/CustomButton';
+import CustomImage from '../Components/CustomImage';
+import CustomText from '../Components/CustomText';
 import ImagePickerModal from '../Components/ImagePickerModal';
-import {position} from 'native-base/lib/typescript/theme/styled-system';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import ScreenBoiler from '../Components/ScreenBoiler';
+import TextInputWithTitle from '../Components/TextInputWithTitle';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 
 const LoginScreen = props => {
   const dispatch = useDispatch();
-  // const navigation =useNavigation()
   const [username, setUserName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
@@ -124,18 +102,14 @@ const LoginScreen = props => {
                 inputWidth={0.55}
                 borderBottomWidth={1}
                 borderRadius={moderateScale(30, 0.3)}
-                // borderColor={'#000'}
                 backgroundColor={'transparent'}
                 marginTop={moderateScale(30, 0.3)}
                 color={Color.white}
                 placeholderColor={Color.lightGrey}
-                // elevation
               />
               <View style={{marginTop: moderateScale(20, 0.6)}} />
               <CustomButton
                 onPress={() => {
-                  // navigation.navigate('EnterLocationScreen');
-                  // navigation.navigate('PaymentScreen')
                   navigation.navigate('TaxiAvailability');
                 }}
                 text={'Log in'}
@@ -162,7 +136,6 @@ const LoginScreen = props => {
               <CustomText
                 style={{
                   color: Color.lightGrey,
-                  // ...FONTS.Light10,
                   textAlign: 'center',
                   fontSize: moderateScale(13, 0.6),
                   width: windowWidth * 0.85,
@@ -173,7 +146,6 @@ const LoginScreen = props => {
               </CustomText>
             </View>
           </LinearGradient>
-          {/* </ImageBackground> */}
           <ImagePickerModal
             show={imagePicker}
             setShow={setImagePicker}
@@ -194,7 +166,6 @@ const styles = StyleSheet.create({
   },
   description: {
     color: Color.lightGrey,
-    // ...FONTS.Light10,
     fontSize: moderateScale(13, 0.6),
     paddingHorizontal: moderateScale(32, 0.6),
     marginTop: moderateScale(-45, 0.3),
@@ -203,7 +174,6 @@ const styles = StyleSheet.create({
   text: {
     color: 'white',
     marginTop: moderateScale(20, 0.3),
-    // ...FONTS.Regular10,
     fontSize: moderateScale(13, 0.6),
     paddingTop: moderateScale(10, 0.3),
   },
@@ -216,7 +186,6 @@ const styles = StyleSheet.create({
     width: moderateScale(20, 0.3),
     height: moderateScale(20, 0.3),
     position: 'absolute',
-    // top: 110,
     bottom: -2,
     right: 5,
     borderRadius: moderateScale(10, 0.3),

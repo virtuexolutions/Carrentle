@@ -20,11 +20,11 @@ import {Icon} from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CustomButton from '../Components/CustomButton';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 const PaymentScreen = () => {
   const navigation = useNavigation();
-  console.log("🚀 ~ PaymentScreen ~ navigation:",  )
+  console.log('🚀 ~ PaymentScreen ~ navigation:');
   return (
     <ScreenBoiler
       // showHeader
@@ -34,19 +34,16 @@ const PaymentScreen = () => {
       // hideUser={false}
       statusBarBackgroundColor={'white'}
       statusBarContentStyle={'dark-content'}>
-      <View
-        style={styles.header}>
+      <View style={styles.header}>
         <TouchableOpacity
           style={styles.btn}
           onPress={() => {
-            console.log('helloooooo===== >>>>>>> >>>>')
-            // navigation.toggleDrawer()
+            console.log('helloooooo===== >>>>>>> >>>>');
           }}>
           <Icon as={Ionicons} name="menu" size={moderateScale(20, 0.2)} />
         </TouchableOpacity>
         <CustomText>Confirm your payment</CustomText>
-        <View
-          style={styles.logo}>
+        <View style={styles.logo}>
           <CustomImage
             source={require('../Assets/Images/Group13.png')}
             style={{width: windowHeight * 0.04, height: windowHeight * 0.04}}
@@ -121,19 +118,21 @@ const PaymentScreen = () => {
           <View style={styles.LocationView}>
             <View style={styles.marker}>
               <Icon
-              as={Fontisto}
+                as={Fontisto}
                 name="map-marker-alt"
                 size={moderateScale(17, 0.2)}
-                style={{color: "#FF8A00", textAlign:'center',}}
+                style={{color: '#FF8A00', textAlign: 'center'}}
               />
               <CustomText style={styles.dot}>- - - - -</CustomText>
               <Icon
-              as={Fontisto}
+                as={Fontisto}
                 name="map-marker-alt"
                 size={moderateScale(17, 0.2)}
-                style={{color: "#72AFED", 
-                textAlign:'center',
-                marginTop: moderateScale(12,0.2)}}
+                style={{
+                  color: '#72AFED',
+                  textAlign: 'center',
+                  marginTop: moderateScale(12, 0.2),
+                }}
               />
             </View>
             <View
@@ -219,7 +218,7 @@ const PaymentScreen = () => {
           </CustomText>
           <View style={styles.promoView}>
             <CustomText style={{fontSize: moderateScale(11, 0.6)}}>
-            DJ248JN245
+              DJ248JN245
             </CustomText>
             <Icon
               name="keyboard-arrow-right"
@@ -266,9 +265,12 @@ const PaymentScreen = () => {
         </View>
         <CustomButton
           onPress={() => {
-            ToastAndroid.show('Booking succeed . Rider is on the way' , ToastAndroid.SHORT)
+            ToastAndroid.show(
+              'Booking succeed . Rider is on the way',
+              ToastAndroid.SHORT,
+            );
             setTimeout(() => {
-              navigation.navigate('TaxiAvailability')
+              navigation.navigate('TaxiAvailability');
             }, 500);
           }}
           isGradient
@@ -283,7 +285,6 @@ const PaymentScreen = () => {
           marginTop={moderateScale(20, 0.3)}
           bgColor={['#79B9F6', '#00309E']}
           isBold
-          // isGradient
         />
       </ScrollView>
     </ScreenBoiler>
@@ -301,7 +302,7 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(20, 0.6),
     marginBottom: moderateScale(10, 0.3),
   },
-  header:{
+  header: {
     width: windowWidth,
     paddingHorizontal: moderateScale(12, 0.3),
     paddingVertical: moderateScale(12, 0.2),
@@ -309,7 +310,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  logo:{
+  logo: {
     width: windowHeight * 0.045,
     justifyContent: 'center',
     alignItems: 'center',
@@ -318,7 +319,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#dedbdbc8',
     borderRadius: (windowHeight * 0.045) / 2,
   },
-  btn:{
+  btn: {
     width: windowWidth * 0.09,
     backgroundColor: 'white',
     height: windowWidth * 0.09,
@@ -326,7 +327,7 @@ const styles = StyleSheet.create({
     elevation: 12,
     alignItems: 'center',
     borderRadius: (windowWidth * 0.09) / 2,
-    zIndex :1
+    zIndex: 1,
   },
   container: {
     height: windowHeight * 0.12,

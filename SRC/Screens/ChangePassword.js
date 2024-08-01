@@ -1,48 +1,37 @@
 import React, {useState} from 'react';
-import * as Animatable from 'react-native-animatable';
 import Color from '../Assets/Utilities/Color';
-import CustomImage from '../Components/CustomImage';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import ScreenBoiler from '../Components/ScreenBoiler';
-
 import {
   ActivityIndicator,
   ScrollView,
   View,
   TouchableOpacity,
   ImageBackground,
-  StyleSheet,
 } from 'react-native';
 import CustomText from '../Components/CustomText';
 import CustomButton from '../Components/CustomButton';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import CountryPicker, {DARK_THEME} from 'react-native-country-picker-modal';
-import Fontisto from 'react-native-vector-icons/Fontisto';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-
 import navigationService from '../navigationService';
-import {useDispatch} from 'react-redux';
-
 import {Icon} from 'native-base';
-import ImagePickerModal from '../Components/ImagePickerModal';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+
 const Profile = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const [currPassword, setCurrPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
- 
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <TouchableOpacity
-      activeOpacity={0.8}
-      onPress={()=>{
-        navigation.goBack()
-      }}
+        activeOpacity={0.8}
+        onPress={() => {
+          navigation.goBack();
+        }}
         style={styles.back}>
         <Icon
           name="arrowleft"
@@ -50,131 +39,112 @@ const Profile = () => {
           style={styles.icon2}
           color={Color.white}
           size={moderateScale(20, 0.3)}
-          onPress={()=>{
-            navigation.goBack()
+          onPress={() => {
+            navigation.goBack();
           }}
         />
       </TouchableOpacity>
       <ImageBackground
+        style={{
+          width: windowWidth,
+          minHeight: windowHeight,
+          paddingBottom: moderateScale(40, 0.6),
+          alignItems: 'center',
+        }}
+        source={require('../Assets/Images/customerservice.png')}>
+        <CustomText style={styles.txt5}>Change Password</CustomText>
+        <View
           style={{
-            width: windowWidth,
-            minHeight: windowHeight,
-            paddingBottom: moderateScale(40, 0.6),
-            // justifyContent: 'center',
-            // backgroundColor:'red',
-            // height: windowHeight*0.8,
+            gap: 18,
             alignItems: 'center',
-          }}
-          source={require('../Assets/Images/customerservice.png')}>
-          
-{/* 
-          <View
-            style={{
-           
-              height: windowHeight * 0.13,
-              width: windowHeight * 0.13,
-              borderRadius: moderateScale((windowHeight * 0.13) / 2),
-              // overflow : 'hidden'
-            }}>
-          </View> */}
-           <CustomText style={styles.txt5}>Change Password</CustomText>
-          <View
-            style={{
-              gap: 18,
-              // paddingVertical: moderateScale(30, 0.3),
-              alignItems: 'center',
-              // justifyContent: 'center',
-              marginTop: windowHeight * 0.15
-              // marginTop: moderateScale(20, 0.3),
-            }}>
-           
-              <TextInputWithTitle
-              iconName={'lock1'}
-              iconType={AntDesign}
-              LeftIcon={true}
-              titleText={'Current Password'}
-              placeholder={'Current Password'}
-              setText={setCurrPassword}
-              value={currPassword}
-              secureText={true}
-              viewHeight={0.06}
-              viewWidth={0.75}
-              inputWidth={0.55}
-              border={1}
-              borderRadius={moderateScale(30, 0.3)}
-              borderColor={'#000'}
-              backgroundColor={Color.white}
-              marginTop={moderateScale(10, 0.3)}
-              color={Color.black}
-              placeholderColor={Color.veryLightGray}
-              elevation
-            />
-              <TextInputWithTitle
-              iconName={'lock1'}
-              iconType={AntDesign}
-              LeftIcon={true}
-              titleText={'New Password'}
-              placeholder={'New Password'}
-              setText={setNewPassword}
-              value={newPassword}
-              secureText={true}
-              viewHeight={0.06}
-              viewWidth={0.75}
-              inputWidth={0.55}
-              border={1}
-              borderRadius={moderateScale(30, 0.3)}
-              borderColor={'#000'}
-              backgroundColor={Color.white}
-              marginTop={moderateScale(10, 0.3)}
-              color={Color.black}
-              placeholderColor={Color.veryLightGray}
-              elevation
-            />
+            marginTop: windowHeight * 0.15,
+          }}>
+          <TextInputWithTitle
+            iconName={'lock1'}
+            iconType={AntDesign}
+            LeftIcon={true}
+            titleText={'Current Password'}
+            placeholder={'Current Password'}
+            setText={setCurrPassword}
+            value={currPassword}
+            secureText={true}
+            viewHeight={0.06}
+            viewWidth={0.75}
+            inputWidth={0.55}
+            border={1}
+            borderRadius={moderateScale(30, 0.3)}
+            borderColor={'#000'}
+            backgroundColor={Color.white}
+            marginTop={moderateScale(10, 0.3)}
+            color={Color.black}
+            placeholderColor={Color.veryLightGray}
+            elevation
+          />
+          <TextInputWithTitle
+            iconName={'lock1'}
+            iconType={AntDesign}
+            LeftIcon={true}
+            titleText={'New Password'}
+            placeholder={'New Password'}
+            setText={setNewPassword}
+            value={newPassword}
+            secureText={true}
+            viewHeight={0.06}
+            viewWidth={0.75}
+            inputWidth={0.55}
+            border={1}
+            borderRadius={moderateScale(30, 0.3)}
+            borderColor={'#000'}
+            backgroundColor={Color.white}
+            marginTop={moderateScale(10, 0.3)}
+            color={Color.black}
+            placeholderColor={Color.veryLightGray}
+            elevation
+          />
 
-            <TextInputWithTitle
-              iconName={'unlock'}
-              iconType={FontAwesome}
-              LeftIcon={true}
-              titleText={'Confirm your new password'}
-              placeholder={'Confirm your new password'}
-              setText={setConfirmNewPassword}
-              value={confirmNewPassword}
-              secureText={true}
-              viewHeight={0.06}
-              viewWidth={0.75}
-              inputWidth={0.55}
-              border={1}
-              borderRadius={moderateScale(30, 0.3)}
-              borderColor={'#000'}
-              backgroundColor={Color.white}
-              marginTop={moderateScale(10, 0.3)}
-              color={Color.black}
-              placeholderColor={Color.veryLightGray}
-              elevation
-            />
-           
-          
-              <CustomButton
-                onPress={() => navigationService.navigate('LoginScreen')}
-                text={
-                  isLoading ? (
-                    <ActivityIndicator color={Color.white} size={'small'} />
-                  ) : (
-                    'RESET'
-                  )
-                }
-                fontSize={moderateScale(12, 0.3)}
-                textColor={Color.white}
-                borderRadius={moderateScale(30, 0.3)}
-                width={windowWidth * 0.75}
-                height={windowHeight * 0.06}
-                marginTop={moderateScale(20, 0.3)}
-                bgColor={Color.themeColor2}
-                isBold
-                // isGradient
-              />
-          </View>
-        </ImageBackground>
+          <TextInputWithTitle
+            iconName={'unlock'}
+            iconType={FontAwesome}
+            LeftIcon={true}
+            titleText={'Confirm your new password'}
+            placeholder={'Confirm your new password'}
+            setText={setConfirmNewPassword}
+            value={confirmNewPassword}
+            secureText={true}
+            viewHeight={0.06}
+            viewWidth={0.75}
+            inputWidth={0.55}
+            border={1}
+            borderRadius={moderateScale(30, 0.3)}
+            borderColor={'#000'}
+            backgroundColor={Color.white}
+            marginTop={moderateScale(10, 0.3)}
+            color={Color.black}
+            placeholderColor={Color.veryLightGray}
+            elevation
+          />
+
+          <CustomButton
+            onPress={() => navigationService.navigate('LoginScreen')}
+            text={
+              isLoading ? (
+                <ActivityIndicator color={Color.white} size={'small'} />
+              ) : (
+                'RESET'
+              )
+            }
+            fontSize={moderateScale(12, 0.3)}
+            textColor={Color.white}
+            borderRadius={moderateScale(30, 0.3)}
+            width={windowWidth * 0.75}
+            height={windowHeight * 0.06}
+            marginTop={moderateScale(20, 0.3)}
+            bgColor={Color.themeColor2}
+            isBold
+            // isGradient
+          />
+        </View>
+      </ImageBackground>
     </ScrollView>
   );
 };
@@ -203,15 +173,15 @@ const styles = ScaledSheet.create({
   //   elevation: 9,
   // },
   txt5: {
-    marginTop:windowHeight * 0.11,
-    marginLeft:windowHeight * 0.18,
-    fontSize : moderateScale(20,0.6),
+    marginTop: windowHeight * 0.11,
+    marginLeft: windowHeight * 0.18,
+    fontSize: moderateScale(20, 0.6),
     fontWeight: 'bold',
-    width: windowWidth * 0.85, 
+    width: windowWidth * 0.85,
     color: '#FFFF',
   },
 
- back : {
+  back: {
     width: moderateScale(35, 0.6),
     height: moderateScale(35, 0.6),
     borderRadius: moderateScale(5, 0.6),
@@ -221,14 +191,11 @@ const styles = ScaledSheet.create({
     left: moderateScale(10, 0.6),
     top: moderateScale(10, 0.6),
     zIndex: 1,
-    margin :5 ,
-    alignItems : 'center',
-    justifyContent : 'center'
-  }
+    margin: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
-
-
-
 
 // import React, {useState} from 'react';
 // import {
@@ -290,7 +257,7 @@ const styles = ScaledSheet.create({
 //         showBack={true}
 //         title={'Change Password'}
 //         headerColor={['#CBE4E8', '#D2E4E4']}
-       
+
 //       />
 
 //       <LinearGradient

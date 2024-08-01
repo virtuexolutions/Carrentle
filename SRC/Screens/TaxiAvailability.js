@@ -1,14 +1,13 @@
-import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import CustomImage from '../Components/CustomImage';
-import {moderateScale} from 'react-native-size-matters';
-import CustomText from '../Components/CustomText';
-import CustomButton from '../Components/CustomButton';
-import navigationService from '../navigationService';
+import { moderateScale } from 'react-native-size-matters';
 import Color from '../Assets/Utilities/Color';
-import {color} from 'native-base/lib/typescript/theme/styled-system';
+import CustomButton from '../Components/CustomButton';
+import CustomImage from '../Components/CustomImage';
+import CustomText from '../Components/CustomText';
+import navigationService from '../navigationService';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 
 const TaxiAvailability = () => {
   return (
@@ -30,7 +29,6 @@ const TaxiAvailability = () => {
           textAlign: 'center',
           color: '#b2c2d6',
           fontSize: moderateScale(11, 0, 6),
-          // ...FONTS.PoppinsLight11,
         }}
         numberOfLines={1}>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit,{' '}
@@ -42,7 +40,6 @@ const TaxiAvailability = () => {
           textAlign: 'center',
           color: '#b2c2d6',
           fontSize: moderateScale(11, 0, 6),
-          // ...FONTS.PoppinsLight11
         }}
         numberOfLines={1}>
         sed do eiusmod tempor incididunt labore.
@@ -69,7 +66,6 @@ const TaxiAvailability = () => {
             color: '#b2c2d6',
             textAlign: 'center',
             fontSize: moderateScale(12, 0.6),
-            // ...FONTS.poppinsRegular12
           }}
           numberOfLines={3}>
           Lorem ipsum dolor sit amet, do eiusmod tempor incididunt ut, eiusmod
@@ -94,7 +90,6 @@ const TaxiAvailability = () => {
       <CustomButton
         textstyle={{color: Color.white, fontSize: moderateScale(16, 0.3)}}
         marginTop={moderateScale(10, 0.2)}
-        // bgColor={'white'}
         textColor={'white'}
         text={'Out of City'}
         textTransform={'none'}
@@ -122,7 +117,6 @@ const TaxiAvailability = () => {
         </CustomText>
         <CustomText
           style={{
-            // marginTop: moderateScale(14,0.2),
             width: windowWidth * 0.7,
             textAlign: 'center',
             color: '#FFFFFF',

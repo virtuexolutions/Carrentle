@@ -1,21 +1,18 @@
-import React, {useState} from 'react';
-import Color from '../Assets/Utilities/Color';
-import CustomImage from '../Components/CustomImage';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
-import ScreenBoiler from '../Components/ScreenBoiler';
+import React from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {ScrollView, View, StyleSheet} from 'react-native';
-import CustomText from '../Components/CustomText';
+import { moderateScale } from 'react-native-size-matters';
+import { useDispatch } from 'react-redux';
+import Color from '../Assets/Utilities/Color';
 import CustomButton from '../Components/CustomButton';
-import {useDispatch} from 'react-redux';
-// import CardContainer from '../Components/CardContainer';
-import {useNavigation} from '@react-navigation/native';
-// import LinearGradient from 'react-native-linear-gradient';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import CustomImage from '../Components/CustomImage';
+import CustomText from '../Components/CustomText';
+import ScreenBoiler from '../Components/ScreenBoiler';
+import { windowHeight, windowWidth } from '../Utillity/utils';
+import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { setUserType } from '../Store/slices/auth-slice';
 import localStoreUtil from '../Utillity/localstoreUntil';
-import {setUserType} from '../Store/slices/auth-slice';
 
 const Start = () => {
   const navigation = useNavigation();
@@ -121,7 +118,6 @@ const styles = StyleSheet.create({
     width: moderateScale(20, 0.3),
     height: moderateScale(20, 0.3),
     position: 'absolute',
-    // top: 110,
     bottom: -2,
     right: 5,
     borderRadius: moderateScale(10, 0.3),

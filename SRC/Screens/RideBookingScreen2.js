@@ -16,18 +16,15 @@ import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 
 const RideBookingScreen2 = () => {
-  // const navigation =useNavigation()
   const origin = {latitude: 37.3285792, longitude: -122.0356209};
   const destination = {latitude: 37.3320305, longitude: -122.0355326};
 
   return (
     <View style={styles.container}>
-      {/* <Header/> */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.btn}
           onPress={() => {
-            // navigation.toggleDrawer()
           }}>
           <Icon as={Ionicons} name="menu" size={moderateScale(20, 0.2)} />
         </TouchableOpacity>
@@ -196,7 +193,6 @@ fontSize :moderateScale(13,.6)
   },
   dot: {
     width: windowWidth * 0.1,
-    // backgroundColor:'red',
     marginTop: moderateScale(11, 0.2),
     textAlign: 'center',
     marginLeft: moderateScale(2, 0.2),
@@ -214,7 +210,6 @@ fontSize :moderateScale(13,.6)
     alignItems: 'center',
     elevation: 12,
     height: windowHeight * 0.045,
-    // overflow:'hidden',
     backgroundColor: '#dedbdbc8',
     borderRadius: (windowHeight * 0.045) / 2,
   },

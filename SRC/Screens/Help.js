@@ -63,7 +63,6 @@ const Help = () => {
     <ScrollView
       contentContainerStyle={{
         paddingBottom: moderateScale(150, 0.6),
-        // paddingHorizontal :moderateScale(20,.6)
       }}
       showsVerticalScrollIndicator={false}
       style={{
@@ -107,8 +106,6 @@ const Help = () => {
         </View>
         <View style={styles.field}>
           <CustomText>Financial Issues</CustomText>
-          {/* <CustomText style={styles.value}> {'>'} </CustomText>
-           */}
           <Icon
             as={MaterialIcons}
             name="keyboard-arrow-right"
@@ -117,8 +114,6 @@ const Help = () => {
         </View>
         <TouchableOpacity style={styles.field}>
           <CustomText>Drive or vehicle feedback</CustomText>
-          {/* <CustomText style={styles.value}> {'>'} </CustomText>
-           */}
           <Icon
             as={MaterialIcons}
             name="keyboard-arrow-right"
@@ -127,8 +122,6 @@ const Help = () => {
         </TouchableOpacity>
         <TouchableOpacity style={styles.field}>
           <CustomText>I was in a traffic accident</CustomText>
-          {/* <CustomText style={styles.value}> {'>'} </CustomText>
-           */}
           <Icon
             as={MaterialIcons}
             name="keyboard-arrow-right"
@@ -137,8 +130,6 @@ const Help = () => {
         </TouchableOpacity>
         <TouchableOpacity style={styles.field}>
           <CustomText>I feel unsafe</CustomText>
-          {/* <CustomText style={styles.value}> {'>'} </CustomText>
-           */}
           <Icon
             as={MaterialIcons}
             name="keyboard-arrow-right"

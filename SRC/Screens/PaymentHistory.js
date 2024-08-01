@@ -2,16 +2,11 @@ import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from '
 import React from 'react';
 import { moderateScale } from 'react-native-size-matters';
 import { windowHeight, windowWidth } from '../Utillity/utils';
-import ScreenBoiler from '../Components/ScreenBoiler';
 import Header from '../Components/Header';
-import CustomText from '../Components/CustomText';
-import CustomImage from '../Components/CustomImage';
 import Color from '../Assets/Utilities/Color';
-import { Card } from 'native-base';
 import HistoryComponent from '../Components/HistoryComponent';
 import { useNavigation } from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import Icon from 'native-base'
+
 
 const PaymentHistory = () => {
   const navigation = useNavigation()
@@ -97,7 +92,6 @@ const PaymentHistory = () => {
     <ScrollView
       contentContainerStyle={{
         paddingBottom: moderateScale(150, 0.6),
-        // paddingHorizontal :moderateScale(20,.6)
       }}
       showsVerticalScrollIndicator={false}
       style={{
