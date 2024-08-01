@@ -41,8 +41,11 @@ import RideAcceptance from './Screens/RideAcceptance';
 import BoardingPointDetails from './Screens/BoardingPointDetails';
 import TaxiAvailability from './Screens/TaxiAvailability';
 import BoardingPointSearchScreen from './Screens/BoardingPointSearchScreen';
-import PaymentHistory from './Screens/PaymentHistory';
+import Start from './Screens/Start';
 import MyWallet from './Screens/MyWallet';
+import EditProfile from './Screens/EditProfile';
+import Help from './Screens/Help';
+import MyJourneys from './Screens/MyJourneys';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -72,7 +75,7 @@ const AppNavigator = () => {
             name="WalkThroughScreen"
             component={WalkThroughScreen}
           />
-          {/* <RootNav.Screen name="HomeScreen" component={HomeScreen} /> */}
+          <RootNav.Screen name="Start" component={Start} />
           <RootNav.Screen name="LoginScreen" component={LoginScreen} />
           <RootNav.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
           {/* <RootNav.Screen
@@ -83,7 +86,7 @@ const AppNavigator = () => {
           <RootNav.Screen name="Signup" component={Signup} />
           <RootNav.Screen name="PaymentScreen" component={PaymentScreen} />
           <RootNav.Screen name="MessagesScreen" component={MessagesScreen} />
-          <RootNav.Screen name="PaymentHistory" component={PaymentHistory} />
+          {/* <RootNav.Screen name="PaymentHistory" component={PaymentHistory} /> */}
 
           <RootNav.Screen
             name="BoardingPointScreen"
@@ -110,6 +113,7 @@ const AppNavigator = () => {
             name="TaxiAvailability"
             component={TaxiAvailability}
           />
+          <RootNav.Screen name="EditProfile" component={EditProfile} />
         </RootNav.Navigator>
       </NavigationContainer>
     );
@@ -214,7 +218,6 @@ export const TabNavigation = () => {
       {/* <Tabs.Screen name={'HomeScreen'} component={HomeScreen} /> */}
       {/* <Tabs.Screen name={'Donation'} component={Donation} />
       <Tabs.Screen name={'Campaigns'} component={Campaigns} />
-
       {/* <Tabs.Screen name={'BibleCategories'} component={BibleCategories} /> */}
       {/* <Tabs.Screen name={'StoreScreen'} component={StoreScreen} /> */}
       <Tabs.Screen name={'Settings'} component={Settings} />
@@ -231,6 +234,8 @@ export const MyDrawer = () => {
       initialRouteName={'HomeScreen'}
       screenOptions={{
         headerShown: false,
+
+        drawerStyle: {width: '80%'},
       }}>
       <DrawerNavigation.Screen name="HomeScreen" component={HomeScreen} />
       <DrawerNavigation.Screen
@@ -251,14 +256,12 @@ export const MyDrawer = () => {
         name="TermsAndConditions"
         component={TermsAndConditions}
       />
-
+      <DrawerNavigation.Screen name="Help" component={Help} />
       <DrawerNavigation.Screen name="MyWallet" component={MyWallet} />
+      <DrawerNavigation.Screen name="MyJourneys" component={MyJourneys} />
     </DrawerNavigation.Navigator>
   );
 };
 
 export default AppNavigator;
 
-{
-  /* <></>\ */
-}

@@ -114,7 +114,7 @@ dependencies {
 //       implementation(project(':react-native-onesignal')){
 //       exclude group: 'com.google.android.gms'
 //   }
-
+  implementation 'com.google.android.gms:play-services-location:21.0.1'
   implementation(project(':react-native-maps')){
       exclude group: 'com.google.android.gms'
   } 

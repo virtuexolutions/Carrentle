@@ -6,9 +6,7 @@ import CustomText from './CustomText';
 import {Code, Icon} from 'native-base';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from './CustomImage';
-import {mode} from 'native-base/lib/typescript/theme/tools';
 import Feather from 'react-native-vector-icons/Feather';
-import {FONTS, SIZES} from '../Constant/theme';
 
 const PaymentCard = ({data, onPress}) => {
   return (

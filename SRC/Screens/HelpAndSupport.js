@@ -7,12 +7,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import React, { useState } from 'react';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 
-import {moderateScale} from 'react-native-size-matters';
-import {useNavigation} from '@react-navigation/native';
-import {Icon} from 'native-base';
+import { moderateScale } from 'react-native-size-matters';
+import { useNavigation } from '@react-navigation/native';
+import { Icon } from 'native-base';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
@@ -80,7 +80,7 @@ const HelpAndSupport = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{
-          minHeight : windowHeight ,
+          minHeight: windowHeight,
           // marginTop: windowHeight * 0.1,
         }}
         contentContainerStyle={{
@@ -115,19 +115,19 @@ const HelpAndSupport = () => {
           />
         </View>
         <CustomText
-        numberOfLine={2}
+          numberOfLine={2}
           isBold
           style={{
             color: Color.white,
-            width: windowWidth *0.5,
+            width: windowWidth * 0.5,
             textAlign: 'center',
             fontSize: moderateScale(20, 0.6),
-            paddingVertical:moderateScale(15,.6),
+            paddingVertical: moderateScale(15, .6),
             // backgroundColor:'red',
-            lineHeight:moderateScale(28,.6),
-            letterSpacing:moderateScale(2.9,.6)
+            lineHeight: moderateScale(28, .6),
+            letterSpacing: moderateScale(2.9, .6)
           }}>
-         hello, How can we help you ?
+          hello, How can we help you ?
         </CustomText>
         <View
           style={{

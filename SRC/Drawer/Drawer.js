@@ -5,22 +5,19 @@ import CustomImage from '../Components/CustomImage';
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
-import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../Components/CustomText';
-import {Icon} from 'native-base';
+import {Divider, Icon} from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {SetUserRole, setUserLogoutAuth} from '../Store/slices/auth';
+import {SetUserRole, setUserLogoutAuth} from '../Store/slices/auth-slice';
 import {setUserLogOut} from '../Store/slices/common';
 import navigationService from '../navigationService';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 // import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
 const Drawer = () => {
@@ -29,7 +26,6 @@ const Drawer = () => {
   const userData = useSelector(state => state.commonReducer.userData);
   const token = useSelector(state => state.authReducer.token);
   // console.log('🚀 ~ file: Drawer.js:19 ~ Drawer ~ token:', token);
-
   const role = useSelector(state => state.authReducer.role);
   // console.log('🚀 ~ file: Drawer.js:29 ~ Drawer ~ role:', role);
 
@@ -63,7 +59,7 @@ const Drawer = () => {
       iconName: 'compass-outline',
       iconType: Ionicons,
       onPress: () => {
-        // navigation.navigate('HomeScreen');
+        navigation.navigate('MyJourneys');
       },
     },
     {
@@ -87,7 +83,7 @@ const Drawer = () => {
       iconName: 'help-circle',
       iconType: Feather,
       onPress: () => {
-        // navigation.navigate('ChangePassword');
+        navigation.navigate('Help');
       },
     },
     {
@@ -118,7 +114,6 @@ const Drawer = () => {
       <View
         style={{
           height: windowHeight,
-
           backgroundColor: '#F8F8F8',
         }}>
         {/* back buttons */}
@@ -126,7 +121,6 @@ const Drawer = () => {
           style={{
             width: '100%',
             paddingVertical: moderateScale(16, 0.2),
-            // borderWidth:1,borderColor:'red',
             paddingHorizontal: moderateScale(10, 0.2),
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -140,7 +134,7 @@ const Drawer = () => {
             name="arrowleft"
             color={'#636363'}
           />
-          <CustomText style={{width: windowWidth * 0.12}}>Menu</CustomText>
+          <CustomText style={styles.menu_text}>Menu</CustomText>
           <TouchableOpacity
             onPress={() => {
               navigation.goBack();
@@ -158,15 +152,17 @@ const Drawer = () => {
             height: windowHeight * 0.2,
             width: '100%',
             paddingVertical: moderateScale(12, 0.2),
-            // backgroundColor: '#D2E4E4',
           }}>
-          {token == null ? (
+          {/* {token == null ? (
             <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 backgroundColor: 'white',
-                height: windowHeight * 0.2,
+                height: windowHeight * 0.12,
+                paddingHorizontal: moderateScale(10, 0.6),
+                marginTop: moderateScale(20, 0.3),
+                paddingVertical: moderateScale(10, 0.2),
               }}>
               <View style={styles.Profile}>
                 <CustomImage
@@ -190,64 +186,75 @@ const Drawer = () => {
                 {`Login/Signup`}
               </CustomText>
             </View>
-          ) : (
+          ) : ( */}
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() => navigation.navigate('EditProfile')}
+            style={{
+              height: windowHeight * 0.12,
+              flexDirection: 'row',
+              backgroundColor: '#FFFFFF',
+              marginTop: moderateScale(20, 0.3),
+              alignItems: 'center',
+              paddingVertical: moderateScale(10, 0.2),
+              paddingHorizontal: moderateScale(6, 0.2),
+              shadowColor: '#00000021',
+              shadowOffset: {
+                width: 0,
+                height: 4,
+              },
+              shadowOpacity: 0.2,
+              elevation: 6,
+              // marginLeft: moderateScale(10, 0.3),
+            }}>
+            <View style={styles.Profile}>
+              <CustomImage
+                resizeMode={'cover'}
+                source={require('../Assets/Images/men.png')}
+                style={{width: '100%', height: '100%'}}
+              />
+            </View>
+
+            <View style={{marginLeft: moderateScale(10, 0.3)}}>
+              <CustomText
+                style={{fontSize: moderateScale(16, 0.6), color: Color.black}}
+                isBold>
+                {/* {userData?.name} */}
+                {'Parsely Montana'}
+              </CustomText>
+
+              <CustomText
+                style={{
+                  width: windowWidth * 0.4,
+                  fontSize: moderateScale(11, 0.6),
+                  color: Color.grey,
+                }}>
+                {/* {userData?.email}
+                 */}
+                San Fransisco
+              </CustomText>
+            </View>
             <View
               style={{
-                flexDirection: 'row',
-                backgroundColor: '#FFFFFF',
-                marginTop: moderateScale(20, 0.3),
+                width: windowHeight * 0.025,
+                justifyContent: 'center',
                 alignItems: 'center',
-                paddingVertical: moderateScale(10, 0.2),
-                paddingHorizontal: moderateScale(6, 0.2),
-                // marginLeft: moderateScale(10, 0.3),
+                elevation: 12,
+                height: windowHeight * 0.025,
+                backgroundColor: '#dedbdbc8',
+                marginLeft: moderateScale(20, 0.6),
+                borderRadius: (windowHeight * 0.02) / 2,
               }}>
-              <View style={styles.Profile}>
-                <CustomImage
-                  resizeMode={'cover'}
-                  source={require('../Assets/Images/men.png')}
-                  style={{width: '100%', height: '100%'}}
-                />
-              </View>
-
-              <View style={{marginLeft: moderateScale(10, 0.3)}}>
-                <CustomText
-                  style={{fontSize: moderateScale(16, 0.6), color: Color.black}}
-                  isBold>
-                  {/* {userData?.name} */}
-                  {'Parsely Montana'}
-                </CustomText>
-
-                <CustomText
-                  style={{
-                    width: windowWidth * 0.4,
-                    fontSize: moderateScale(11, 0.6),
-                    color: ' #989898',
-                  }}>
-                  {/* {userData?.email}
-                   */}
-                  San Fransisco
-                </CustomText>
-              </View>
-              <View
+              <CustomImage
+                source={require('../Assets/Images/Group13.png')}
                 style={{
-                  width: windowHeight * 0.025,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  elevation: 12,
-                  height: windowHeight * 0.025,
-                  backgroundColor: '#dedbdbc8',
-                  borderRadius: (windowHeight * 0.02) / 2,
-                }}>
-                <CustomImage
-                  source={require('../Assets/Images/Group13.png')}
-                  style={{
-                    width: windowHeight * 0.021,
-                    height: windowHeight * 0.021,
-                  }}
-                />
-              </View>
+                  width: windowHeight * 0.021,
+                  height: windowHeight * 0.021,
+                }}
+              />
             </View>
-          )}
+          </TouchableOpacity>
+          {/* )} */}
         </View>
         <View
           style={{
@@ -259,7 +266,7 @@ const Drawer = () => {
               <TouchableOpacity
                 onPress={item?.onPress}
                 style={{
-                  width: windowWidth * 0.6,
+                  width: windowWidth * 0.7,
                   // borderBottomWidth: 0.5,
                   borderColor: Color.black,
                   margin: moderateScale(15, 0.3),
@@ -292,6 +299,14 @@ const Drawer = () => {
                   style={{position: 'absolute', right: 0}}
                 />
               </TouchableOpacity>
+              <Divider
+                marginTop={moderateScale(1, 0.2)}
+                marginX={moderateScale(15, 0.2)}
+                color={'#F0F0F0'}
+                width={'72'}
+                borderWidth={0.1}
+                borderColor={'#b0adad'}
+              />
             </>
           ))}
         </View>
@@ -329,11 +344,14 @@ export default Drawer;
 
 const styles = StyleSheet.create({
   Profile: {
-    width: windowWidth * 0.2,
-    height: windowWidth * 0.2,
+    width: windowWidth * 0.15,
+    height: windowWidth * 0.15,
     borderRadius: (windowWidth * 0.2) / 1,
     borderWidth: 1,
     borderColor: Color.white,
     overflow: 'hidden',
+  },
+  menu_text: {
+    color: Color.darkGray,
   },
 });

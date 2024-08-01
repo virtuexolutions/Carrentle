@@ -28,7 +28,8 @@ const ScreenBoiler = props => {
     headerType,
     showList,
     Notify,
-    hideUser
+    hideUser,
+    headertextstyle
   } = props;
 
   return (
@@ -40,6 +41,7 @@ const ScreenBoiler = props => {
       {showHeader && (
         <Header
           navigation={navigation}
+          textstyle={headertextstyle}
           title={title}
           showBack={showBack}
           useDebounce={useDebounce}

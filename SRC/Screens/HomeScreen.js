@@ -10,7 +10,7 @@ import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import {View, RefreshControl, ScrollView, FlatList} from 'react-native';
 import CustomText from '../Components/CustomText';
-import {useIsFocused, } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 import Header from '../Components/Header';
 import BookYourCapComponent from '../Components/BookYourCapComponent';
 import CustomButton from '../Components/CustomButton';
@@ -18,7 +18,7 @@ import BottomSheet from '../Components/BottomSheet';
 import BookingCard from '../Components/BookingCard';
 import ReviewModal from '../Components/ReviewModal';
 
-const HomeScreen = ({navigation})=> {
+const HomeScreen = ({navigation}) => {
   // const
   // const isFocused = useIsFocused();
   // const navigation = useNavigation();
@@ -113,35 +113,35 @@ const HomeScreen = ({navigation})=> {
       headerColor={['white', 'white']}
       hideUser={false}
       statusBarBackgroundColor={'white'}
-      statusBarContentStyle={'dark-content'}>
-   
+      statusBarContentStyle={'dark-content'}
+      // headertextstyle={{ ...FONTS.PoppinsSemiBold13 }}
+    >
       <ScrollView
         contentContainerStyle={{
           paddingBottom: moderateScale(150, 0.6),
-          // paddingHorizontal :moderateScale(20,.6)
         }}
         showsVerticalScrollIndicator={false}
         style={{
           minHeight: windowHeight,
           backgroundColor: 'white',
         }}>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          style={{
-            paddingTop: moderateScale(10, 0.6),
-            paddingHorizontal: moderateScale(18, 0.6),
-          }}
-          contentContainerStyle={{
-            paddingBottom: moderateScale(10, 0.6),
-          }}
-          data={dummyArray}
-          renderItem={(item, index) => {
-            return <BookYourCapComponent item={item?.item} />;
-          }}
-        />
-          
-        
-         </ScrollView>
+        <View style={{paddingHorizontal: moderateScale(18, 0.6)}}>
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            style={{
+              paddingTop: moderateScale(10, 0.6),
+              paddingHorizontal: moderateScale(18, 0.6),
+            }}
+            contentContainerStyle={{
+              paddingBottom: moderateScale(10, 0.6),
+            }}
+            data={dummyArray}
+            renderItem={(item, index) => {
+              return <BookYourCapComponent item={item?.item} />;
+            }}
+          />
+        </View>
+      </ScrollView>
     </ScreenBoiler>
   );
 };

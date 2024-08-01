@@ -14,7 +14,7 @@ import {moderateScale, scale} from 'react-native-size-matters';
 import CustomText from './CustomText';
 import Color from '../Assets/Utilities/Color';
 
-const CustomButton = props => {
+const CustomButton = (props ) => {
   const {
     activeOpacity,
     onPress,
@@ -42,6 +42,7 @@ const CustomButton = props => {
     alignSelf,
     elevation,
     marginRight,
+    textstyle
   } = props;
   return (
     <TouchableOpacity
@@ -154,9 +155,10 @@ const CustomButton = props => {
           <CustomText
             style={[
               styles.text,
+              textstyle,
               {
                 color: textColor,
-                fontSize: fontSize ? fontSize : moderateScale(15, 0.3),
+                // fontSize: fontSize ? fontSize : moderateScale(15, 0.3),
               },
               textTransform && {
                 textTransform: textTransform,
@@ -192,6 +194,7 @@ const styles = StyleSheet.create({
     // fontWeight: 'bold',
     textTransform: 'uppercase',
     textAlign: 'center',
+    // ...FONTS.Medium11
   },
   indicatorStyle: {
     paddingRight: 5,

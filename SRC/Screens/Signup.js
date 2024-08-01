@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import * as Animatable from 'react-native-animatable';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
@@ -16,9 +16,6 @@ import {
 import CustomText from '../Components/CustomText';
 import CustomButton from '../Components/CustomButton';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -29,15 +26,18 @@ import navigationService from '../navigationService';
 // import CardContainer from '../Components/CardContainer';
 import DropDownSingleSelect from '../Components/DropDownSingleSelect';
 import {Post} from '../Axios/AxiosInterceptorFunction';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {setUserData} from '../Store/slices/common';
-import {SetUserRole, setUserToken} from '../Store/slices/auth';
+import {SetUserRole, setUserToken} from '../Store/slices/auth-slice';
 import {ToastAndroid} from 'react-native';
 import {Platform} from 'react-native';
 import {validateEmail} from '../Config';
 import {Icon} from 'native-base';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import {useNavigation} from '@react-navigation/native';
+import localStorage from 'redux-persist/es/storage';
+import localStoreUtil from '../Utillity/localstoreUntil';
+import {mode} from 'native-base/lib/typescript/theme/tools';
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -46,6 +46,7 @@ const Signup = () => {
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState(null);
   const [confirmPass, setconfirmPass] = useState('');
   const [showNumberModal, setShowNumberModal] = useState(false);
   console.log(
@@ -66,12 +67,11 @@ const Signup = () => {
     region: 'Americas',
     subregion: 'North America',
   });
-  const [userRole, setuserRole] = useState('seller');
   const [withCallingCode, setWithCallingCode] = useState(true);
   const [withFilter, setFilter] = useState(true);
-  const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
-  const UserRoleArray = ['seller', 'buyer'];
+  const {user_type} = useSelector(state => state.authReducer);
+  console.log(user_type, 'userrtypeeeeee');
 
   const onSelect = country => {
     // console.log('dasdasdasdads =>', country);
@@ -134,7 +134,7 @@ const Signup = () => {
 
           <View
             style={{
-              height: windowHeight * 0.15,
+              height: windowHeight * 0.12,
               width: windowHeight * 0.3,
               // backgroundColor :'red'
             }}>
@@ -152,9 +152,8 @@ const Signup = () => {
               color: Color.white,
               fontSize: moderateScale(12, 0.6),
               width: windowWidth * 0.8,
-
               paddingTop: moderateScale(15, 0.6),
-              textAlign: 'justify',
+              textAlign: 'center',
             }}
             numberOfLines={2}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
@@ -177,13 +176,13 @@ const Signup = () => {
               viewHeight={0.06}
               viewWidth={0.75}
               inputWidth={0.55}
-              borderBottomWidth={2}
+              borderBottomWidth={1}
               // borderRadius={moderateScale(30, 0.3)}
               backgroundColor={'transparent'}
               borderColor={Color.black}
               marginTop={moderateScale(10, 0.3)}
               color={Color.white}
-              placeholderColor={Color.white}
+              placeholderColor={Color.lightGrey}
               // elevation
             />
             <TextInputWithTitle
@@ -198,7 +197,7 @@ const Signup = () => {
               viewHeight={0.06}
               viewWidth={0.75}
               inputWidth={0.55}
-              borderBottomWidth={2}
+              borderBottomWidth={1}
               // borderRadius={moderateScale(30, 0.3)}
               backgroundColor={'transparent'}
               borderColor={Color.black}
@@ -221,7 +220,7 @@ const Signup = () => {
               viewHeight={0.06}
               viewWidth={0.75}
               inputWidth={0.55}
-              borderBottomWidth={2}
+              borderBottomWidth={1}
               // borderRadius={moderateScale(30, 0.3)}
               // borderColor={'#000'}
               backgroundColor={'transparent'}
@@ -243,7 +242,7 @@ const Signup = () => {
               viewHeight={0.06}
               viewWidth={0.75}
               inputWidth={0.55}
-              borderBottomWidth={2}
+              borderBottomWidth={1}
               // borderRadius={moderateScale(30, 0.3)}
               // borderColor={'#000'}
               backgroundColor={'transparent'}
@@ -252,6 +251,31 @@ const Signup = () => {
               placeholderColor={Color.white}
               // elevation
             />
+            {user_type === 'Rider' && (
+              <TextInputWithTitle
+                iconHeigth={windowHeight * 0.00005}
+                iconName={'check'}
+                iconType={FontAwesome}
+                LeftIcon={true}
+                titleText={'Phone Number'}
+                placeholder={'Enter Your Phone Number Here'}
+                setText={setPhoneNumber}
+                value={phoneNumber}
+                secureText={true}
+                viewHeight={0.06}
+                viewWidth={0.75}
+                inputWidth={0.55}
+                borderBottomWidth={1}
+                // borderRadius={moderateScale(30, 0.3)}
+                // borderColor={'#000'}
+                backgroundColor={'transparent'}
+                marginTop={moderateScale(30, 0.3)}
+                color={Color.white}
+                placeholderColor={Color.white}
+                keyboardType={'numeric'}
+                // elevation
+              />
+            )}
             {/* <TouchableOpacity
               onPress={() => {
                 setShowNumberModal(true);
@@ -301,15 +325,15 @@ const Signup = () => {
                 }}
               />
             </TouchableOpacity> */}
+            <View style={{marginTop: moderateScale(20, 0.6)}} />
             <CustomButton
               onPress={() => {
                 dispatch(setUserToken({token: 'abc'}));
                 navigation.goBack();
               }}
               text={'sign in'}
-              fontSize={moderateScale(14, 0.3)}
               textColor={Color.white}
-              borderWidth={2}
+              borderWidth={1}
               borderColor={Color.white}
               borderRadius={moderateScale(8, 0.3)}
               width={windowWidth * 0.4}
@@ -320,18 +344,20 @@ const Signup = () => {
               // isGradient
             />
           </View>
-          <CustomText
-            style={{
-              color: Color.white,
-              fontSize: moderateScale(12, 0.6),
-              width: windowWidth * 0.85,
-              position: 'absolute',
-              bottom: 30,
-            }}
-            numberOfLines={2}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
-            suscipit gravida tellus, eu ullamcorper.
-          </CustomText>
+          <View style={styles.text_view}>
+            <CustomText
+              style={{
+                color: Color.lightGrey,
+                fontSize: moderateScale(10, 0.6),
+                // ...FONTS.Light10,
+                textAlign: 'center',
+                paddingHorizontal: moderateScale(45, 0.6),
+              }}
+              numberOfLines={2}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
+              suscipit gravida tellus, eu ullamcorper.
+            </CustomText>
+          </View>
         </LinearGradient>
         <ImagePickerModal
           show={imagePicker}
@@ -351,6 +377,11 @@ const styles = ScaledSheet.create({
     width: windowWidth,
     alignItems: 'center',
     backgroundColor: '#cc5200',
+  },
+  text_view: {
+    justifyContent: 'flex-end',
+    flex: 1,
+    marginBottom: moderateScale(40, 0.6),
   },
   birthday: {
     width: windowWidth * 0.75,

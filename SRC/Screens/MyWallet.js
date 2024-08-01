@@ -16,8 +16,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import {Icon} from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
 import CustomImage from '../Components/CustomImage';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import PaymentCard from '../Components/PaymentCard';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const MyWallet = ({navigation}) => {
   const [payment_type, set_Payemnt_type] = useState('Cash');

@@ -1,7 +1,7 @@
-import {FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import {moderateScale} from 'react-native-size-matters';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { moderateScale } from 'react-native-size-matters';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import Header from '../Components/Header';
 import CustomText from '../Components/CustomText';
@@ -11,13 +11,10 @@ import { Card } from 'native-base';
 import HistoryComponent from '../Components/HistoryComponent';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import Icon from  'native-base'
-
-
-
+import Icon from 'native-base'
 
 const PaymentHistory = () => {
-const navigation=useNavigation()
+  const navigation = useNavigation()
 
   const dummyArray = [
     {
@@ -96,8 +93,6 @@ const navigation=useNavigation()
     },
   ];
 
-
-
   return (
     <ScrollView
       contentContainerStyle={{
@@ -109,7 +104,7 @@ const navigation=useNavigation()
         minHeight: windowHeight,
         backgroundColor: 'white',
       }}>
-   
+
       <Header showBack={true} title={'payment History'} headerColor={['white', 'white']} />
 
       {/* <View style={styles.row}>
@@ -195,9 +190,6 @@ const navigation=useNavigation()
         </View>
       </View> */}
 
-
-
-
       <FlatList
         showsVerticalScrollIndicator={false}
         style={{
@@ -225,8 +217,8 @@ const styles = StyleSheet.create({
     height: windowHeight * 0.08,
     flexDirection: 'row',
     paddingHorizontal: moderateScale(10, 0.6),
-    borderColor:Color.cartheme1,
-    borderWidth:1,
+    borderColor: Color.cartheme1,
+    borderWidth: 1,
   },
   text: {
     textAlign: 'center',
@@ -244,7 +236,7 @@ const styles = StyleSheet.create({
     padding: moderateScale(5, 0.6),
     marginTop: moderateScale(10, 0.6),
   },
-  header:{
+  header: {
     width: windowWidth,
     paddingHorizontal: moderateScale(12, 0.3),
     paddingVertical: moderateScale(12, 0.2),
@@ -252,7 +244,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  logo:{
+  logo: {
     width: windowHeight * 0.045,
     justifyContent: 'center',
     alignItems: 'center',
@@ -261,7 +253,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#dedbdbc8',
     borderRadius: (windowHeight * 0.045) / 2,
   },
-  btn:{
+  btn: {
     width: windowWidth * 0.09,
     backgroundColor: 'white',
     height: windowWidth * 0.09,
@@ -269,7 +261,7 @@ const styles = StyleSheet.create({
     elevation: 12,
     alignItems: 'center',
     borderRadius: (windowWidth * 0.09) / 2,
-    zIndex :1
+    zIndex: 1
   },
 
 });

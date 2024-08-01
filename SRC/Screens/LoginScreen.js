@@ -27,9 +27,9 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import navigationService from '../navigationService';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 // import CardContainer from '../Components/CardContainer';
-import {SetUserRole, setUserToken} from '../Store/slices/auth';
+import {SetUserRole, setUserToken} from '../Store/slices/auth-slice';
 import {Post} from '../Axios/AxiosInterceptorFunction';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {setUserData} from '../Store/slices/common';
@@ -42,6 +42,7 @@ import {position} from 'native-base/lib/typescript/theme/styled-system';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 const LoginScreen = props => {
+  const dispatch = useDispatch();
   // const navigation =useNavigation()
   const [username, setUserName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -51,10 +52,11 @@ const LoginScreen = props => {
   const [image, setImage] = useState({});
   const navigation = useNavigation();
 
-  const dispatch = useDispatch();
+  const {user_type} = useSelector(state => state.authReducer);
+  console.log(user_type, 'userrtypeeeeee');
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1}}>
       <ScreenBoiler
         statusBarBackgroundColor={'white'}
         statusBarContentStyle={'dark-content'}>
@@ -78,15 +80,7 @@ const LoginScreen = props => {
                 }}
               />
             </View>
-            <CustomText
-              style={{
-                color: Color.white,
-                fontSize: moderateScale(13, 0.6),
-                width: windowWidth * 0.8,
-                // textAlign: 'justify',
-                marginTop: moderateScale(-45, 0.3),
-              }}
-              numberOfLines={2}>
+            <CustomText style={styles.description} numberOfLines={2}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
               suscipit gravida tellus, eu ullamcorper.
             </CustomText>
@@ -105,18 +99,16 @@ const LoginScreen = props => {
                 setText={setUserName}
                 value={username}
                 viewHeight={0.06}
-                viewWidth={0.75}
+                viewWidth={0.85}
                 inputWidth={0.55}
-                borderBottomWidth={2}
-                // borderRadius={moderateScale(30, 0.3)}
+                borderBottomWidth={1}
+                borderRadius={moderateScale(30, 0.3)}
                 backgroundColor={'transparent'}
                 borderColor={Color.black}
                 marginTop={moderateScale(10, 0.3)}
                 color={Color.white}
-                placeholderColor={Color.white}
-                // elevation
+                placeholderColor={Color.lightGrey}
               />
-
               <TextInputWithTitle
                 iconHeigth={windowHeight * 0.00005}
                 iconName={'key'}
@@ -128,18 +120,18 @@ const LoginScreen = props => {
                 value={password}
                 secureText={true}
                 viewHeight={0.06}
-                viewWidth={0.75}
+                viewWidth={0.85}
                 inputWidth={0.55}
-                borderBottomWidth={2}
-                // borderRadius={moderateScale(30, 0.3)}
+                borderBottomWidth={1}
+                borderRadius={moderateScale(30, 0.3)}
                 // borderColor={'#000'}
                 backgroundColor={'transparent'}
                 marginTop={moderateScale(30, 0.3)}
                 color={Color.white}
-                placeholderColor={Color.white}
+                placeholderColor={Color.lightGrey}
                 // elevation
               />
-
+              <View style={{marginTop: moderateScale(20, 0.6)}} />
               <CustomButton
                 onPress={() => {
                   // navigation.navigate('EnterLocationScreen');
@@ -149,7 +141,7 @@ const LoginScreen = props => {
                 text={'Log in'}
                 fontSize={moderateScale(14, 0.3)}
                 textColor={Color.white}
-                borderWidth={2}
+                borderWidth={1.5}
                 borderColor={Color.white}
                 borderRadius={moderateScale(8, 0.3)}
                 width={windowWidth * 0.4}
@@ -157,33 +149,29 @@ const LoginScreen = props => {
                 marginTop={moderateScale(30, 0.3)}
                 bgColor={'transparent'}
                 isBold
-                // isGradient
               />
-
-              <CustomText style={styles.txt5}>
-                don't have an ancount ?
-              </CustomText>
             </View>
-
+            <CustomText style={styles.text}>don't have an ancount ?</CustomText>
             <CustomText
               isBold
               onPress={() => navigation.navigate('Signup')}
-              style={styles.txt6}>
+              style={styles.signup_btn}>
               Sign up
             </CustomText>
-
-            <CustomText
-              style={{
-                color: Color.white,
-                fontSize: moderateScale(13, 0.6),
-                width: windowWidth * 0.85,
-                position: 'absolute',
-                bottom: 50,
-              }}
-              numberOfLines={2}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
-              suscipit gravida tellus, eu ullamcorper.
-            </CustomText>
+            <View style={styles.text_view}>
+              <CustomText
+                style={{
+                  color: Color.lightGrey,
+                  // ...FONTS.Light10,
+                  textAlign: 'center',
+                  fontSize: moderateScale(13, 0.6),
+                  width: windowWidth * 0.85,
+                }}
+                numberOfLines={2}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
+                suscipit gravida tellus, eu ullamcorper.
+              </CustomText>
+            </View>
           </LinearGradient>
           {/* </ImageBackground> */}
           <ImagePickerModal
@@ -204,13 +192,22 @@ const styles = StyleSheet.create({
     width: windowWidth,
     alignItems: 'center',
   },
-  txt5: {
+  description: {
+    color: Color.lightGrey,
+    // ...FONTS.Light10,
+    fontSize: moderateScale(13, 0.6),
+    paddingHorizontal: moderateScale(32, 0.6),
+    marginTop: moderateScale(-45, 0.3),
+    textAlign: 'center',
+  },
+  text: {
     color: 'white',
     marginTop: moderateScale(20, 0.3),
+    // ...FONTS.Regular10,
     fontSize: moderateScale(13, 0.6),
     paddingTop: moderateScale(10, 0.3),
   },
-  txt6: {
+  signup_btn: {
     fontSize: moderateScale(16, 0.6),
     color: 'white',
   },
@@ -235,6 +232,11 @@ const styles = StyleSheet.create({
     borderRadius: (windowHeight * 0.03) / 2,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  text_view: {
+    justifyContent: 'flex-end',
+    flex: 1,
+    marginBottom: moderateScale(40, 0.6),
   },
 });
 

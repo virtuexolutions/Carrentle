@@ -20,7 +20,7 @@ import Feather from 'react-native-vector-icons/Feather';
 
 import {useDispatch, useSelector} from 'react-redux';
 import {imageUrl} from '../Config';
-import {setUserLogout, setUserLogoutAuth} from '../Store/slices/auth';
+import {setUserLogout, setUserLogoutAuth} from '../Store/slices/auth-slice';
 import LinearGradient from 'react-native-linear-gradient';
 import {setUserLogOut} from '../Store/slices/common';
 import navigationService from '../navigationService';
@@ -46,6 +46,7 @@ const Header = props => {
     Notify,
     hideUser,
     navigation,
+    textstyle,
   } = props;
 
   const [searchText, setSearchText] = useState('');
@@ -78,7 +79,7 @@ const Header = props => {
 
   return (
     <LinearGradient
-      style={[styles.header2 , index && {zIndex : 1}]}
+      style={[styles.header2, index && {zIndex: 1}]}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 1}}
       colors={headerColor ? headerColor : Color.themeBgColor}>
@@ -110,7 +111,7 @@ const Header = props => {
             color={Color.black}
             onPress={() => {
               console.log('hello mg ');
-              navigation.toggleDrawer();
+              navigationN.toggleDrawer();
               // navigation.openDrawer()
               // navigationN.dispatch(DrawerActions.toggleDrawer());
             }}
@@ -118,12 +119,7 @@ const Header = props => {
         )}
       </View>
       {title ? (
-        <CustomText
-          style={{
-            fontSize: moderateScale(18, 0.6),
-            color: Color.black,
-          }}
-          isBold>
+        <CustomText style={[styles.text, textstyle]} isBold>
           {title}
         </CustomText>
       ) : (
@@ -227,6 +223,10 @@ const styles = ScaledSheet.create({
 
     elevation: 11,
   },
+  text: {
+    fontSize: moderateScale(18, 0.6),
+    color: Color.black,
+  },
   menu: {
     height: windowHeight * 0.05,
     width: windowHeight * 0.05,
@@ -270,7 +270,6 @@ const styles = ScaledSheet.create({
     paddingHorizontal: moderateScale(20, 0.3),
     paddingVertical: moderateScale(15, 0.3),
     alignItems: 'center',
-   
   },
   notificationCircle: {
     position: 'absolute',

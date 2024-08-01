@@ -20,7 +20,7 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Entypo from "react-native-vector-icons/Entypo";
-import { setUserLogout } from "../Store/slices/auth";
+import { setUserLogout } from "../Store/slices/auth-slice";
 import { setUserLogOut } from "../Store/slices/common";
 import { imageUrl } from "../Config";
 // import { imageUrl } from "../Config/apiUrl";

@@ -17,7 +17,6 @@ const AuthSlice = createSlice({
     setUserToken(state, action) {
       state.token = action?.payload?.token;   
     },
-    
     SetFCMToken(state, action) {
       state.fcmToken = action?.payload?.fcmToken;
     },
@@ -40,15 +39,12 @@ const AuthSlice = createSlice({
 });
 
 export const {
-  
   setUserLogin,
   setUserLogoutAuth,
   setUserToken,
   SetFCMToken,
   setWalkThrough,
   SetUserRole
-  
-  
 } = AuthSlice.actions;
 
 export default AuthSlice.reducer;
