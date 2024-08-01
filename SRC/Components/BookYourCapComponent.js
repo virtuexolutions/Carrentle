@@ -173,7 +173,6 @@ const BookYourCapComponent = ({item}) => {
         onPress={() => {
           navigation.navigate('BoardingPointScreen');
         }}
-        // textstyle={{...FONTS.poppinsRegular10}}
         text={'Book your cab'}
         textColor={Color.white}
         borderWidth={2}

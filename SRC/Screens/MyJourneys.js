@@ -115,7 +115,9 @@ const MyJourneys = () => {
                   end={{x: 4, y: 2}}
                   colors={['#00309E', '#79B9F6', '#FFFFFF']}
                   style={styles.button}>
-                  <CustomText style={{color: Color.white}}>{item.buttontext}</CustomText>
+                  <CustomText style={{color: Color.white}}>
+                    {item.buttontext}
+                  </CustomText>
                 </LinearGradient>
                 {/* <View style={styles.button}></View> */}
               </View>

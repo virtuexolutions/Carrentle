@@ -46,6 +46,7 @@ import MyWallet from './Screens/MyWallet';
 import EditProfile from './Screens/EditProfile';
 import Help from './Screens/Help';
 import MyJourneys from './Screens/MyJourneys';
+import PaymentHistory from './Screens/PaymentHistory';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
