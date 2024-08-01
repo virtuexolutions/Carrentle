@@ -42,6 +42,7 @@ import BoardingPointDetails from './Screens/BoardingPointDetails';
 import TaxiAvailability from './Screens/TaxiAvailability';
 import BoardingPointSearchScreen from './Screens/BoardingPointSearchScreen';
 import PaymentHistory from './Screens/PaymentHistory';
+import MyWallet from './Screens/MyWallet';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -54,14 +55,12 @@ const AppNavigator = () => {
   const RootNavLogged = createNativeStackNavigator();
 
   const AppNavigatorContainer = () => {
-    const firstScreen = 'LoginScreen'
-   
-   
-    // walkThrough == false
-      //   ? 'WalkThroughScreen'
-      //   : token == null
-      //   ? 'LoginScreen'
-      //   : 'MyDrawer';
+    const firstScreen =
+      walkThrough == false
+        ? 'WalkThroughScreen'
+        : token == null
+        ? 'LoginScreen'
+        : 'MyDrawer';
 
     return (
       <NavigationContainer ref={navigationService.navigationRef}>
@@ -111,7 +110,6 @@ const AppNavigator = () => {
             name="TaxiAvailability"
             component={TaxiAvailability}
           />
-
         </RootNav.Navigator>
       </NavigationContainer>
     );
@@ -235,9 +233,12 @@ export const MyDrawer = () => {
         headerShown: false,
       }}>
       <DrawerNavigation.Screen name="HomeScreen" component={HomeScreen} />
-      <DrawerNavigation.Screen name="PaymentHistory" component={PaymentHistory} />
+      <DrawerNavigation.Screen
+        name="PaymentHistory"
+        component={PaymentHistory}
+      />
       <DrawerNavigation.Screen name="PaymentScreen" component={PaymentScreen} />
-      
+
       <DrawerNavigation.Screen
         name="BoardingPointSearchScreen"
         component={BoardingPointSearchScreen}
@@ -250,6 +251,8 @@ export const MyDrawer = () => {
         name="TermsAndConditions"
         component={TermsAndConditions}
       />
+
+      <DrawerNavigation.Screen name="MyWallet" component={MyWallet} />
     </DrawerNavigation.Navigator>
   );
 };

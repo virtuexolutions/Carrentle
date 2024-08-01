@@ -71,7 +71,7 @@ const Drawer = () => {
       iconName: 'wallet',
       iconType: AntDesign,
       onPress: () => {
-        // navigation.navigate('HomeScreen');
+        navigation.navigate('MyWallet');
       },
     },
     {
