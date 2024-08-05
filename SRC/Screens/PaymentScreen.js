@@ -7,31 +7,26 @@ import {
   PermissionsAndroid,
   ToastAndroid,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Color from '../Assets/Utilities/Color';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
+import { windowHeight, windowWidth } from '../Utillity/utils';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
-import {Rating} from 'react-native-ratings';
+import { Rating } from 'react-native-ratings';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
-import {Icon} from 'native-base';
+import { Icon } from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CustomButton from '../Components/CustomButton';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 const PaymentScreen = () => {
   const navigation = useNavigation();
   console.log('🚀 ~ PaymentScreen ~ navigation:');
   return (
     <ScreenBoiler
-      // showHeader
-      // headerTransparent={true}
-      // title={'confrim your payment'}
-      // headerColor={['white', 'white']}
-      // hideUser={false}
       statusBarBackgroundColor={'white'}
       statusBarContentStyle={'dark-content'}>
       <View style={styles.header}>
@@ -46,7 +41,7 @@ const PaymentScreen = () => {
         <View style={styles.logo}>
           <CustomImage
             source={require('../Assets/Images/Group13.png')}
-            style={{width: windowHeight * 0.04, height: windowHeight * 0.04}}
+            style={{ width: windowHeight * 0.04, height: windowHeight * 0.04 }}
           />
         </View>
       </View>
@@ -63,7 +58,7 @@ const PaymentScreen = () => {
           <View style={styles.row}>
             <View style={styles.userImage}>
               <CustomImage
-                style={{height: '100%', width: '100%', overflow: 'hidden'}}
+                style={{ height: '100%', width: '100%', overflow: 'hidden' }}
                 source={require('../Assets/Images/dummyUser.png')}
               />
             </View>
@@ -121,7 +116,7 @@ const PaymentScreen = () => {
                 as={Fontisto}
                 name="map-marker-alt"
                 size={moderateScale(17, 0.2)}
-                style={{color: '#FF8A00', textAlign: 'center'}}
+                style={{ color: '#FF8A00', textAlign: 'center' }}
               />
               <CustomText style={styles.dot}>- - - - -</CustomText>
               <Icon
@@ -207,7 +202,7 @@ const PaymentScreen = () => {
             <CustomText isBold style={styles.dollar}>
               $10.00{' '}
             </CustomText>
-            <CustomText isBold style={[styles.dollar, {color: '#193075'}]}>
+            <CustomText isBold style={[styles.dollar, { color: '#193075' }]}>
               visa
             </CustomText>
           </View>
@@ -217,7 +212,7 @@ const PaymentScreen = () => {
             promo code
           </CustomText>
           <View style={styles.promoView}>
-            <CustomText style={{fontSize: moderateScale(11, 0.6)}}>
+            <CustomText style={{ fontSize: moderateScale(11, 0.6) }}>
               DJ248JN245
             </CustomText>
             <Icon
@@ -229,13 +224,13 @@ const PaymentScreen = () => {
           </View>
         </View>
         <View style={styles.Textrow}>
-          <CustomText isBold style={{fontSize: moderateScale(12, 0.6)}}>
+          <CustomText isBold style={{ fontSize: moderateScale(12, 0.6) }}>
             trip fare breakdown
           </CustomText>
           <CustomText>$10.00</CustomText>
         </View>
         <View style={styles.Textrow}>
-          <CustomText isBold style={{fontSize: moderateScale(12, 0.6)}}>
+          <CustomText isBold style={{ fontSize: moderateScale(12, 0.6) }}>
             sub total
           </CustomText>
           <CustomText>$10.00</CustomText>
@@ -258,7 +253,7 @@ const PaymentScreen = () => {
           </CustomText>
         </View>
         <View style={styles.Textrow}>
-          <CustomText isBold style={{fontSize: moderateScale(14, 0.6)}}>
+          <CustomText isBold style={{ fontSize: moderateScale(14, 0.6) }}>
             total
           </CustomText>
           <CustomText>$10.00</CustomText>
@@ -345,7 +340,7 @@ const styles = StyleSheet.create({
     marginTop: moderateScale(11, 0.2),
     textAlign: 'center',
     marginLeft: moderateScale(2.5, 0.2),
-    transform: [{rotate: '90deg'}],
+    transform: [{ rotate: '90deg' }],
   },
   shadowprops: {
     elevation: 7,

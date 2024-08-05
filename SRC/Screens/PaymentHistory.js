@@ -14,78 +14,88 @@ const PaymentHistory = () => {
   const dummyArray = [
     {
       id: 1,
-      carN0: 'car no2',
-      ratings: 4.5,
-      carModel: '2013 dodge caravan',
       userImage: require('../Assets/Images/men.png'),
-      carimage: require('../Assets/Images/car1.png'),
-      ratingCount: '4.0',
-      time: '3 mint',
-      distance: '0.2 km',
-      availableSeat: 2,
-      pickUppoint: 'fannie street san angelo, texas',
-      dropLocation: 'navile street salem colorado',
+      date: 'Dec 20 2024',
+      time: '10 : 00 AM',
+      price: '$15',
+      taxi_expanse: 'Taxi Expance',
+      name: "Danial Austin"
     },
     {
       id: 2,
-      carN0: 'car no3',
-      ratings: 4.1,
-      time: '5 mint',
-      ratingCount: '3.0',
-
-      carModel: '2013 dodge caravan',
       userImage: require('../Assets/Images/dummyUser.png'),
-      carimage: require('../Assets/Images/car3.png'),
-      distance: '0.4 km',
-      availableSeat: 4,
-      pickUppoint: 'fannie street san angelo, texas',
-      dropLocation: 'navile street salem colorado',
+      date: 'Dec 20 2024',
+      time: '10 : 00 AM',
+      price: '$15',
+      taxi_expanse: 'Taxi Expance',
+      name: "Danial Austin"
     },
     {
       id: 3,
-      carN0: 'car no22',
-      ratings: 4.2,
-      ratingCount: '4.0',
-      time: '10 mint',
-      distance: '0.5 km',
-
-      carModel: '2013 dodge caravan',
       userImage: require('../Assets/Images/dummyUser.png'),
-      carimage: require('../Assets/Images/car4.png'),
-      availableSeat: 3,
-      pickUppoint: 'fannie street san angelo, texas',
-      dropLocation: 'navile street salem colorado',
+      date: 'Dec 20 2024',
+      time: '10 : 00 AM',
+      price: '$15',
+      taxi_expanse: 'Taxi Expance',
+      name: "Danial Austin"
+
     },
     {
       id: 4,
-      carN0: 'car no12',
-      ratings: 3.5,
-      ratingCount: '3.0',
-      time: '3 mint',
-      distance: '0.4 km',
-
-      carModel: '2013 dodge caravan',
       userImage: require('../Assets/Images/dummyman1.png'),
-      carimage: require('../Assets/Images/car3.png'),
-      availableSeat: 2,
-      pickUppoint: 'fannie street san angelo, texas',
-      dropLocation: 'navile street salem colorado',
+      date: 'Dec 20 2024',
+      time: '10 : 00 AM',
+      price: '$15',
+      taxi_expanse: 'Taxi Expance',
+      name: "Danial Austin"
+
     },
     {
       id: 5,
-      carN0: 'car no22',
-      ratings: 2.9,
-      time: '20 mint',
-
-      carModel: '2013 dodge caravan',
       userImage: require('../Assets/Images/dummyUser1.png'),
-      carimage: require('../Assets/Images/car4.png'),
-      ratingCount: '2.0',
-      distance: '0.11 km',
-      availableSeat: 1,
-      pickUppoint: 'fannie street san angelo, texas',
-      dropLocation: 'navile street salem colorado',
+      date: 'Dec 20 2024',
+      time: '10 : 00 AM',
+      price: '$15',
+      taxi_expanse: 'Taxi Expance',
+      name: "Danial Austin"
     },
+    {
+      id: 6,
+      userImage: require('../Assets/Images/dummyUser1.png'),
+      date: 'Dec 20 2024',
+      time: '10 : 00 AM',
+      price: '$15',
+      taxi_expanse: 'Taxi Expance',
+      name: "Danial Austin"
+    },
+    {
+      id: 7,
+      userImage: require('../Assets/Images/dummyUser1.png'),
+      date: 'Dec 20 2024',
+      time: '10 : 00 AM',
+      price: '$15',
+      taxi_expanse: 'Taxi Expance',
+      name: "Danial Austin"
+    },
+    {
+      id: 8,
+      userImage: require('../Assets/Images/dummyUser1.png'),
+      date: 'Dec 20 2024',
+      time: '10 : 00 AM',
+      price: '$15',
+      taxi_expanse: 'Taxi Expance',
+      name: "Danial Austin"
+    },
+    {
+      id: 9,
+      userImage: require('../Assets/Images/dummyUser1.png'),
+      date: 'Dec 20 2024',
+      time: '10 : 00 AM',
+      price: '$15',
+      taxi_expanse: 'Taxi Expance',
+      name: "Danial Austin"
+    },
+
   ];
 
   return (
@@ -100,90 +110,6 @@ const PaymentHistory = () => {
       }}>
 
       <Header showBack={true} title={'payment History'} headerColor={['white', 'white']} />
-
-      {/* <View style={styles.row}>
-        <View style={styles.container}>
-          <View style={styles.image}>
-            <CustomImage
-              style={{
-                height: '100%',
-                width: '100%',
-              }}
-              source={require('../Assets/Images/caricon.png')}
-            />
-          </View>
-          <View
-            style={{
-              paddingHorizontal: moderateScale(9, 0.6),
-              justifyContent: 'center',
-            }}>
-            <CustomText
-              
-              style={[
-                styles.text,
-                {
-                  fontSize: moderateScale(12, 0.6),
-                },
-              ]}>
-              total jobs
-            </CustomText>
-            <CustomText
-            isBold
-              style={[
-                styles.text,
-                {
-                  fontSize: moderateScale(13, 0.6),
-                },
-              ]}>
-              10
-            </CustomText>
-          </View>
-        </View>
-        <View style={[styles.container,{
-          borderRadius:moderateScale(10,.6)
-        }]}>
-          <View
-            style={[
-              styles.image,
-              {height: windowHeight * 0.053, width: windowWidth * 0.1},
-            ]}>
-            <CustomImage
-              style={{
-                height: '100%',
-                width: '100%',
-              }}
-              source={require('../Assets/Images/coin.png')}
-            />
-          </View>
-          <View
-            style={{
-              paddingHorizontal: moderateScale(9, 0.6),
-              justifyContent: 'center',
-            }}>
-            <CustomText
-             
-              style={[
-                styles.text,
-                {
-                  fontSize: moderateScale(12, 0.6),
-                },
-              ]}>
-              total earning
-            </CustomText>
-            <CustomText
-            isBold
-              style={[
-                styles.text,
-                {
-                  fontSize: moderateScale(13, 0.6),
-                },
-              ]}>
-              1045
-            </CustomText>
-          </View>
-        </View>
-      </View> */}
-
       <FlatList
         showsVerticalScrollIndicator={false}
         style={{
@@ -195,7 +121,7 @@ const PaymentHistory = () => {
         }}
         data={dummyArray}
         renderItem={(item, index) => {
-          return <HistoryComponent item={item?.item} />;
+          return <HistoryComponent data={item?.item} />;
         }}
       />
     </ScrollView>

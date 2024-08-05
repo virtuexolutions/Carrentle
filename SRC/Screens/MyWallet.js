@@ -6,20 +6,20 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import ScreenBoiler from '../Components/ScreenBoiler';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import CustomText from '../Components/CustomText';
 import LinearGradient from 'react-native-linear-gradient';
-import {Icon} from 'native-base';
+import { Icon } from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
 import CustomImage from '../Components/CustomImage';
 import PaymentCard from '../Components/PaymentCard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-const MyWallet = ({navigation}) => {
+const MyWallet = ({ navigation }) => {
   const paymentHistoryList = [
     {
       id: 1,
@@ -60,9 +60,13 @@ const MyWallet = ({navigation}) => {
       statusBarContentStyle={'dark-content'}>
       <View style={styles.container}>
         <LinearGradient
-          start={{x: 0, y: 2.1}}
-          end={{x: 4, y: 2}}
-          colors={['#00309E', '#79B9F6', '#FFFFFF']}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          colors={['#71B0F0', '#4680D1', '#00309E']}
+          locations={[0, 0.5, 1]}
+          // start={{ x: 0.5, y: 0 }}
+          // end={{ x: 0, y: 1.5 }}
+          // colors={['#00309E', '#79B9F6', '#FFFFFF']}
           style={styles.card_view}>
           <View style={styles.tab_bar_view}>
             <TouchableOpacity
@@ -75,7 +79,7 @@ const MyWallet = ({navigation}) => {
                   backgroundColor: Color.white,
                 },
               ]}>
-              <CustomText style={[styles.tab_bar_text, {color: Color.black}]}>
+              <CustomText style={[styles.tab_bar_text, { color: Color.black }]}>
                 Cash
               </CustomText>
             </TouchableOpacity>
@@ -89,7 +93,7 @@ const MyWallet = ({navigation}) => {
                   backgroundColor: 'transparent',
                 },
               ]}>
-              <CustomText style={[styles.tab_bar_text, {color: Color.white}]}>
+              <CustomText style={[styles.tab_bar_text, { color: Color.white }]}>
                 Discount
               </CustomText>
             </TouchableOpacity>
@@ -146,7 +150,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card_view: {
-    height: windowHeight * 0.19,
+    height: windowHeight * 0.21,
     width: windowWidth * 0.9,
     borderRadius: moderateScale(20, 0.3),
     justifyContent: 'center',
@@ -154,7 +158,7 @@ const styles = StyleSheet.create({
     marginBottom: moderateScale(45, 0.3),
   },
   payment: {
-    fontSize: moderateScale(18, 0.6),
+    fontSize: moderateScale(22, 0.6),
     color: Color.white,
     textAlign: 'center',
   },
@@ -171,7 +175,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     position: 'absolute',
-    top: moderateScale(120, 0.6),
+    top: moderateScale(130, 0.6),
     borderRadius: moderateScale(20, 0.3),
     shadowColor: Color.black,
     shadowOffset: {
@@ -239,6 +243,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4.84,
     elevation: 5,
   },
-  tab_bar_text: {fontSize: moderateScale(12, 0.3), color: Color.black},
-  selected_tab_text: {fontSize: moderateScale(12, 0.3), color: Color.white},
+  tab_bar_text: { fontSize: moderateScale(12, 0.3), color: Color.black },
+  selected_tab_text: { fontSize: moderateScale(12, 0.3), color: Color.white },
 });

@@ -1,42 +1,36 @@
-import {View, Text, StyleSheet} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Icon } from 'native-base';
 import React from 'react';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale} from 'react-native-size-matters';
+import { StyleSheet, View } from 'react-native';
+import { Rating } from 'react-native-ratings';
+import { moderateScale } from 'react-native-size-matters';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Color from '../Assets/Utilities/Color';
+import { windowHeight, windowWidth } from '../Utillity/utils';
+import CustomButton from './CustomButton';
 import CustomImage from './CustomImage';
 import CustomText from './CustomText';
-import {Divider, Icon} from 'native-base';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import CustomButton from './CustomButton';
-import {Rating} from 'react-native-ratings';
-import Color from '../Assets/Utilities/Color';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {
-  background,
-  color,
-  position,
-} from 'native-base/lib/typescript/theme/styled-system';
-import {useNavigation} from '@react-navigation/native';
 
-const BookYourCapComponent = ({item}) => {
+const BookYourCapComponent = ({ item }) => {
   const navigation = useNavigation();
   return (
     <View style={[styles.container, styles.shadowprops]}>
       <View style={styles.imageContainer}>
         <CustomImage
-          style={{height: '100%', width: '100%'}}
+          style={{ height: '100%', width: '100%' }}
           source={item?.carimage}
         />
       </View>
       <View style={styles.row}>
         <View style={styles.userImage}>
           <CustomImage
-            style={{height: '100%', width: '100%', overflow: 'hidden'}}
+            style={{ height: '100%', width: '100%', overflow: 'hidden' }}
             source={item?.userImage}
           />
         </View>
         <View style={styles.rowInnerView}>
           <CustomText style={styles.text}>{item?.carN0}</CustomText>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Rating
               type="custom"
               startingValue={item?.ratings}
@@ -65,9 +59,9 @@ const BookYourCapComponent = ({item}) => {
       </CustomText>
 
       <View style={styles.distanceView}>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{ flexDirection: 'row' }}>
           <View
-            style={{height: windowHeight * 0.028, width: windowWidth * 0.1}}>
+            style={{ height: windowHeight * 0.028, width: windowWidth * 0.1 }}>
             <CustomImage
               style={{
                 height: '100%',
@@ -133,7 +127,7 @@ const BookYourCapComponent = ({item}) => {
                 color: 'black',
                 top: 17,
                 marginLeft: moderateScale(-7, 0.6),
-                transform: [{rotate: '-90deg'}],
+                transform: [{ rotate: '-90deg' }],
               },
             ]}>
             -----
@@ -207,14 +201,6 @@ const styles = StyleSheet.create({
     // shadowOpacity: 0.5,
     // shadowRadius: 30,
   },
-  // shadowprops: {
-  //   shadowColor: 'black',
-  //   shadowOffset: { width: 0, height: 1 },
-  //   shadowOpacity: 0.5,
-  //   shadowRadius: 2,
-  //   elevation: 5,
-  // },
-
   imageContainer: {
     height: windowHeight * 0.2,
     overflow: 'hidden',

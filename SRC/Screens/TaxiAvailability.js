@@ -13,8 +13,8 @@ const TaxiAvailability = () => {
   return (
     <LinearGradient
       colors={['#00309E', '#79B9F6']}
-      start={{x: 0.45, y: 0.3}}
-      end={{x: 0.2, y: 0.75}}
+      start={{ x: 0.45, y: 0.3 }}
+      end={{ x: 0.2, y: 0.75 }}
       style={{
         width: windowWidth,
         height: windowHeight,
@@ -73,7 +73,7 @@ const TaxiAvailability = () => {
         </CustomText>
       </View>
       <CustomButton
-        textstyle={{color: Color.blue, fontSize: moderateScale(16, 0.6)}}
+        textstyle={{ color: Color.blue, fontSize: moderateScale(16, 0.6) }}
         bgColor={'white'}
         textColor={Color.themeColor}
         text={'City'}
@@ -88,7 +88,7 @@ const TaxiAvailability = () => {
         borderRadius={moderateScale(12, 0.2)}
       />
       <CustomButton
-        textstyle={{color: Color.white, fontSize: moderateScale(16, 0.3)}}
+        textstyle={{ color: Color.white, fontSize: moderateScale(16, 0.3) }}
         marginTop={moderateScale(10, 0.2)}
         textColor={'white'}
         text={'Out of City'}
@@ -103,7 +103,7 @@ const TaxiAvailability = () => {
         height={windowHeight * 0.09}
         borderRadius={moderateScale(12, 0.2)}
       />
-      <View style={{alignItems: 'center', position: 'absolute', bottom: 45}}>
+      <View style={{ alignItems: 'center', position: 'absolute', bottom: 45 }}>
         <CustomText
           style={{
             marginTop: moderateScale(14, 0.2),

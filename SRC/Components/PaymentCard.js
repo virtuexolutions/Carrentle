@@ -1,14 +1,14 @@
-import React, {useState} from 'react';
-import {Image, View, TouchableOpacity, StyleSheet} from 'react-native';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale} from 'react-native-size-matters';
+import React, { useState } from 'react';
+import { Image, View, TouchableOpacity, StyleSheet } from 'react-native';
+import { windowHeight, windowWidth } from '../Utillity/utils';
+import { moderateScale } from 'react-native-size-matters';
 import CustomText from './CustomText';
-import {Code, Icon} from 'native-base';
+import { Code, Icon } from 'native-base';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from './CustomImage';
 import Feather from 'react-native-vector-icons/Feather';
 
-const PaymentCard = ({data, onPress}) => {
+const PaymentCard = ({ data, onPress }) => {
   return (
     <View style={styles.container}>
       <View
@@ -20,7 +20,7 @@ const PaymentCard = ({data, onPress}) => {
           top: moderateScale(-20, 0.3),
         }}>
         <CustomImage
-          style={{width: '100%', height: '100%'}}
+          style={{ width: '100%', height: '100%' }}
           resizeMode={'cover'}
           source={data?.profilepic}
         />
@@ -34,7 +34,7 @@ const PaymentCard = ({data, onPress}) => {
       </CustomText>
       <View style={styles.text_view}>
         <View>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Icon name="map-pin" as={Feather} color={Color.orange} />
             <CustomText
               isBold={true}
@@ -54,7 +54,7 @@ const PaymentCard = ({data, onPress}) => {
                   paddingVertical: moderateScale(10, 0.6),
                   top: 11,
                   // marginLeft: moderateScale(-3, 0.6),
-                  transform: [{rotate: '-90deg'}],
+                  transform: [{ rotate: '-90deg' }],
                 },
               ]}>
               - - -
@@ -70,7 +70,7 @@ const PaymentCard = ({data, onPress}) => {
           </CustomText>
 
           <View
-            style={{flexDirection: 'row', marginTop: moderateScale(7, 0.6)}}>
+            style={{ flexDirection: 'row', marginTop: moderateScale(7, 0.6) }}>
             <Icon name="map-pin" as={Feather} color={Color.cartheme} />
             <CustomText
               isBold={true}
@@ -96,7 +96,7 @@ const PaymentCard = ({data, onPress}) => {
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-          <CustomText style={{color: Color.grey}}>{data?.distance}</CustomText>
+          <CustomText style={{ color: Color.grey }}>{data?.distance}</CustomText>
           <CustomText>{'$ ' + data?.price}</CustomText>
         </View>
       </View>
@@ -110,12 +110,21 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: Color.white,
     height: windowHeight * 0.2,
-    width: windowWidth * 0.9,
+    width: windowWidth * 0.8,
     marginTop: moderateScale(20, 0.6),
     borderRadius: moderateScale(20, 0.6),
     marginTop: moderateScale(30, 0.6),
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: Color.themeColor,
+    shadowOffset: {
+      width: 6,
+      height: 10,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10.84,
+    elevation: 3,
+    marginHorizontal: moderateScale(20, 0.6)
   },
   text_view: {
     flexDirection: 'row',

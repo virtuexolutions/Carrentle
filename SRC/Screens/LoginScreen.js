@@ -19,6 +19,7 @@ import ImagePickerModal from '../Components/ImagePickerModal';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import { windowHeight, windowWidth } from '../Utillity/utils';
+import CustomModal from '../Components/CustomModal';
 
 const LoginScreen = props => {
   const dispatch = useDispatch();
@@ -30,18 +31,18 @@ const LoginScreen = props => {
   const [image, setImage] = useState({});
   const navigation = useNavigation();
 
-  const {user_type} = useSelector(state => state.authReducer);
+  const { user_type } = useSelector(state => state.authReducer);
   console.log(user_type, 'userrtypeeeeee');
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       <ScreenBoiler
         statusBarBackgroundColor={'white'}
         statusBarContentStyle={'dark-content'}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <LinearGradient
-            start={{x: 0, y: 2.1}}
-            end={{x: 4, y: 2}}
+            start={{ x: 0, y: 2.1 }}
+            end={{ x: 4, y: 2 }}
             colors={['#00309E', '#79B9F6', '#FFFFFF']}
             style={styles.container}>
             <View
@@ -107,7 +108,7 @@ const LoginScreen = props => {
                 color={Color.white}
                 placeholderColor={Color.lightGrey}
               />
-              <View style={{marginTop: moderateScale(20, 0.6)}} />
+              <View style={{ marginTop: moderateScale(20, 0.6) }} />
               <CustomButton
                 onPress={() => {
                   navigation.navigate('TaxiAvailability');

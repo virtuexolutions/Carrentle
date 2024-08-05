@@ -1,12 +1,12 @@
-import {ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import { Icon } from 'native-base';
 import React from 'react';
-import Header from '../Components/Header';
-import {moderateScale} from 'react-native-size-matters';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import CustomText from '../Components/CustomText';
-import {Icon} from 'native-base';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { moderateScale } from 'react-native-size-matters';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {FONTS} from '../Constant/theme';
+import CustomText from '../Components/CustomText';
+import Header from '../Components/Header';
+import { FONTS } from '../Constant/theme';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 
 const Help = () => {
   const helpArray = [
@@ -180,13 +180,13 @@ const styles = StyleSheet.create({
     // shadowOffset: {width: 0.5, height: 1},
     // shadowOpacity: 0.25,
     // shadowRadius: 3.25,
-    shadowColor: '#093AA438',
+    shadowColor: '#093AA438#093AA438',
     shadowOffset: {
       width: 0,
-      height: 3,
+      height: 4,
     },
     shadowOpacity: 0.25,
-    shadowRadius: 4.84,
-    elevation: 5,
+    shadowRadius: 5.84,
+    elevation: 10,
   },
 });
