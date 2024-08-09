@@ -13,6 +13,7 @@ const CustomText = (props) => {
           textTransform: "capitalize",
           // textTransform: "capitalize",
           color: Color.black,
+          
         },
         style,
         { fontFamily: "PlusJakartaDisplay-Regular" },

@@ -32,7 +32,6 @@ const LoginScreen = props => {
   const navigation = useNavigation();
 
   const { user_type } = useSelector(state => state.authReducer);
-  console.log(user_type, 'userrtypeeeeee');
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

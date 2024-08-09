@@ -50,6 +50,7 @@ import PaymentHistory from './Screens/PaymentHistory';
 import MyTrips from './Screens/MyTrips';
 import BookingRequest from './Screens/BookingRequest';
 import CencalTexi from './Screens/CancelTaxi';
+import DashBoard from './Screens/Dashboard';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -57,6 +58,9 @@ const AppNavigator = () => {
   const role = useSelector(state => state.authReducer.role);
   const isVerified = useSelector(state => state.authReducer.isVerified);
   const token = useSelector(state => state.authReducer.token);
+
+  const { user_type } = useSelector(state => state.authReducer);
+  console.log(user_type, 'userrtypeeeeee');
 
   const RootNav = createNativeStackNavigator();
   const RootNavLogged = createNativeStackNavigator();
@@ -66,7 +70,7 @@ const AppNavigator = () => {
       walkThrough == false
         ? 'WalkThroughScreen'
         : token == null
-          ? 'LoginScreen'
+          ? 'Start'
           : 'MyDrawer';
 
     return (
@@ -234,17 +238,20 @@ export const TabNavigation = () => {
 
 export const MyDrawer = () => {
   const DrawerNavigation = createDrawerNavigator();
-  const firstScreen = 'HomeScreen';
+  const { user_type } = useSelector(state => state.authReducer);
+  const firstScreen = user_type === 'Rider' ? 'DashBoard' : 'HomeScreen';
   return (
     <DrawerNavigation.Navigator
       drawerContent={props => <Drawer {...props} />}
-      initialRouteName={'HomeScreen'}
+      initialRouteName={firstScreen}
       screenOptions={{
         headerShown: false,
 
         drawerStyle: { width: '80%' },
       }}>
       <DrawerNavigation.Screen name="HomeScreen" component={HomeScreen} />
+      <DrawerNavigation.Screen name="DashBoard" component={DashBoard} />
+
       <DrawerNavigation.Screen
         name="PaymentHistory"
         component={PaymentHistory}

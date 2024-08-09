@@ -19,6 +19,7 @@ import {
 } from './SRC/Utillity/utils';
 import SplashScreen from './SRC/Screens/SplashScreen';
 import AppNavigator from './SRC/appNavigation';
+import DashBoard from './SRC/Screens/Dashboard';
 
 const App = () => {
   const [publishableKey, setPublishableKey] = useState('');
