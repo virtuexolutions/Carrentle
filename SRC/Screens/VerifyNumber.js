@@ -24,21 +24,21 @@ import {
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
 import {useEffect} from 'react';
-import CardContainer from '../Components/CardContainer';
 import CustomStatusBar from '../Components/CustomStatusBar';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Icon} from 'native-base';
 import LinearGradient from 'react-native-linear-gradient';
+import {useNavigation} from '@react-navigation/native';
 
 const VerifyNumber = props => {
   const SelecteduserRole = useSelector(
     state => state.commonReducer.selectedRole,
   );
-  // const navigationN = useNavigation();
+  const navigationN = useNavigation();
 
   //params
   const fromForgot = props?.route?.params?.fromForgot;
-  const phoneNumber = props?.route?.params?.phoneNumber;
+  const email = props?.route?.params?.email;
 
   //states
   const [code, setCode] = useState('');
@@ -64,12 +64,12 @@ const VerifyNumber = props => {
   const sendOTP = async () => {
     const url = 'password/email';
     setIsLoading(true);
-    const response = await Post(url, {email: phoneNumber}, apiHeader());
+    const response = await Post(url, {email: email}, apiHeader());
     setIsLoading(false);
     if (response != undefined) {
       Platform.OS == 'android'
-        ? ToastAndroid.show(`OTP sent to ${phoneNumber}`, ToastAndroid.SHORT)
-        : alert(`OTP sent to ${phoneNumber}`);
+        ? ToastAndroid.show(`OTP sent to ${email}`, ToastAndroid.SHORT)
+        : alert(`OTP sent to ${email}`);
     }
   };
 
@@ -84,7 +84,7 @@ const VerifyNumber = props => {
         ? ToastAndroid.show(`otp verified`, ToastAndroid.SHORT)
         : alert(`otp verified`);
 
-      navigationService.navigate('ResetPassword', {phoneNumber: phoneNumber});
+      navigationService.navigate('ResetPassword', {email: email});
     }
   };
 
@@ -92,17 +92,16 @@ const VerifyNumber = props => {
     label();
   }, [time]);
 
-  // useEffect(()=>{
-  //   if(timerLabel == )
-  //   sendOTP();
-  // },[timerLabel])
+  useEffect(() => {
+    if (timerLabel == 0) {
+      sendOTP();
+    }
+  }, [timerLabel]);
 
   return (
     <>
       <CustomStatusBar
-       backgroundColor={
-       Color.white
-      }
+        backgroundColor={Color.white}
         barStyle={'dark-content'}
       />
       <LinearGradient
@@ -110,11 +109,11 @@ const VerifyNumber = props => {
           width: windowWidth,
           height: windowHeight,
         }}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y:1}}
-         colors={[Color.themeColor2,Color.themeColor2]}
+        start={{x: 0, y: 2.1}}
+        end={{x: 4, y: 2}}
+        colors={['#00309E', '#79B9F6', '#FFFFFF']}
         // locations ={[0, 0.5, 0.6]}
-        >
+      >
         <TouchableOpacity
           activeOpacity={0.8}
           style={{
@@ -133,7 +132,7 @@ const VerifyNumber = props => {
             name={'arrowleft'}
             as={AntDesign}
             size={moderateScale(22, 0.3)}
-            color={Color.yellow}
+            color={Color.black}
             onPress={() => {
               navigationN.goBack();
             }}
@@ -149,86 +148,76 @@ const VerifyNumber = props => {
             width: '100%',
             height: windowHeight,
           }}>
-          <CardContainer
-            style={{
-              paddingVertical: moderateScale(30, 0.3),
-              alignItems: 'center',
-            }}>
-            <CustomText isBold style={styles.txt2}>
-              Enter OTP
-            </CustomText>
-            <CustomText style={styles.txt3}>
-              Enter the email address and we'll send and email with instructions
-              to reset your password{' '}
-              {
-                <CustomText style={{color: Color.black}}>
-                  {phoneNumber}
+          <CustomText isBold style={styles.txt2}>
+            Enter OTP
+          </CustomText>
+          <CustomText style={styles.txt3}>
+            Enter the email address and we'll send and email with instructions
+            to reset your password{' '}
+            {
+              <CustomText isBold style={{color: Color.black}}>
+                {email}
+              </CustomText>
+            }
+          </CustomText>
+          <CodeField
+            placeholder={'0'}
+            ref={ref}
+            value={code}
+            onChangeText={setCode}
+            cellCount={CELL_COUNT}
+            rootStyle={styles.codeFieldRoot}
+            keyboardType="number-pad"
+            textContentType="oneTimeCode"
+            renderCell={({index, symbol, isFocused}) => (
+              <View
+                onLayout={getCellOnLayoutHandler(index)}
+                key={index}
+                style={[styles.cellRoot, isFocused && styles.focusCell]}>
+                <CustomText
+                  style={[styles.cellText, isFocused && {color: Color.black}]}>
+                  {symbol || (isFocused ? <Cursor /> : null)}
                 </CustomText>
-              }
-            </CustomText>
-            <CodeField
-              placeholder={'0'}
-              ref={ref}
-              value={code}
-              onChangeText={setCode}
-              cellCount={CELL_COUNT}
-              rootStyle={styles.codeFieldRoot}
-              keyboardType="number-pad"
-              textContentType="oneTimeCode"
-              renderCell={({index, symbol, isFocused}) => (
-                <View
-                  onLayout={getCellOnLayoutHandler(index)}
-                  key={index}
-                  style={[styles.cellRoot, isFocused && styles.focusCell]}>
-                  <CustomText
-                    style={[
-                      styles.cellText,
-                      isFocused && {color: Color.black},
-                    ]}>
-                    {symbol || (isFocused ? <Cursor /> : null)}
-                  </CustomText>
-                </View>
-              )}
-            />
-            <CustomText style={[styles.txt3, {width: windowWidth * 0.6}]}>
-              Haven't Recieved Verification Code ?{' '}
-              {
-                <TouchableOpacity
-                  disabled={timerLabel == 'Resend Code ' ? false : true}
-                  onPress={() => {
-                    settimerLabel('ReSend in '), settime(120);
-                  }}>
-                  <CustomText style={[styles.txt4]}>
-
-                    {timerLabel} {time}
-                  </CustomText>
-                </TouchableOpacity>
-              }
-            </CustomText>
-            <CustomButton
-              // textTransform={"capitalize"}
-              text={
-                isLoading ? (
-                  <ActivityIndicator color={'#ffffff'} size={'small'} />
-                ) : (
-                  'Verify now'
-                )
-              }
-              isBold
-              textColor={Color.white}
-              width={windowWidth * 0.4}
-              height={windowHeight * 0.06}
-              marginTop={moderateScale(20, 0.3)}
-              onPress={() => {
-                navigationService.navigate('ResetPassword', {
-                  phone: phoneNumber,
-                });
-              }}
-              bgColor={Color.yellow
-              }
-              // borderRadius={moderateScale(30, 0.3)}
-            />
-          </CardContainer>
+              </View>
+            )}
+          />
+          <CustomText style={[styles.txt3, {width: windowWidth * 0.6}]}>
+            Haven't Recieved Verification Code ?{' '}
+            {
+              <TouchableOpacity
+                disabled={timerLabel == 'Resend Code ' ? false : true}
+                onPress={() => {
+                  settimerLabel('ReSend in '), settime(120);
+                }}>
+                <CustomText style={[styles.txt4]}>
+                  {timerLabel} {time}
+                </CustomText>
+              </TouchableOpacity>
+            }
+          </CustomText>
+          <CustomButton
+            // textTransform={"capitalize"}
+            text={
+              isLoading ? (
+                <ActivityIndicator color={'#ffffff'} size={'small'} />
+              ) : (
+                'Verify now'
+              )
+            }
+            fontSize={moderateScale(14, 0.3)}
+            textColor={Color.white}
+            borderWidth={1.5}
+            borderColor={Color.white}
+            borderRadius={moderateScale(8, 0.3)}
+            width={windowWidth * 0.4}
+            height={windowHeight * 0.06}
+            marginTop={moderateScale(30, 0.3)}
+            bgColor={'transparent'}
+            isBold
+            onPress={() => {
+              VerifyOTP();
+            }}
+          />
         </KeyboardAwareScrollView>
       </LinearGradient>
     </>
@@ -236,21 +225,27 @@ const VerifyNumber = props => {
 };
 
 const styles = ScaledSheet.create({
+  container: {
+    paddingTop: windowHeight * 0.1,
+    height: windowHeight,
+    width: windowWidth,
+    alignItems: 'center',
+  },
   txt2: {
-    color: Color.black,
+    color: Color.white,
     fontSize: moderateScale(25, 0.6),
     textTransform: 'uppercase',
   },
   txt3: {
-    color: Color.themeLightGray,
+    color: Color.white,
     fontSize: moderateScale(11, 0.6),
     textAlign: 'center',
-    width: '95%',
+    width: '80%',
     marginTop: moderateScale(10, 0.3),
     lineHeight: moderateScale(20, 0.3),
   },
   txt4: {
-    color: Color.yellow,
+    color: Color.white,
     fontSize: moderateScale(14, 0.6),
     borderBottomWidth: 1,
     borderColor: Color.white,
@@ -270,8 +265,8 @@ const styles = ScaledSheet.create({
     marginRight: 'auto',
   },
   cellRoot: {
-    width: moderateScale(40, 0.3),
-    height: moderateScale(40, 0.3),
+    width: moderateScale(50, 0.3),
+    height: moderateScale(50, 0.3),
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: '#ccc',
@@ -284,11 +279,11 @@ const styles = ScaledSheet.create({
     // backgroundColor: Color.themeColor,
     // borderRadius: moderateScale(10, 0.3),
 
-    borderColor: Color.yellow,
+    borderColor: Color.darkBlue,
     borderWidth: 1,
   },
   cellText: {
-    color: Color.yellow,
+    color: Color.white,
     fontSize: moderateScale(20, 0.3),
     textAlign: 'center',
   },

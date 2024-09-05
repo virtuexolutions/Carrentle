@@ -1,19 +1,20 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import {useNavigation} from '@react-navigation/native';
+import React, {useState} from 'react';
 import {
   Alert,
   Platform,
   ScrollView,
   StyleSheet,
   ToastAndroid,
-  View
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { moderateScale } from 'react-native-size-matters';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {moderateScale} from 'react-native-size-matters';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
@@ -21,12 +22,12 @@ import CustomText from '../Components/CustomText';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import CustomModal from '../Components/CustomModal';
 import authAction from '../Store/auth-action';
-import { Post } from '../Axios/AxiosInterceptorFunction';
-import { getToken } from '../Utillity/auth.utill';
-import { setUserToken } from '../Store/slices/auth-slice';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import {getToken} from '../Utillity/auth.utill';
+import {setUserToken} from '../Store/slices/auth-slice';
 
 const LoginScreen = props => {
   const dispatch = useDispatch();
@@ -36,19 +37,16 @@ const LoginScreen = props => {
   const [password, setPassword] = useState('');
   const [imagePicker, setImagePicker] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const [image, setImage] = useState({});
   const navigation = useNavigation();
-  const { UserLogin } = authAction();
+  const {UserLogin} = authAction();
+  const token = getToken();
 
-  const token = getToken()
-
-  const { user_type } = useSelector(state => state.authReducer);
+  const {user_type} = useSelector(state => state.authReducer);
 
   const onpressSubmit = async () => {
     const url = 'login';
-    const body = { email: username, password: password };
-
+    const body = {email: username, password: password};
     for (let key in body) {
       if (body[key] == '') {
         return Platform.OS == 'android'
@@ -56,30 +54,26 @@ const LoginScreen = props => {
           : Alert.alert(`${key} is required`);
       }
     }
-
     setLoading(true);
     const response = await Post(url, body, apiHeader(token));
     setLoading(false);
     if (response != undefined) {
-      navigation.navigate('TaxiAvailability')
-      console.log(response?.data, 'dataaaaaaaaa')
-      console.log(response?.data, 'dataaaaaaaaa')
-      dispatch(setUserToken({ token: response?.data?.token }));
+      navigation.navigate('TaxiAvailability');
+      console.log(response?.data, 'dataaaaaaaaa');
+      dispatch(setUserToken({token: response?.data?.token}));
       dispatch(setUserData(response?.data?.user_info));
     }
   };
 
-
-
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{flex: 1}}>
       <ScreenBoiler
         statusBarBackgroundColor={'white'}
         statusBarContentStyle={'dark-content'}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <LinearGradient
-            start={{ x: 0, y: 2.1 }}
-            end={{ x: 4, y: 2 }}
+            start={{x: 0, y: 2.1}}
+            end={{x: 4, y: 2}}
             colors={['#00309E', '#79B9F6', '#FFFFFF']}
             style={styles.container}>
             <View
@@ -145,11 +139,27 @@ const LoginScreen = props => {
                 color={Color.white}
                 placeholderColor={Color.lightGrey}
               />
-              <View style={{ marginTop: moderateScale(20, 0.6) }} />
+              <TouchableOpacity
+                onPress={() => navigation.navigate('VerifyEmail')}
+                activeOpacity={0.6}
+                style={{
+                  alignSelf: 'flex-end',
+                  marginTop: moderateScale(8, 0.6),
+                }}>
+                <CustomText
+                  style={{
+                    fontSize: moderateScale(12, 0.7),
+                    textDecorationLine: 'underline',
+                    color: 'white',
+                  }}>
+                  Forget Password?
+                </CustomText>
+              </TouchableOpacity>
+              <View style={{marginTop: moderateScale(20, 0.6)}} />
               <CustomButton
                 onPress={() => {
-                  // onpressSubmit()
-                  navigation.navigate('TaxiAvailability');
+                  onpressSubmit();
+                  // navigation.navigate('TaxiAvailability');
                 }}
                 text={'Log in'}
                 fontSize={moderateScale(14, 0.3)}
@@ -167,9 +177,7 @@ const LoginScreen = props => {
             <CustomText style={styles.text}>don't have an ancount ?</CustomText>
             <CustomText
               isBold
-              onPress={() =>
-                navigation.navigate('Signup')
-              }
+              onPress={() => navigation.navigate('Signup')}
               style={styles.signup_btn}>
               Sign up
             </CustomText>

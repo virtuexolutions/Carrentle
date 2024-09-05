@@ -1,11 +1,11 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
-import { windowHeight, windowWidth } from '../Utillity/utils';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useState} from 'react';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
 import Modal from 'react-native-modal';
 import CustomText from './CustomText';
-import { moderateScale } from 'react-native-size-matters';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import {moderateScale} from 'react-native-size-matters';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
 const SearchLocationModal = ({
   isModalVisible,
@@ -15,7 +15,7 @@ const SearchLocationModal = ({
   setPickupLocation,
   setdropOffLocation,
   onPressCurrentLocation,
-  isyourLocation = false
+  isyourLocation = false,
 }) => {
   return (
     <Modal
@@ -38,26 +38,28 @@ const SearchLocationModal = ({
           isBold>
           Select Location
         </CustomText>
-        {locationType == 'pickup' &&
-          <TouchableOpacity onPress={onPressCurrentLocation} style={{
-            width: windowWidth * 0.8,
-            height: windowHeight * 0.05,
-            backgroundColor: Color.white,
-            paddingHorizontal: moderateScale(10, 0.3),
-            marginVertical: moderateScale(12, 0.2),
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            flexDirection: 'row'
-          }}>
+        {locationType == 'pickup' && (
+          <TouchableOpacity
+            onPress={onPressCurrentLocation}
+            style={{
+              width: windowWidth * 0.8,
+              height: windowHeight * 0.05,
+              backgroundColor: Color.white,
+              paddingHorizontal: moderateScale(10, 0.3),
+              marginVertical: moderateScale(12, 0.2),
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              flexDirection: 'row',
+            }}>
             <CustomText>Use Your Current Location</CustomText>
           </TouchableOpacity>
-        }
+        )}
         <GooglePlacesAutocomplete
           placeholder="Search"
           textInputProps={{
+
             placeholderTextColor: '#5d5d5d',
             // value: inputValue,
-            // onChangeText: (text) => setInputValue(text),
           }}
           onPress={(data, details = null) => {
             console.log('Location ========>>>>', {
@@ -66,15 +68,17 @@ const SearchLocationModal = ({
               lng: details?.geometry?.location?.lng,
             });
             // setInputValue(data?.description)
-            locationType == 'pickup' ? setPickupLocation({
-              name: data?.description,
-              lat: details?.geometry?.location?.lat,
-              lng: details?.geometry?.location?.lng,
-            }) : setdropOffLocation({
-              name: data?.description,
-              lat: details?.geometry?.location?.lat,
-              lng: details?.geometry?.location?.lng,
-            })
+            locationType == 'pickup'
+              ? setPickupLocation({
+                  name: data?.description,
+                  lat: details?.geometry?.location?.lat,
+                  lng: details?.geometry?.location?.lng,
+                })
+              : setdropOffLocation({
+                  name: data?.description,
+                  lat: details?.geometry?.location?.lat,
+                  lng: details?.geometry?.location?.lng,
+                });
             setIsModalVisible(false);
           }}
           query={{
@@ -100,8 +104,8 @@ const SearchLocationModal = ({
               width: windowWidth * 0.8,
               marginLeft: moderateScale(5, 0.6),
               borderColor: Color.veryLightGray,
+              backgroundColor: 'red',
             },
-
             description: {
               color: 'black',
             },

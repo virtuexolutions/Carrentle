@@ -1,18 +1,12 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-import {
-  Alert,
-  Platform,
-  ScrollView,
-  ToastAndroid,
-  View
-} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import React, {useState} from 'react';
+import {Alert, Platform, ScrollView, ToastAndroid, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { moderateScale, ScaledSheet } from 'react-native-size-matters';
+import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
@@ -20,9 +14,9 @@ import CustomText from '../Components/CustomText';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import { setUserToken } from '../Store/slices/auth-slice';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
-import { Post } from '../Axios/AxiosInterceptorFunction';
+import {setUserToken} from '../Store/slices/auth-slice';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -52,7 +46,7 @@ const Signup = () => {
   const [withCallingCode, setWithCallingCode] = useState(true);
   const [withFilter, setFilter] = useState(true);
   const [address, setAddress] = useState('');
-  const { user_type } = useSelector(state => state.authReducer);
+  const {user_type} = useSelector(state => state.authReducer);
   console.log(user_type, 'userrtypeeeeee');
 
   const onSelect = country => {
@@ -61,10 +55,16 @@ const Signup = () => {
     setCountry(country);
   };
 
-
   const onpressSubmit = async () => {
     const url = 'register';
-    const body = { name: username, email: email, password: password, phone: phoneNumber, role: user_type, confirm_password: confirmPass };
+    const body = {
+      name: username,
+      email: email,
+      password: password,
+      phone: phoneNumber,
+      role: user_type,
+      confirm_password: confirmPass,
+    };
     for (let key in body) {
       if (body[key] == '') {
         return Platform.OS == 'android'
@@ -75,12 +75,12 @@ const Signup = () => {
     setIsLoading(true);
     const response = await Post(url, body, apiHeader());
     setIsLoading(false);
-    return console.log('body ====================> ', body, response?.data)
+    console.log('body ====================> ', body, response?.data);
     if (response != undefined) {
-      navigation.navigate('TaxiAvailability')
-      console.log(response?.data, 'dataaaaaaaaa')
-      console.log(response?.data, 'dataaaaaaaaa')
-      dispatch(setUserToken({ token: response?.data?.token }));
+      navigation.navigate('TaxiAvailability');
+      console.log(response?.data, 'dataaaaaaaaa');
+      console.log(response?.data, 'dataaaaaaaaa');
+      dispatch(setUserToken({token: response?.data?.token}));
       dispatch(setUserData(response?.data?.user_info));
     }
   };
@@ -97,8 +97,8 @@ const Signup = () => {
           }
         }>
         <LinearGradient
-          start={{ x: 0, y: 2.1 }}
-          end={{ x: 4, y: 2 }}
+          start={{x: 0, y: 2.1}}
+          end={{x: 4, y: 2}}
           colors={['#00309E', '#79B9F6', '#FFFFFF']}
           style={styles.container}>
           {/* <View
@@ -189,7 +189,7 @@ const Signup = () => {
               marginTop={moderateScale(10, 0.3)}
               color={Color.white}
               placeholderColor={Color.lightGrey}
-            // elevation
+              // elevation
             />
             <TextInputWithTitle
               iconHeigth={windowHeight * 0.00005}
@@ -210,7 +210,7 @@ const Signup = () => {
               marginTop={moderateScale(30, 0.3)}
               color={Color.white}
               placeholderColor={Color.white}
-            // elevation
+              // elevation
             />
 
             <TextInputWithTitle
@@ -233,7 +233,7 @@ const Signup = () => {
               marginTop={moderateScale(30, 0.3)}
               color={Color.white}
               placeholderColor={Color.white}
-            // elevation
+              // elevation
             />
             <TextInputWithTitle
               iconHeigth={windowHeight * 0.00005}
@@ -255,7 +255,7 @@ const Signup = () => {
               marginTop={moderateScale(30, 0.3)}
               color={Color.white}
               placeholderColor={Color.white}
-            // elevation
+              // elevation
             />
             {user_type === 'Rider' && (
               <TextInputWithTitle
@@ -279,7 +279,7 @@ const Signup = () => {
                 color={Color.white}
                 placeholderColor={Color.white}
                 keyboardType={'numeric'}
-              // elevation
+                // elevation
               />
             )}
             {/* <TouchableOpacity
@@ -331,12 +331,12 @@ const Signup = () => {
                 }}
               />
             </TouchableOpacity> */}
-            <View style={{ marginTop: moderateScale(20, 0.6) }} />
+            <View style={{marginTop: moderateScale(20, 0.6)}} />
             <CustomButton
               onPress={() => {
-                // onpressSubmit()
+                onpressSubmit()
                 // dispatch(setUserToken({ token: 'abc' }));
-                navigation.goBack();
+                // navigation.goBack();
               }}
               text={'sign up'}
               textColor={Color.white}
@@ -348,7 +348,7 @@ const Signup = () => {
               marginTop={moderateScale(35, 0.3)}
               bgColor={'transparent'}
               isBold
-            // isGradient
+              // isGradient
             />
           </View>
           <View style={styles.text_view}>
