@@ -1,4 +1,4 @@
-import {Icon} from 'native-base';
+import { Icon } from 'native-base';
 import React from 'react';
 import {
   ImageBackground,
@@ -8,15 +8,15 @@ import {
   View,
 } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {useDispatch} from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import ScreenBoiler from '../Components/ScreenBoiler';
-import {setWalkThrough} from '../Store/slices/auth-slice';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { setWalkThrough } from '../Store/slices/auth-slice';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 
 const WalkThroughScreen = props => {
   const dispatch = useDispatch();
@@ -44,7 +44,7 @@ const WalkThroughScreen = props => {
     },
   ];
 
-  const RenderSlider = ({item}) => {
+  const RenderSlider = ({ item }) => {
     return (
       <View style={styles.SliderContainer}>
         <ImageBackground
@@ -93,7 +93,7 @@ const WalkThroughScreen = props => {
                 lineHeight: moderateScale(44, 0.6),
                 position: 'absolute',
                 top: item?.key == 3 ? windowHeight * 0.37 : windowHeight * 0.24,
-                transform: [{rotate: item?.key == 2 ? '-90deg' : '-0deg'}],
+                transform: [{ rotate: item?.key == 2 ? '-90deg' : '-0deg' }],
                 left: item?.key != 3 ? 50 : 55,
                 letterSpacing: 0.6,
                 textTransform: 'upperCase',
@@ -110,8 +110,8 @@ const WalkThroughScreen = props => {
                   item?.key == 2
                     ? windowWidth * 0.63
                     : item?.key == 3
-                    ? windowWidth * 0.8
-                    : windowWidth * 0.9,
+                      ? windowWidth * 0.8
+                      : windowWidth * 0.9,
                 lineHeight: moderateScale(15, 0.3),
                 textAlign: 'left',
                 paddingVertical: moderateScale(5, 0.6),
@@ -120,8 +120,8 @@ const WalkThroughScreen = props => {
                   item?.key == 2
                     ? windowHeight * 0.63
                     : item?.key == 3
-                    ? windowHeight * 0.5
-                    : windowHeight * 0.69,
+                      ? windowHeight * 0.5
+                      : windowHeight * 0.69,
                 left: item?.key == 2 ? 125 : 0,
               }}
               numberOfLines={15}>
@@ -212,7 +212,7 @@ const WalkThroughScreen = props => {
           renderDoneButton={RenderDoneBtn}
           // renderNextButton={RenderNextBtn}
           renderSkipButton={RenderSkipBtn}
-          // renderPrevButton={RenderBackBtn}
+        // renderPrevButton={RenderBackBtn}
         />
       </View>
     </ScreenBoiler>
@@ -278,6 +278,6 @@ const styles = StyleSheet.create({
 });
 
 export default WalkThroughScreen;
-const BoldText = ({children}) => {
-  return <Text style={{fontWeight: 'bold'}}>{children}</Text>;
+const BoldText = ({ children }) => {
+  return <Text style={{ fontWeight: 'bold' }}>{children}</Text>;
 };

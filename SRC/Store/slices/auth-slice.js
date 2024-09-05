@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   token: null,
@@ -9,6 +9,9 @@ const initialState = {
   isGoalCreated: false,
   role: '',
   user_type: '',
+  auth_loading: '',
+  auth_loading_type: '',
+  user: ""
 };
 
 export const AuthSlice = createSlice({
@@ -39,6 +42,15 @@ export const AuthSlice = createSlice({
       state.userWalkThrough = action.payload;
       // console.log("🚀 ~ setWalkThrough ~ action.payload:", action.payload)
     },
+    setAuthLoading: (state, action) => {
+      state.auth_loading = action.payload;
+    },
+    setAuthLoadingType: (state, action) => {
+      state.auth_loading_type = action.payload;
+    },
+    setUser: (state, action) => {
+      state.user = action.payload
+    }
   },
 });
 
@@ -50,6 +62,9 @@ export const {
   setWalkThrough,
   SetUserRole,
   setUserType,
+  setAuthLoading,
+  setAuthLoadingType,
+  setUser
 } = AuthSlice.actions;
 
 export default AuthSlice.reducer;

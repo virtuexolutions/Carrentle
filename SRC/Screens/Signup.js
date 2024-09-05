@@ -1,7 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
+  Alert,
+  Platform,
   ScrollView,
+  ToastAndroid,
   View
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -18,7 +21,8 @@ import ImagePickerModal from '../Components/ImagePickerModal';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import { setUserToken } from '../Store/slices/auth-slice';
-import { windowHeight, windowWidth } from '../Utillity/utils';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -30,10 +34,7 @@ const Signup = () => {
   const [phoneNumber, setPhoneNumber] = useState(null);
   const [confirmPass, setconfirmPass] = useState('');
   const [showNumberModal, setShowNumberModal] = useState(false);
-  console.log(
-    '🚀 ~ file: Signup.js:48 ~ Signup ~ showNumberModal:',
-    showNumberModal,
-  );
+  // const [isLoading ,setIsLoading] =useState(false)
   const [countryCode, setCountryCode] = useState('US');
   const [imagePicker, setImagePicker] = useState(false);
   console.log('🚀 ~ file: Signup.js:50 ~ Signup ~ imagePicker:', imagePicker);
@@ -51,13 +52,37 @@ const Signup = () => {
   const [withCallingCode, setWithCallingCode] = useState(true);
   const [withFilter, setFilter] = useState(true);
   const [address, setAddress] = useState('');
-  const {user_type} = useSelector(state => state.authReducer);
+  const { user_type } = useSelector(state => state.authReducer);
   console.log(user_type, 'userrtypeeeeee');
 
   const onSelect = country => {
     // console.log('dasdasdasdads =>', country);
     setCountryCode(country.cca2);
     setCountry(country);
+  };
+
+
+  const onpressSubmit = async () => {
+    const url = 'register';
+    const body = { name: username, email: email, password: password, phone: phoneNumber, role: user_type, confirm_password: confirmPass };
+    for (let key in body) {
+      if (body[key] == '') {
+        return Platform.OS == 'android'
+          ? ToastAndroid.show(`${key} is required`, ToastAndroid.SHORT)
+          : Alert.alert(`${key} is required`);
+      }
+    }
+    setIsLoading(true);
+    const response = await Post(url, body, apiHeader());
+    setIsLoading(false);
+    return console.log('body ====================> ', body, response?.data)
+    if (response != undefined) {
+      navigation.navigate('TaxiAvailability')
+      console.log(response?.data, 'dataaaaaaaaa')
+      console.log(response?.data, 'dataaaaaaaaa')
+      dispatch(setUserToken({ token: response?.data?.token }));
+      dispatch(setUserData(response?.data?.user_info));
+    }
   };
 
   return (
@@ -72,8 +97,8 @@ const Signup = () => {
           }
         }>
         <LinearGradient
-          start={{x: 0, y: 2.1}}
-          end={{x: 4, y: 2}}
+          start={{ x: 0, y: 2.1 }}
+          end={{ x: 4, y: 2 }}
           colors={['#00309E', '#79B9F6', '#FFFFFF']}
           style={styles.container}>
           {/* <View
@@ -164,7 +189,7 @@ const Signup = () => {
               marginTop={moderateScale(10, 0.3)}
               color={Color.white}
               placeholderColor={Color.lightGrey}
-              // elevation
+            // elevation
             />
             <TextInputWithTitle
               iconHeigth={windowHeight * 0.00005}
@@ -185,7 +210,7 @@ const Signup = () => {
               marginTop={moderateScale(30, 0.3)}
               color={Color.white}
               placeholderColor={Color.white}
-              // elevation
+            // elevation
             />
 
             <TextInputWithTitle
@@ -208,7 +233,7 @@ const Signup = () => {
               marginTop={moderateScale(30, 0.3)}
               color={Color.white}
               placeholderColor={Color.white}
-              // elevation
+            // elevation
             />
             <TextInputWithTitle
               iconHeigth={windowHeight * 0.00005}
@@ -217,8 +242,8 @@ const Signup = () => {
               LeftIcon={true}
               titleText={'Password'}
               placeholder={'Re-type your Password'}
-              setText={setPassword}
-              value={password}
+              setText={setconfirmPass}
+              value={confirmPass}
               secureText={true}
               viewHeight={0.06}
               viewWidth={0.75}
@@ -230,19 +255,19 @@ const Signup = () => {
               marginTop={moderateScale(30, 0.3)}
               color={Color.white}
               placeholderColor={Color.white}
-              // elevation
+            // elevation
             />
             {user_type === 'Rider' && (
               <TextInputWithTitle
                 iconHeigth={windowHeight * 0.00005}
-                iconName={'check'}
+                iconName={'phone'}
                 iconType={FontAwesome}
                 LeftIcon={true}
                 titleText={'Phone Number'}
                 placeholder={'Enter Your Phone Number Here'}
                 setText={setPhoneNumber}
                 value={phoneNumber}
-                secureText={true}
+                // secureText={true}
                 viewHeight={0.06}
                 viewWidth={0.75}
                 inputWidth={0.55}
@@ -254,7 +279,7 @@ const Signup = () => {
                 color={Color.white}
                 placeholderColor={Color.white}
                 keyboardType={'numeric'}
-                // elevation
+              // elevation
               />
             )}
             {/* <TouchableOpacity
@@ -306,13 +331,14 @@ const Signup = () => {
                 }}
               />
             </TouchableOpacity> */}
-            <View style={{marginTop: moderateScale(20, 0.6)}} />
+            <View style={{ marginTop: moderateScale(20, 0.6) }} />
             <CustomButton
               onPress={() => {
-                dispatch(setUserToken({token: 'abc'}));
+                // onpressSubmit()
+                // dispatch(setUserToken({ token: 'abc' }));
                 navigation.goBack();
               }}
-              text={'sign in'}
+              text={'sign up'}
               textColor={Color.white}
               borderWidth={1}
               borderColor={Color.white}
@@ -322,7 +348,7 @@ const Signup = () => {
               marginTop={moderateScale(35, 0.3)}
               bgColor={'transparent'}
               isBold
-              // isGradient
+            // isGradient
             />
           </View>
           <View style={styles.text_view}>

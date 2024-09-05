@@ -1,27 +1,19 @@
+import { Icon } from 'native-base';
+import React from 'react';
 import {
-    Image,
-    ImageBackground,
-    ScrollView,
     StyleSheet,
-    Text,
     TouchableOpacity,
-    View,
-    FlatList
+    View
 } from 'react-native';
-import React, { useState } from 'react';
-import CustomText from '../Components/CustomText';
-import { windowHeight, windowWidth } from '../Utillity/utils';
-import Header from '../Components/Header';
+import LinearGradient from 'react-native-linear-gradient';
 import { moderateScale } from 'react-native-size-matters';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Feather from 'react-native-vector-icons/Feather';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
-import { Icon } from 'native-base';
-import Feather from 'react-native-vector-icons/Feather';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import { color } from 'native-base/lib/typescript/theme/styled-system';
-import LinearGradient from 'react-native-linear-gradient';
-import { mode } from 'native-base/lib/typescript/theme/tools';
-import CustomButton from '../Components/CustomButton';
+import CustomText from '../Components/CustomText';
+import Header from '../Components/Header';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 
 const BookingRequest = () => {
     return (

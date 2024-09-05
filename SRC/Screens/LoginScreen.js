@@ -1,8 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
+  Alert,
+  Platform,
   ScrollView,
   StyleSheet,
+  ToastAndroid,
   View
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -18,8 +21,12 @@ import CustomText from '../Components/CustomText';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import { windowHeight, windowWidth } from '../Utillity/utils';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 import CustomModal from '../Components/CustomModal';
+import authAction from '../Store/auth-action';
+import { Post } from '../Axios/AxiosInterceptorFunction';
+import { getToken } from '../Utillity/auth.utill';
+import { setUserToken } from '../Store/slices/auth-slice';
 
 const LoginScreen = props => {
   const dispatch = useDispatch();
@@ -28,10 +35,41 @@ const LoginScreen = props => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [imagePicker, setImagePicker] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const [image, setImage] = useState({});
   const navigation = useNavigation();
+  const { UserLogin } = authAction();
+
+  const token = getToken()
 
   const { user_type } = useSelector(state => state.authReducer);
+
+  const onpressSubmit = async () => {
+    const url = 'login';
+    const body = { email: username, password: password };
+
+    for (let key in body) {
+      if (body[key] == '') {
+        return Platform.OS == 'android'
+          ? ToastAndroid.show(`${key} is required`, ToastAndroid.SHORT)
+          : Alert.alert(`${key} is required`);
+      }
+    }
+
+    setLoading(true);
+    const response = await Post(url, body, apiHeader(token));
+    setLoading(false);
+    if (response != undefined) {
+      navigation.navigate('TaxiAvailability')
+      console.log(response?.data, 'dataaaaaaaaa')
+      console.log(response?.data, 'dataaaaaaaaa')
+      dispatch(setUserToken({ token: response?.data?.token }));
+      dispatch(setUserData(response?.data?.user_info));
+    }
+  };
+
+
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -110,6 +148,7 @@ const LoginScreen = props => {
               <View style={{ marginTop: moderateScale(20, 0.6) }} />
               <CustomButton
                 onPress={() => {
+                  // onpressSubmit()
                   navigation.navigate('TaxiAvailability');
                 }}
                 text={'Log in'}
@@ -128,7 +167,9 @@ const LoginScreen = props => {
             <CustomText style={styles.text}>don't have an ancount ?</CustomText>
             <CustomText
               isBold
-              onPress={() => navigation.navigate('Signup')}
+              onPress={() =>
+                navigation.navigate('Signup')
+              }
               style={styles.signup_btn}>
               Sign up
             </CustomText>

@@ -51,6 +51,7 @@ import MyTrips from './Screens/MyTrips';
 import BookingRequest from './Screens/BookingRequest';
 import CencalTexi from './Screens/CancelTaxi';
 import DashBoard from './Screens/Dashboard';
+// import ResetPassword from './Screens/ResetPassword';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -86,6 +87,8 @@ const AppNavigator = () => {
           <RootNav.Screen name="Start" component={Start} />
           <RootNav.Screen name="LoginScreen" component={LoginScreen} />
           <RootNav.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+          {/* <RootNav.Screen name="ResetPassword" component={ResetPassword} /> */}
+
           {/* <RootNav.Screen
             name="TermsAndConditions"
             component={TermsAndConditions}
@@ -239,7 +242,7 @@ export const TabNavigation = () => {
 export const MyDrawer = () => {
   const DrawerNavigation = createDrawerNavigator();
   const { user_type } = useSelector(state => state.authReducer);
-  const firstScreen = user_type === 'Rider' ? 'DashBoard' : 'HomeScreen';
+  const firstScreen = user_type === 'Rider' ? 'DashBoard' : 'BoardingPointScreen';
   return (
     <DrawerNavigation.Navigator
       drawerContent={props => <Drawer {...props} />}
