@@ -1,14 +1,21 @@
-import { Divider, Icon } from 'native-base';
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Platform, StyleSheet, ToastAndroid, TouchableOpacity, View } from 'react-native';
-import MapView, { Circle, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { moderateScale } from 'react-native-size-matters';
+import {Divider, Icon} from 'native-base';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  Alert,
+  Platform,
+  StyleSheet,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import MapView, {Circle, Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import {moderateScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CustomText from '../Components/CustomText';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
-import { getDistance } from 'geolib';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import {getDistance, isValidCoordinate} from 'geolib';
 import Geolocation from 'react-native-geolocation-service';
 import MapViewDirections from 'react-native-maps-directions';
 import Color from '../Assets/Utilities/Color';
@@ -17,24 +24,24 @@ import CustomButton from '../Components/CustomButton';
 import Loader from '../Components/Loader';
 import SearchLocationModal from '../Components/SearchLocationModal';
 import Header from '../Components/Header';
-import { Post } from '../Axios/AxiosInterceptorFunction';
-import { useSelector } from 'react-redux';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import {useSelector} from 'react-redux';
 
-const BoardingPointScreen = ({ navigation }) => {
-  console.log('first');
+const BoardingPointScreen = ({navigation}) => {
   const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
 
   const mapRef = useRef(null);
 
-  const token = useSelector((state) => state.authReducer.token);
+  const token = useSelector(state => state.authReducer.token);
+  const user = useSelector(state => state.commonReducer.userData);
+  console.log(user, 'sdaskdjahskd');
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pickupLocation, setPickUpLocation] = useState({});
   const [dropOffLocation, setDropOffLocation] = useState({});
   const [locationType, setLocationType] = useState('pickup');
   const [isYourLocation, setIsyourLocation] = useState(null);
-  const [send, setSend] = useState(false)
-  const circleCenter = { latitude: 24.8607333, longitude: 67.001135 };
+  const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
   const circleRadius = 15000;
   const [currentPossition, setcurrentPossition] = useState({});
   const [distance, setDistance] = useState(0);
@@ -51,7 +58,7 @@ const BoardingPointScreen = ({ navigation }) => {
     latitude: dropOffLocation?.lat || null,
     longitude: dropOffLocation?.lng || null,
   };
-  console.log(currentPossition, 'cureeentPOsition');
+
   useEffect(() => {
     const checkIfMarkerInsideCircle = () => {
       const dropoffdistance = getDistance(circleCenter, dropOffLocation);
@@ -73,45 +80,68 @@ const BoardingPointScreen = ({ navigation }) => {
       console.log('distanceeeeeeee', km);
       setDistance(km);
     }
-    // const watchId = Geolocation.watchPosition(
-    //   position => {
-    //     const { latitude, longitude } = position.coords;
-    //     console.log(latitude, longitude, '===================>');
-    //     setPickUpLocation({
-    //       ...location,
-    //       latitude,
-    //       longitude,
-    //     });
-    //   },
-    //   error => console.log(error),
-    //   { enableHighAccuracy: true, distanceFilter: 10, interval: 1000 },
-    // );
-    // return () => {
-    //   Geolocation.clearWatch(watchId);
-    // };
+    const watchId = Geolocation.watchPosition(
+      position => {
+        const {latitude, longitude} = position.coords;
+        setPickUpLocation(prevLocation => ({
+          ...prevLocation,
+          latitude,
+          longitude,
+        }));
+      },
+      error => console.log(error),
+      {enableHighAccuracy: true, distanceFilter: 10, interval: 1000},
+    );
+    return () => {
+      Geolocation.clearWatch(watchId);
+    };
   }, []);
 
   console.log(distance, 'distanceeee');
 
-  // useEffect(() => {
-  //   if (!origin || !destinations) return;
-  //   mapRef.current?.fitToSuppliedMarkers(['origin', 'destination'], {
-  //     edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
-  //   });
-  //   console.log('asdahsdgjsgj')
+  useEffect(() => {
+    if (!origin || !destinations) return;
+    mapRef.current?.fitToSuppliedMarkers(['origin', 'destination'], {
+      edgePadding: {top: 50, right: 50, bottom: 50, left: 50},
+    });
+    console.log('asdahsdgjsgj');
+  }, [origin, destinations]);
 
-  // }, [origin, destinations]);
+  useEffect(() => {
+    if (!origin || !destinations) return;
+    // const getTravelTime = async () => {
+    //   const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin}&destinations=${destinations}&key=${GOOGLE_MAPS_API_KEY}`;
+    //   const response = await fetch(url);
+    //   console.log(response, 'sdhahsdjagdjagdagsdgas');
+    // };
+    const getTravelTime = async () => {
+      try {
+        const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin.latitude},${origin.longitude}&destinations=${destinations.latitude},${destinations.longitude}&key=${GOOGLE_MAPS_API_KEY}`;
+        const response = await fetch(url);
 
-  // useEffect(() => {
-  //   if (!origin || !destinations) return;
-  //   const getTravelTime = async () => {
-  //     const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin}&destinations=${destinations}&key=${GOOGLE_MAPS_API_KEY}`;
-  //     const response = await fetch(url);
-  //     // console.log(response, 'sdhahsdjagdjagdagsdgas')
-  //   };
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
 
-  //   getTravelTime();
-  // }, [origin, destinations, GOOGLE_MAPS_API_KEY]);
+        const data = await response.json();
+        console.log(data, 'API Response');
+
+        if (data.status === 'OK') {
+          const distanceMatrix = data.rows[0].elements[0];
+          const travelTime = distanceMatrix.duration.text; // e.g., "1 hour 20 mins"
+          console.log(`Travel time: ${travelTime}`);
+          return travelTime;
+        } else {
+          console.error('Error fetching travel time:', data.status);
+          return null;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    getTravelTime();
+  }, [origin, destinations, GOOGLE_MAPS_API_KEY]);
 
   const getCurrentLocation = async () => {
     try {
@@ -146,7 +176,6 @@ const BoardingPointScreen = ({ navigation }) => {
     Platform.OS == 'android'
       ? ToastAndroid.show(`Ride Request is Send`, ToastAndroid.SHORT)
       : Alert.alert(`Ride Request is Send`);
-    setSend(true)
     // const data = {
     //   location_from: '1352 Ripple Street',
     //   locarion_to: ' 127 Limer Street',
@@ -165,6 +194,12 @@ const BoardingPointScreen = ({ navigation }) => {
     // }
   };
 
+  const isValidCoordinate = coordinate => {
+    return (
+      coordinate && !isNaN(coordinate.latitude) && !isNaN(coordinate.longitude)
+    );
+  };
+
   console.log(origin, 'origin', destinations, 'destinations');
 
   return (
@@ -172,26 +207,16 @@ const BoardingPointScreen = ({ navigation }) => {
       <Header
         index
         title={'Boarding Point'}
-        textstyle={{ color: Color.darkGray }}
+        textstyle={{color: Color.darkGray}}
         headerColor={['white', 'white']}
         hideUser={false}
         navigation={navigation}
       />
-      {/* <ImageBackground
-        style={{
-          width: windowWidth,
-          height: windowHeight,
-          alignItems: 'center',
-          paddingBottom: moderateScale(12, 0.2),
-        }}
-        source={require('../Assets/Images/map.png')}> */}
       <View style={styles.locBox}>
         <View
           style={{
             width: windowWidth * 0.85,
             backgroundColor: 'white',
-            // borderWidth: 1,
-
             borderRadius: moderateScale(10, 0.2),
             padding: moderateScale(12, 0.2),
           }}>
@@ -201,14 +226,11 @@ const BoardingPointScreen = ({ navigation }) => {
           style={{
             width: windowWidth * 0.85,
             gap: moderateScale(-7, 0.1),
-            // flexDirection: 'row',
-            // marginTop: moderateScale(4, 0.2),
             backgroundColor: '#f3f3f3f8',
-            // borderWidth:1,
             borderRadius: moderateScale(10, 0.2),
             padding: moderateScale(12, 0.2),
           }}>
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{flexDirection: 'row'}}>
             <Icon
               as={Entypo}
               name="dot-single"
@@ -242,20 +264,20 @@ const BoardingPointScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
           <View style={styles.dotView}>
-            <View style={{ gap: -5 }}>
+            <View style={{gap: -5}}>
               <Icon
                 as={Entypo}
                 name="dots-two-vertical"
                 size={moderateScale(24, 0.2)}
-                style={{ color: '#fcf36b' }}
-              // color={}
+                style={{color: '#fcf36b'}}
+                // color={}
               />
               <Icon
                 as={Entypo}
                 name="dots-two-vertical"
                 size={moderateScale(24, 0.2)}
-                style={{ color: '#fcf36b' }}
-              // color={}
+                style={{color: '#fcf36b'}}
+                // color={}
               />
             </View>
             <Divider
@@ -266,7 +288,7 @@ const BoardingPointScreen = ({ navigation }) => {
               borderColor={'#b0adad'}
             />
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Icon
               as={Entypo}
               name="dot-single"
@@ -306,8 +328,8 @@ const BoardingPointScreen = ({ navigation }) => {
           provider={PROVIDER_GOOGLE}
           style={styles.map}
           initialRegion={{
-            latitude: currentPossition.latitude,
-            longitude: currentPossition.longitude,
+            latitude: currentPossition.latitude || 0,
+            longitude: currentPossition.longitude || 0,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
@@ -323,23 +345,24 @@ const BoardingPointScreen = ({ navigation }) => {
             zIndex={1}
           />
 
-          {Object.keys(pickupLocation).length > 0 && (
-            <Marker
-              coordinate={{
-                latitude: isYourLocation
-                  ? pickupLocation?.latitude
-                  : pickupLocation?.lat,
-                longitude: isYourLocation
-                  ? pickupLocation?.longitude
-                  : pickupLocation?.lng,
-              }}
-              title={isYourLocation ? 'Your Location' : 'Pickup Location'}
-              pinColor="blue"
-            />
-          )}
+          {/* {Object.keys(pickupLocation).length > 0 &&
+            isValidCoordinate(pickupLocation) && (
+              <Marker
+                coordinate={{
+                  latitude: isYourLocation
+                    ? pickupLocation?.latitude
+                    : pickupLocation?.lat,
+                  longitude: isYourLocation
+                    ? pickupLocation?.longitude
+                    : pickupLocation?.lng,
+                }}
+                title={isYourLocation ? 'Your Location' : 'Pickup Location'}
+                pinColor="blue"
+              />
+            )} */}
           <Marker coordinate={currentPossition} title="Your Are Here Now" />
-          {Object.keys(pickupLocation).length > 0 &&
-            Object.keys(dropOffLocation).length > 0 ? (
+          {/* {Object.keys(pickupLocation).length > 0 &&
+          Object.keys(dropOffLocation).length > 0 ? (
             <MapViewDirections
               origin={origin}
               destination={destinations}
@@ -354,22 +377,22 @@ const BoardingPointScreen = ({ navigation }) => {
               }}
               tappable={true}
             />
-          ) : null}
-          {Object.keys(dropOffLocation).length > 0 && (
-            <Marker
-              coordinate={{
-                latitude: dropOffLocation?.lat,
-                longitude: dropOffLocation?.lng,
-              }}
-              title="Drop-off Location"
-              pinColor="green"
-            />
-          )}
+          ) : null} */}
+          {/* {Object.keys(dropOffLocation).length > 0 &&
+            isValidCoordinate(dropOffLocation) && (
+              <Marker
+                coordinate={{
+                  latitude: dropOffLocation?.lat,
+                  longitude: dropOffLocation?.lng,
+                }}
+                title="Drop-off Location"
+                pinColor="green"
+              />
+            )} */}
         </MapView>
       ) : (
         <Loader />
       )}
-
       {/* {currentPossition ?
         <MapView
           provider={PROVIDER_GOOGLE}
@@ -534,51 +557,48 @@ const BoardingPointScreen = ({ navigation }) => {
           as={MaterialIcons}
           name="my-location"
           size={moderateScale(24, 0.2)}
-          style={{ color: 'blue' }}
+          style={{color: 'blue'}}
         />
       </TouchableOpacity>
-      {/* {Object.keys(pickupLocation).length > 0 &&
-        Object.keys(dropOffLocation).length > 0 && ( */}
-      {send ? <></> : (
-        <>
-          <BookingCard
-            distance={distance || '7 Km'}
-            username={'Testing User'}
-            isSentRequest={true}
-            pickupLocation={
-              // isYourLocation ? 'Your Location' : pickupLocation?.name
-              ' 1352 Ripple Street'
-            }
-            dropoffLocation={dropOffLocation?.name || '127 Limer Street'}
-            time={'20 mints'}
-          />
-          <View
-            style={{
-              alignSelf: 'center',
-              position: 'absolute',
-              // bottom: 50, old
-              bottom: 70,
-              zIndex: 1,
-            }}>
-            <CustomButton
-              text={'Proceed'}
-              textColor={Color.white}
-              width={windowWidth * 0.8}
-              height={windowHeight * 0.06}
-              marginTop={moderateScale(20, 0.3)}
-              onPress={() => {
-                onPressProceed();
-              }}
-              bgColor={Color.cartheme}
-              borderColor={Color.white}
-              borderWidth={1}
-              borderRadius={moderateScale(30, 0.3)}
-              isGradient
+      {Object.keys(pickupLocation).length > 0 &&
+        Object.keys(dropOffLocation).length > 0 && (
+          <>
+            <BookingCard
+              distance={distance}
+              username={'Testing User'}
+              isSentRequest={true}
+              pickupLocation={
+                isYourLocation ? 'Your Location' : pickupLocation?.name
+              }
+              dropoffLocation={dropOffLocation?.name}
+              time={'20 mints'}
             />
-          </View>
-        </>
-      )}
-      {/* )} */}
+            <View
+              style={{
+                alignSelf: 'center',
+                position: 'absolute',
+                // bottom: 50, old
+                bottom: 70,
+                zIndex: 1,
+              }}>
+              <CustomButton
+                text={'Proceed'}
+                textColor={Color.white}
+                width={windowWidth * 0.8}
+                height={windowHeight * 0.06}
+                marginTop={moderateScale(20, 0.3)}
+                onPress={() => {
+                  onPressProceed();
+                }}
+                bgColor={Color.cartheme}
+                borderColor={Color.white}
+                borderWidth={1}
+                borderRadius={moderateScale(30, 0.3)}
+                isGradient
+              />
+            </View>
+          </>
+        )}
       <SearchLocationModal
         isModalVisible={isModalVisible}
         setIsModalVisible={setIsModalVisible}

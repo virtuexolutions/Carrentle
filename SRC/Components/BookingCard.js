@@ -1,33 +1,37 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
 
-import { Rating } from 'react-native-ratings';
+import {Rating} from 'react-native-ratings';
 import CustomImage from '../Components/CustomImage';
-import { Icon } from 'native-base';
+import {Icon} from 'native-base';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {
-  windowHeight,
-  windowWidth,
-} from '../Utillity/utils';
-import { moderateScale } from 'react-native-size-matters';
+import {windowHeight, windowWidth} from '../Utillity/utils';
+import {moderateScale} from 'react-native-size-matters';
 import CustomText from './CustomText';
 import Color from '../Assets/Utilities/Color';
 
-const BookingCard = ({ username, isSentRequest, pickupLocation, dropoffLocation, distance, time }) => {
+const BookingCard = ({
+  username,
+  isSentRequest,
+  pickupLocation,
+  dropoffLocation,
+  distance,
+  time,
+}) => {
   return (
     <View style={styles.card}>
       <View style={styles.row}>
         <View style={styles.userImage}>
           <CustomImage
-            style={{ height: '100%', width: '100%', overflow: 'hidden' }}
+            style={{height: '100%', width: '100%', overflow: 'hidden'}}
             source={require('../Assets/Images/men.png')}
           />
         </View>
         <View style={styles.rowInnerView}>
           <CustomText style={styles.text}>{username}</CustomText>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Rating
               type="custom"
               startingValue={5}
@@ -44,7 +48,7 @@ const BookingCard = ({ username, isSentRequest, pickupLocation, dropoffLocation,
               //  isBold
               style={{
                 fontSize: moderateScale(9, 0.6),
-                marginLeft: moderateScale(4, 0.3)
+                marginLeft: moderateScale(4, 0.3),
               }}>
               (8)
             </CustomText>
@@ -57,11 +61,11 @@ const BookingCard = ({ username, isSentRequest, pickupLocation, dropoffLocation,
           <CustomImage source={require('../Assets/Images/message.png')} />
         </TouchableOpacity>
       </View>
-      {isSentRequest ? null :
+      {isSentRequest ? null : (
         <CustomText isBold style={styles.heading}>
           {riderName}
         </CustomText>
-      }
+      )}
       <View
         style={{
           paddingVertical: moderateScale(5, 0.6),
@@ -107,7 +111,7 @@ const BookingCard = ({ username, isSentRequest, pickupLocation, dropoffLocation,
         </CustomText>
       </View>
 
-      {isSentRequest ? null :
+      {isSentRequest ? null : (
         <>
           <CustomText
             style={[
@@ -125,17 +129,20 @@ const BookingCard = ({ username, isSentRequest, pickupLocation, dropoffLocation,
               {
                 paddingHorizontal: moderateScale(15, 0.6),
               },
-
-            ]}>02</CustomText>
-
+            ]}>
+            02
+          </CustomText>
         </>
-      }
+      )}
       <View style={isSentRequest ? styles.details_view : styles.distanceView}>
-        <View style={{ flexDirection: 'row' }}>
-          {isSentRequest ? null :
+        <View style={{flexDirection: 'row'}}>
+          {isSentRequest ? null : (
             <>
               <View
-                style={{ height: windowHeight * 0.028, width: windowWidth * 0.1 }}>
+                style={{
+                  height: windowHeight * 0.028,
+                  width: windowWidth * 0.1,
+                }}>
                 <CustomImage
                   style={{
                     height: '100%',
@@ -145,11 +152,18 @@ const BookingCard = ({ username, isSentRequest, pickupLocation, dropoffLocation,
                 />
               </View>
 
-              <CustomText isBold style={[styles.text, {
-                paddingHorizontal: moderateScale(5, .6)
-              }]}>car no 251</CustomText>
+              <CustomText
+                isBold
+                style={[
+                  styles.text,
+                  {
+                    paddingHorizontal: moderateScale(5, 0.6),
+                  },
+                ]}>
+                car no 251
+              </CustomText>
             </>
-          }
+          )}
         </View>
         <View
           style={{
@@ -157,14 +171,20 @@ const BookingCard = ({ username, isSentRequest, pickupLocation, dropoffLocation,
             borderBottomWidth: StyleSheet.hairlineWidth,
           }}
         />
-        <View style={{ flexDirection: 'row', alignItems: "center", justifyContent: 'flex-start', marginTop: moderateScale(10, 0.3) }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            marginTop: moderateScale(10, 0.3),
+          }}>
           <View>
             <CustomText isBold style={styles.text2}>
               Distance
             </CustomText>
-            <CustomText style={styles.text1}>{distance + " Km"}</CustomText>
+            <CustomText style={styles.text1}>{distance + ' Km'}</CustomText>
           </View>
-          <View style={{ marginLeft: moderateScale(20, 0.3) }}>
+          <View style={{marginLeft: moderateScale(20, 0.3)}}>
             <CustomText isBold style={styles.text2}>
               time
             </CustomText>
@@ -173,14 +193,14 @@ const BookingCard = ({ username, isSentRequest, pickupLocation, dropoffLocation,
         </View>
       </View>
     </View>
-  )
-}
+  );
+};
 
-export default BookingCard
+export default BookingCard;
 
 const styles = StyleSheet.create({
   card: {
-    height: windowHeight * 0.25,
+    height: windowHeight * 0.3,
     width: windowWidth * 0.9,
     borderRadius: moderateScale(10, 6),
     borderWidth: 2,
@@ -193,7 +213,7 @@ const styles = StyleSheet.create({
     bottom: 120,
     zIndex: 1,
     paddingHorizontal: moderateScale(12, 0.3),
-    opacity: 0.9
+    opacity: 0.9,
   },
   imageContainer: {
     height: windowHeight * 0.28,
@@ -213,11 +233,11 @@ const styles = StyleSheet.create({
   rowInnerView: {
     paddingHorizontal: moderateScale(10, 0.6),
     paddingVertical: moderateScale(5, 0.6),
-    width: windowWidth * 0.54
+    width: windowWidth * 0.54,
   },
   text: {
     fontSize: moderateScale(12, 0.6),
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   text2: {
     fontSize: moderateScale(10, 0.6),
@@ -242,10 +262,10 @@ const styles = StyleSheet.create({
   btn: {
     height: windowHeight * 0.04,
     width: windowHeight * 0.04,
-    borderRadius: windowHeight * 0.04 / 2,
+    borderRadius: (windowHeight * 0.04) / 2,
     backgroundColor: '#0779fa',
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: moderateScale(3, .3)
-  }
-})
+    marginHorizontal: moderateScale(3, 0.3),
+  },
+});
