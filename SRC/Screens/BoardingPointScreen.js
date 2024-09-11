@@ -1,5 +1,5 @@
-import {Divider, Icon} from 'native-base';
-import React, {useEffect, useRef, useState} from 'react';
+import { Divider, Icon } from 'native-base';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Platform,
@@ -8,14 +8,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import MapView, {Circle, Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import {moderateScale} from 'react-native-size-matters';
+import MapView, { Circle, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { moderateScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CustomText from '../Components/CustomText';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import {getDistance, isValidCoordinate} from 'geolib';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import { getDistance, isValidCoordinate } from 'geolib';
 import Geolocation from 'react-native-geolocation-service';
 import MapViewDirections from 'react-native-maps-directions';
 import Color from '../Assets/Utilities/Color';
@@ -24,10 +24,10 @@ import CustomButton from '../Components/CustomButton';
 import Loader from '../Components/Loader';
 import SearchLocationModal from '../Components/SearchLocationModal';
 import Header from '../Components/Header';
-import {Post} from '../Axios/AxiosInterceptorFunction';
-import {useSelector} from 'react-redux';
+import { Post } from '../Axios/AxiosInterceptorFunction';
+import { useSelector } from 'react-redux';
 
-const BoardingPointScreen = ({navigation}) => {
+const BoardingPointScreen = ({ navigation }) => {
   const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
 
   const mapRef = useRef(null);
@@ -41,10 +41,11 @@ const BoardingPointScreen = ({navigation}) => {
   const [dropOffLocation, setDropOffLocation] = useState({});
   const [locationType, setLocationType] = useState('pickup');
   const [isYourLocation, setIsyourLocation] = useState(null);
-  const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
+  const circleCenter = { latitude: 24.8607333, longitude: 67.001135 };
   const circleRadius = 15000;
   const [currentPossition, setcurrentPossition] = useState({});
   const [distance, setDistance] = useState(0);
+  const [time, setTime] = useState(0);
 
   const origin = {
     latitude: isYourLocation
@@ -82,7 +83,7 @@ const BoardingPointScreen = ({navigation}) => {
     }
     const watchId = Geolocation.watchPosition(
       position => {
-        const {latitude, longitude} = position.coords;
+        const { latitude, longitude } = position.coords;
         setPickUpLocation(prevLocation => ({
           ...prevLocation,
           latitude,
@@ -90,7 +91,7 @@ const BoardingPointScreen = ({navigation}) => {
         }));
       },
       error => console.log(error),
-      {enableHighAccuracy: true, distanceFilter: 10, interval: 1000},
+      { enableHighAccuracy: true, distanceFilter: 10, interval: 1000 },
     );
     return () => {
       Geolocation.clearWatch(watchId);
@@ -102,7 +103,7 @@ const BoardingPointScreen = ({navigation}) => {
   useEffect(() => {
     if (!origin || !destinations) return;
     mapRef.current?.fitToSuppliedMarkers(['origin', 'destination'], {
-      edgePadding: {top: 50, right: 50, bottom: 50, left: 50},
+      edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
     });
     console.log('asdahsdgjsgj');
   }, [origin, destinations]);
@@ -130,7 +131,7 @@ const BoardingPointScreen = ({navigation}) => {
           const distanceMatrix = data.rows[0].elements[0];
           const travelTime = distanceMatrix.duration.text; // e.g., "1 hour 20 mins"
           console.log(`Travel time: ${travelTime}`);
-          return travelTime;
+          return setTime(travelTime);
         } else {
           console.error('Error fetching travel time:', data.status);
           return null;
@@ -207,7 +208,7 @@ const BoardingPointScreen = ({navigation}) => {
       <Header
         index
         title={'Boarding Point'}
-        textstyle={{color: Color.darkGray}}
+        textstyle={{ color: Color.darkGray }}
         headerColor={['white', 'white']}
         hideUser={false}
         navigation={navigation}
@@ -230,7 +231,7 @@ const BoardingPointScreen = ({navigation}) => {
             borderRadius: moderateScale(10, 0.2),
             padding: moderateScale(12, 0.2),
           }}>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Icon
               as={Entypo}
               name="dot-single"
@@ -264,20 +265,20 @@ const BoardingPointScreen = ({navigation}) => {
             </TouchableOpacity>
           </View>
           <View style={styles.dotView}>
-            <View style={{gap: -5}}>
+            <View style={{ gap: -5 }}>
               <Icon
                 as={Entypo}
                 name="dots-two-vertical"
                 size={moderateScale(24, 0.2)}
-                style={{color: '#fcf36b'}}
-                // color={}
+                style={{ color: '#fcf36b' }}
+              // color={}
               />
               <Icon
                 as={Entypo}
                 name="dots-two-vertical"
                 size={moderateScale(24, 0.2)}
-                style={{color: '#fcf36b'}}
-                // color={}
+                style={{ color: '#fcf36b' }}
+              // color={}
               />
             </View>
             <Divider
@@ -288,7 +289,7 @@ const BoardingPointScreen = ({navigation}) => {
               borderColor={'#b0adad'}
             />
           </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Icon
               as={Entypo}
               name="dot-single"
@@ -335,13 +336,11 @@ const BoardingPointScreen = ({navigation}) => {
           }}
           ref={mapRef}>
           <Circle
-            // coordinates={origin}
             center={circleCenter}
             radius={15000}
-            // holes={destination} // Radius in meters
             strokeWidth={2}
             strokeColor={'red'}
-            // fillColor={'#c9c9e'}
+            fillColor={'rgba(51, 170, 51, .2)'}
             zIndex={1}
           />
 
@@ -557,7 +556,7 @@ const BoardingPointScreen = ({navigation}) => {
           as={MaterialIcons}
           name="my-location"
           size={moderateScale(24, 0.2)}
-          style={{color: 'blue'}}
+          style={{ color: 'blue' }}
         />
       </TouchableOpacity>
       {Object.keys(pickupLocation).length > 0 &&
@@ -571,7 +570,7 @@ const BoardingPointScreen = ({navigation}) => {
                 isYourLocation ? 'Your Location' : pickupLocation?.name
               }
               dropoffLocation={dropOffLocation?.name}
-              time={'20 mints'}
+              time={time}
             />
             <View
               style={{
