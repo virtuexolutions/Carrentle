@@ -83,7 +83,7 @@ const SearchLocationModal = ({
             setIsModalVisible(false);
           }}
           query={{
-            key: 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc',
+            key: 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM',
             language: 'en',
           }}
           isRowScrollable={true}

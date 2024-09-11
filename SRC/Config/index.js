@@ -1,5 +1,5 @@
 // export const baseUrl = "https://businessup.fashionaddaoutlet.com";
-export const baseUrl = 'https://e022-103-138-50-45.ngrok-free.app';
+export const baseUrl = 'https://4c7b-103-138-50-45.ngrok-free.app';
 export const imageUrl = `${baseUrl}/api/images/`;
 export const profilePicUrl = `${baseUrl}/uploads`;
 

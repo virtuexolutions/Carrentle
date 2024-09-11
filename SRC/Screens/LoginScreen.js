@@ -161,8 +161,8 @@ const LoginScreen = props => {
               <View style={{ marginTop: moderateScale(20, 0.6) }} />
               <CustomButton
                 onPress={() => {
-                  onpressSubmit();
-                  // navigation.navigate('TaxiAvailability');
+                  // onpressSubmit();
+                  navigation.navigate('BoardingPointScreen');
                 }}
                 text={'Log in'}
                 fontSize={moderateScale(14, 0.3)}

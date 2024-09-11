@@ -20,9 +20,9 @@ import Header from '../Components/Header';
 import { Post } from '../Axios/AxiosInterceptorFunction';
 import { useSelector } from 'react-redux';
 
-const BoardingPointScreen = ({navigation}) => {
+const BoardingPointScreen = ({ navigation }) => {
   console.log('first');
-  const GOOGLE_MAPS_API_KEY = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
+  const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
 
   const mapRef = useRef(null);
 
@@ -93,25 +93,25 @@ const BoardingPointScreen = ({navigation}) => {
 
   console.log(distance, 'distanceeee');
 
-  useEffect(() => {
-    if (!origin || !destinations) return;
-    mapRef.current?.fitToSuppliedMarkers(['origin', 'destination'], {
-      edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
-    });
-    console.log('asdahsdgjsgj')
+  // useEffect(() => {
+  //   if (!origin || !destinations) return;
+  //   mapRef.current?.fitToSuppliedMarkers(['origin', 'destination'], {
+  //     edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+  //   });
+  //   console.log('asdahsdgjsgj')
 
-  }, [origin, destinations]);
+  // }, [origin, destinations]);
 
-  useEffect(() => {
-    if (!origin || !destinations) return;
-    const getTravelTime = async () => {
-      const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin}&destinations=${destinations}&key=${GOOGLE_MAPS_API_KEY}`;
-      const response = await fetch(url);
-      // console.log(response, 'sdhahsdjagdjagdagsdgas')
-    };
+  // useEffect(() => {
+  //   if (!origin || !destinations) return;
+  //   const getTravelTime = async () => {
+  //     const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin}&destinations=${destinations}&key=${GOOGLE_MAPS_API_KEY}`;
+  //     const response = await fetch(url);
+  //     // console.log(response, 'sdhahsdjagdjagdagsdgas')
+  //   };
 
-    getTravelTime();
-  }, [origin, destinations, GOOGLE_MAPS_API_KEY]);
+  //   getTravelTime();
+  // }, [origin, destinations, GOOGLE_MAPS_API_KEY]);
 
   const getCurrentLocation = async () => {
     try {
@@ -222,7 +222,6 @@ const BoardingPointScreen = ({navigation}) => {
                 setLocationType('pickup');
                 setIsModalVisible(true);
               }}
-              disabled={true}
               style={styles.locationPickerBtn}>
               <CustomText
                 numberOfLines={3}
@@ -277,7 +276,6 @@ const BoardingPointScreen = ({navigation}) => {
               }}
             />
             <TouchableOpacity
-              disabled={true}
               onPress={() => {
                 setLocationType('dropOff');
                 setIsModalVisible(true);
@@ -345,7 +343,7 @@ const BoardingPointScreen = ({navigation}) => {
             <MapViewDirections
               origin={origin}
               destination={destinations}
-              apikey="AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc"
+              apikey="AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM"
               strokeWidth={5}
               strokeColor={Color.blue}
               mode="DRIVING"
