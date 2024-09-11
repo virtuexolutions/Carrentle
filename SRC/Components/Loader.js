@@ -8,7 +8,7 @@ const Loader = ({ style, color, size }) => {
     return (
         <View
             style={{
-                marginTop: moderateScale(20, 0.6),
+                marginTop: moderateScale(50, 0.6),
                 alignItems: 'center',
             }}>
             <LottieView
@@ -16,8 +16,8 @@ const Loader = ({ style, color, size }) => {
                 loop
                 style={[
                     {
-                        height: '40%',
-                        width: 120,
+                        height: '60%',
+                        width: 100,
                         alignItems: 'center',
                         alignSelf: 'center',
                     },

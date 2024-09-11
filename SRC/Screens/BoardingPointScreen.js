@@ -1,15 +1,14 @@
-import {Divider, Icon} from 'native-base';
-import React, {useEffect, useRef, useState} from 'react';
-import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
-import MapView, {Circle, Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import {moderateScale} from 'react-native-size-matters';
+import { Divider, Icon } from 'native-base';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, Platform, StyleSheet, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import MapView, { Circle, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { moderateScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CustomText from '../Components/CustomText';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-// import {useNavigation} from '@react-navigation/native';
-import {getDistance} from 'geolib';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import { getDistance } from 'geolib';
 import Geolocation from 'react-native-geolocation-service';
 import MapViewDirections from 'react-native-maps-directions';
 import Color from '../Assets/Utilities/Color';
@@ -18,20 +17,28 @@ import CustomButton from '../Components/CustomButton';
 import Loader from '../Components/Loader';
 import SearchLocationModal from '../Components/SearchLocationModal';
 import Header from '../Components/Header';
+import { Post } from '../Axios/AxiosInterceptorFunction';
+import { useSelector } from 'react-redux';
 
-const BoardingPointScreen = () => {
+const BoardingPointScreen = ({navigation}) => {
   console.log('first');
   const GOOGLE_MAPS_API_KEY = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
+
   const mapRef = useRef(null);
+
+  const token = useSelector((state) => state.authReducer.token);
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pickupLocation, setPickUpLocation] = useState({});
   const [dropOffLocation, setDropOffLocation] = useState({});
   const [locationType, setLocationType] = useState('pickup');
   const [isYourLocation, setIsyourLocation] = useState(null);
-  const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
+  const [send, setSend] = useState(false)
+  const circleCenter = { latitude: 24.8607333, longitude: 67.001135 };
   const circleRadius = 15000;
   const [currentPossition, setcurrentPossition] = useState({});
   const [distance, setDistance] = useState(0);
+
   const origin = {
     latitude: isYourLocation
       ? currentPossition?.latitude
@@ -68,30 +75,31 @@ const BoardingPointScreen = () => {
     }
     // const watchId = Geolocation.watchPosition(
     //   position => {
-    //     const {latitude, longitude} = position.coords;
+    //     const { latitude, longitude } = position.coords;
     //     console.log(latitude, longitude, '===================>');
-    //     // setPickUpLocation({
-    //     //   ...location,
-    //     //   latitude,
-    //     //   longitude,
-    //     // });
+    //     setPickUpLocation({
+    //       ...location,
+    //       latitude,
+    //       longitude,
+    //     });
     //   },
     //   error => console.log(error),
-    //   {enableHighAccuracy: true, distanceFilter: 10, interval: 1000},
+    //   { enableHighAccuracy: true, distanceFilter: 10, interval: 1000 },
     // );
-    return () => {
-      Geolocation.clearWatch(watchId);
-    };
+    // return () => {
+    //   Geolocation.clearWatch(watchId);
+    // };
   }, []);
 
   console.log(distance, 'distanceeee');
 
   useEffect(() => {
     if (!origin || !destinations) return;
-
     mapRef.current?.fitToSuppliedMarkers(['origin', 'destination'], {
-      edgePadding: {top: 50, right: 50, bottom: 50, left: 50},
+      edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
     });
+    console.log('asdahsdgjsgj')
+
   }, [origin, destinations]);
 
   useEffect(() => {
@@ -99,7 +107,7 @@ const BoardingPointScreen = () => {
     const getTravelTime = async () => {
       const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin}&destinations=${destinations}&key=${GOOGLE_MAPS_API_KEY}`;
       const response = await fetch(url);
-      const data = await response.json();
+      // console.log(response, 'sdhahsdjagdjagdagsdgas')
     };
 
     getTravelTime();
@@ -134,16 +142,27 @@ const BoardingPointScreen = () => {
     }
   };
 
-  const onPressProceed = () => {
-    const data = {
-      pickuplatitude: pickupLocation?.lat,
-      pickuplonglitude: pickupLocation?.lng,
-      dropoffLatitude: dropOffLocation?.lat,
-      dropoffLonglitude: dropOffLocation?.lng,
-      dropoffLocationName: dropOffLocation?.name,
-      pickupLocationName: pickupLocation?.name,
-    };
-    console.log(data, 'dataaaaaaaa');
+  const onPressProceed = async () => {
+    Platform.OS == 'android'
+      ? ToastAndroid.show(`Ride Request is Send`, ToastAndroid.SHORT)
+      : Alert.alert(`Ride Request is Send`);
+    setSend(true)
+    // const data = {
+    //   location_from: '1352 Ripple Street',
+    //   locarion_to: ' 127 Limer Street',
+    //   pickup_location_lat: 49.65766,
+    //   pickup_location_lng: -150.40136,
+    //   dropoff_location_lat: 10.48439,
+    //   dropoff_location_lng: 103.08545,
+    //   distance: 20
+    // };
+    // console.log(data, 'dataaaaaaaa');
+    // let url = 'auth/book-ride'
+    // const response = await Post(url, data, apiHeader(token))
+    // return console.log('======......', response?.data)
+    // if (response != undefined) {
+    //   console.log(response?.data, ' =====================>response')
+    // }
   };
 
   console.log(origin, 'origin', destinations, 'destinations');
@@ -153,9 +172,10 @@ const BoardingPointScreen = () => {
       <Header
         index
         title={'Boarding Point'}
-        textstyle={{color: Color.darkGray}}
+        textstyle={{ color: Color.darkGray }}
         headerColor={['white', 'white']}
         hideUser={false}
+        navigation={navigation}
       />
       {/* <ImageBackground
         style={{
@@ -188,7 +208,7 @@ const BoardingPointScreen = () => {
             borderRadius: moderateScale(10, 0.2),
             padding: moderateScale(12, 0.2),
           }}>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Icon
               as={Entypo}
               name="dot-single"
@@ -202,6 +222,7 @@ const BoardingPointScreen = () => {
                 setLocationType('pickup');
                 setIsModalVisible(true);
               }}
+              disabled={true}
               style={styles.locationPickerBtn}>
               <CustomText
                 numberOfLines={3}
@@ -222,20 +243,20 @@ const BoardingPointScreen = () => {
             </TouchableOpacity>
           </View>
           <View style={styles.dotView}>
-            <View style={{gap: -5}}>
+            <View style={{ gap: -5 }}>
               <Icon
                 as={Entypo}
                 name="dots-two-vertical"
                 size={moderateScale(24, 0.2)}
-                style={{color: '#fcf36b'}}
-                // color={}
+                style={{ color: '#fcf36b' }}
+              // color={}
               />
               <Icon
                 as={Entypo}
                 name="dots-two-vertical"
                 size={moderateScale(24, 0.2)}
-                style={{color: '#fcf36b'}}
-                // color={}
+                style={{ color: '#fcf36b' }}
+              // color={}
               />
             </View>
             <Divider
@@ -246,7 +267,7 @@ const BoardingPointScreen = () => {
               borderColor={'#b0adad'}
             />
           </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Icon
               as={Entypo}
               name="dot-single"
@@ -256,6 +277,7 @@ const BoardingPointScreen = () => {
               }}
             />
             <TouchableOpacity
+              disabled={true}
               onPress={() => {
                 setLocationType('dropOff');
                 setIsModalVisible(true);
@@ -319,7 +341,7 @@ const BoardingPointScreen = () => {
           )}
           <Marker coordinate={currentPossition} title="Your Are Here Now" />
           {Object.keys(pickupLocation).length > 0 &&
-          Object.keys(dropOffLocation).length > 0 ? (
+            Object.keys(dropOffLocation).length > 0 ? (
             <MapViewDirections
               origin={origin}
               destination={destinations}
@@ -514,48 +536,51 @@ const BoardingPointScreen = () => {
           as={MaterialIcons}
           name="my-location"
           size={moderateScale(24, 0.2)}
-          style={{color: 'blue'}}
+          style={{ color: 'blue' }}
         />
       </TouchableOpacity>
-      {Object.keys(pickupLocation).length > 0 &&
-        Object.keys(dropOffLocation).length > 0 && (
-          <>
-            <BookingCard
-              distance={distance}
-              username={'Testing User'}
-              isSentRequest={true}
-              pickupLocation={
-                isYourLocation ? 'Your Location' : pickupLocation?.name
-              }
-              dropoffLocation={dropOffLocation?.name}
-              time={'20 mints'}
+      {/* {Object.keys(pickupLocation).length > 0 &&
+        Object.keys(dropOffLocation).length > 0 && ( */}
+      {send ? <></> : (
+        <>
+          <BookingCard
+            distance={distance || '7 Km'}
+            username={'Testing User'}
+            isSentRequest={true}
+            pickupLocation={
+              // isYourLocation ? 'Your Location' : pickupLocation?.name
+              ' 1352 Ripple Street'
+            }
+            dropoffLocation={dropOffLocation?.name || '127 Limer Street'}
+            time={'20 mints'}
+          />
+          <View
+            style={{
+              alignSelf: 'center',
+              position: 'absolute',
+              // bottom: 50, old
+              bottom: 70,
+              zIndex: 1,
+            }}>
+            <CustomButton
+              text={'Proceed'}
+              textColor={Color.white}
+              width={windowWidth * 0.8}
+              height={windowHeight * 0.06}
+              marginTop={moderateScale(20, 0.3)}
+              onPress={() => {
+                onPressProceed();
+              }}
+              bgColor={Color.cartheme}
+              borderColor={Color.white}
+              borderWidth={1}
+              borderRadius={moderateScale(30, 0.3)}
+              isGradient
             />
-            <View
-              style={{
-                alignSelf: 'center',
-                position: 'absolute',
-                // bottom: 50, old
-                bottom: 70,
-                zIndex: 1,
-              }}>
-              <CustomButton
-                text={'Proceed'}
-                textColor={Color.white}
-                width={windowWidth * 0.8}
-                height={windowHeight * 0.06}
-                marginTop={moderateScale(20, 0.3)}
-                onPress={() => {
-                  onPressProceed();
-                }}
-                bgColor={Color.cartheme}
-                borderColor={Color.white}
-                borderWidth={1}
-                borderRadius={moderateScale(30, 0.3)}
-                isGradient
-              />
-            </View>
-          </>
-        )}
+          </View>
+        </>
+      )}
+      {/* )} */}
       <SearchLocationModal
         isModalVisible={isModalVisible}
         setIsModalVisible={setIsModalVisible}

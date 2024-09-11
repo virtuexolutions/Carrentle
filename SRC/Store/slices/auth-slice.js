@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { setUserData } from './common';
 
 const initialState = {
   token: null,
@@ -47,6 +48,9 @@ export const AuthSlice = createSlice({
     },
     setAuthLoadingType: (state, action) => {
       state.auth_loading_type = action.payload;
+    },
+    setUserData: (state, action) => {
+      state.user = action.payload
     },
     setUser: (state, action) => {
       state.user = action.payload

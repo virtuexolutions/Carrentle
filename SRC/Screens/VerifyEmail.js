@@ -119,6 +119,7 @@ const VerifyEmail = props => {
               marginTop={moderateScale(30, 0.3)}
               bgColor={'transparent'}
               isBold
+              loader={isLoading}
               onPress={
                 () => sendOTP()
                 // navigationService.navigate('VerifyNumber', {

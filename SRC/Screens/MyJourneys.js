@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -8,19 +8,43 @@ import {
   Text,
 } from 'react-native';
 import Header from '../Components/Header';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
 import Color from '../Assets/Utilities/Color';
-import {Image} from 'react-native-svg';
-import {mode} from 'native-base/lib/typescript/theme/tools';
-import {color, position} from 'native-base/lib/typescript/theme/styled-system';
+import { Image } from 'react-native-svg';
+import { mode } from 'native-base/lib/typescript/theme/tools';
+import { color, position } from 'native-base/lib/typescript/theme/styled-system';
 import LinearGradient from 'react-native-linear-gradient';
+import { useSelector } from 'react-redux';
+import { Get } from '../Axios/AxiosInterceptorFunction';
+import moment from 'moment';
+import Loader from '../Components/Loader';
 
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 
 const MyJourneys = () => {
+  const [loading, setLoading] = useState(false);
+  const token = useSelector((state) => state.authReducer.token);
+  const [journey_list, setjourneyList] = useState(false);
+
+  useEffect(() => {
+    getJourneyList()
+  }, [])
+
+
+  const getJourneyList = async () => {
+    const url = 'auth/customer/journey'
+    setLoading(true)
+    const reponse = await Get(url, token)
+    console.log(reponse?.data?.data?.rides, 'responseeeeeeeeeeeeeeee')
+    setLoading(false)
+    if (reponse != undefined) {
+      setjourneyList(reponse?.data?.data?.rides)
+    }
+  }
+
   const journeyList = [
     {
       id: 1,
@@ -58,67 +82,70 @@ const MyJourneys = () => {
         title={'My Journey'}
         showBack={false}
       />
-
-      <FlatList
-        contentContainerStyle={{
-          width: '100%',
-          alignItems: 'center',
-          paddingTop: moderateScale(20, 0.6),
-          paddingBottom: moderateScale(100, 0.6),
-        }}
-        showsVerticalScrollIndicator={false}
-        data={journeyList}
-        renderItem={({item, index}) => {
-          return (
-            <View
-              style={{
-                width: width * 0.87,
-                height: height * 0.24,
-                borderWidth: 1,
-                borderRadius: 15,
-                overflow: 'visible',
-                marginTop: moderateScale(30, 0.6),
-              }}>
-              <View style={styles.carImages}>
-                <CustomImage
-                  style={{
-                    height: '100%',
-                    width: '110%',
-                  }}
-                  resizeMode={'contain'}
-                  source={item.image}
-                />
-              </View>
+      {loading ? (
+        <Loader />
+      ) : (
+        <FlatList
+          contentContainerStyle={{
+            width: '100%',
+            alignItems: 'center',
+            paddingTop: moderateScale(20, 0.6),
+            paddingBottom: moderateScale(100, 0.6),
+          }}
+          showsVerticalScrollIndicator={false}
+          data={journey_list}
+          renderItem={({ item, index }) => {
+            return (
               <View
                 style={{
-                  marginLeft: moderateScale(10, 0.3),
-                  marginTop: moderateScale(15, 0.3),
+                  width: width * 0.87,
+                  height: height * 0.24,
+                  borderWidth: 1,
+                  borderRadius: 15,
+                  overflow: 'visible',
+                  marginTop: moderateScale(30, 0.6),
                 }}>
-                <CustomText style={styles.dateStyle}>{item.date}</CustomText>
+                <View style={styles.carImages}>
+                  <CustomImage
+                    style={{
+                      height: '100%',
+                      width: '110%',
+                    }}
+                    resizeMode={'contain'}
+                    source={require('../Assets/Images/car7.png')}
+                  />
+                </View>
+                <View
+                  style={{
+                    marginLeft: moderateScale(10, 0.3),
+                    marginTop: moderateScale(15, 0.3),
+                  }}>
+                  <CustomText style={styles.dateStyle}>{moment(item?.created_at).format('MM-DD-YYYY')}</CustomText>
 
-                <CustomText isBold style={styles.headingStyle}>
-                  {item.heading}
-                </CustomText>
-                <CustomText style={styles.subheadingStyle}>
-                  {item.subheading}
-                </CustomText>
-                <CustomText style={styles.durationStyle}>
-                  {item.timeduration}
-                </CustomText>
-                <LinearGradient
-                  start={{x: 0, y: 2.1}}
-                  end={{x: 4, y: 2}}
-                  colors={['#00309E', '#79B9F6', '#FFFFFF']}
-                  style={styles.button}>
-                  <CustomText style={{color: Color.white}}>
-                    {item.buttontext}
+                  <CustomText isBold style={styles.headingStyle}>
+                    {item.location_from}
                   </CustomText>
-                </LinearGradient>
+                  <CustomText style={styles.subheadingStyle}>
+                    {item.location_to}
+                  </CustomText>
+                  <CustomText style={styles.durationStyle}>
+                    {item.time ? item.time : '10 min'}
+                  </CustomText>
+                  <LinearGradient
+                    start={{ x: 0, y: 2.1 }}
+                    end={{ x: 4, y: 2 }}
+                    colors={['#00309E', '#79B9F6', '#FFFFFF']}
+                    style={styles.button}>
+                    <CustomText style={{ color: Color.white }}>
+                      {item.distance + 'Km'}
+                    </CustomText>
+                  </LinearGradient>
+                </View>
               </View>
-            </View>
-          );
-        }}
-      />
+            );
+          }}
+        />
+      )}
     </View>
   );
 };

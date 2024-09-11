@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Dimensions,
@@ -13,14 +13,14 @@ import {
   // Modal,
   Button,
 } from 'react-native';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
-import {Icon} from 'native-base';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
+import { Icon } from 'native-base';
 import Modal from 'react-native-modal';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import CustomText from '../Components/CustomText';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
 
 const requestCameraPermission = async () => {
@@ -43,7 +43,7 @@ const requestCameraPermission = async () => {
 };
 
 const ImagePickerModal = props => {
-  let {show, setShow, setFileObject, setMultiImages, crop} = props;
+  let { show, setShow, setFileObject, setMultiImages, crop } = props;
 
   const openGallery = () => {
     let options = {
@@ -53,34 +53,34 @@ const ImagePickerModal = props => {
       quailty: 0.9,
       saveToPhotos: true,
     };
-   
-    launchImageLibrary(options, response => {
-            if (Platform.OS === 'ios') {
-              setShow(false);
-            }
-            if (response.didCancel) {
-            } else if (response.error) {
-            } else if (response.customButton) {
-              alert(response.customButton);
-            } else {
-              setFileObject &&
-                setFileObject({
-                  uri: response?.assets[0]?.uri,
-                  type: response?.assets[0]?.type,
-                  name: response?.assets[0]?.fileName,
-                });
 
-              setMultiImages &&
-                setMultiImages(x => [
-                  ...x,
-                  {
-                    uri: response?.assets[0]?.uri,
-                    type: response?.assets[0]?.type,
-                    name: response?.assets[0]?.fileName,
-                  },
-                ]);
-            }
+    launchImageLibrary(options, response => {
+      if (Platform.OS === 'ios') {
+        setShow(false);
+      }
+      if (response.didCancel) {
+      } else if (response.error) {
+      } else if (response.customButton) {
+        alert(response.customButton);
+      } else {
+        setFileObject &&
+          setFileObject({
+            uri: response?.assets[0]?.uri,
+            type: response?.assets[0]?.type,
+            name: response?.assets[0]?.fileName,
           });
+
+        setMultiImages &&
+          setMultiImages(x => [
+            ...x,
+            {
+              uri: response?.assets[0]?.uri,
+              type: response?.assets[0]?.type,
+              name: response?.assets[0]?.fileName,
+            },
+          ]);
+      }
+    });
     // }
   };
 
@@ -102,7 +102,7 @@ const ImagePickerModal = props => {
       if (Platform.OS == 'ios') {
         setShow(false);
       }
-      
+
       else {
         setFileObject &&
           setFileObject({
@@ -149,9 +149,9 @@ const ImagePickerModal = props => {
         <View style={styles.modalContentContianer}>
           <TouchableOpacity
             onPress={() => {
-              if (Platform.OS === 'android') {
-                setShow(false);
-              }
+              // if (Platform.OS === 'android') {
+              //   setShow(false);
+              // }
               openGallery();
             }}
             style={styles.modalContentBtn}>
@@ -167,9 +167,9 @@ const ImagePickerModal = props => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              if (Platform.OS === 'android') {
-                setShow(false);
-              }
+              // if (Platform.OS === 'android') {
+              //   setShow(false);
+              // }
               openCamera();
             }}
             style={styles.modalContentBtn}>

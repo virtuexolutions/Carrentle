@@ -1,5 +1,7 @@
-import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+
+
+import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
 import {
   Alert,
   Platform,
@@ -10,11 +12,11 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {moderateScale} from 'react-native-size-matters';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { moderateScale } from 'react-native-size-matters';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
@@ -22,12 +24,13 @@ import CustomText from '../Components/CustomText';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 import CustomModal from '../Components/CustomModal';
 import authAction from '../Store/auth-action';
-import {Post} from '../Axios/AxiosInterceptorFunction';
-import {getToken} from '../Utillity/auth.utill';
-import {setUserToken} from '../Store/slices/auth-slice';
+import { Post } from '../Axios/AxiosInterceptorFunction';
+import { getToken } from '../Utillity/auth.utill';
+import { setUserToken } from '../Store/slices/auth-slice';
+import { setUserData } from '../Store/slices/common';
 
 const LoginScreen = props => {
   const dispatch = useDispatch();
@@ -39,14 +42,15 @@ const LoginScreen = props => {
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState({});
   const navigation = useNavigation();
-  const {UserLogin} = authAction();
+  const { UserLogin } = authAction();
   const token = getToken();
 
-  const {user_type} = useSelector(state => state.authReducer);
+  const { user_type } = useSelector(state => state.authReducer);
 
   const onpressSubmit = async () => {
     const url = 'login';
-    const body = {email: username, password: password};
+    const body = { email: username, password: password };
+    setLoading(true);
     for (let key in body) {
       if (body[key] == '') {
         return Platform.OS == 'android'
@@ -54,26 +58,25 @@ const LoginScreen = props => {
           : Alert.alert(`${key} is required`);
       }
     }
-    setLoading(true);
     const response = await Post(url, body, apiHeader(token));
     setLoading(false);
     if (response != undefined) {
       navigation.navigate('TaxiAvailability');
       console.log(response?.data, 'dataaaaaaaaa');
-      dispatch(setUserToken({token: response?.data?.token}));
+      dispatch(setUserToken({ token: response?.data?.token }));
       dispatch(setUserData(response?.data?.user_info));
     }
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       <ScreenBoiler
         statusBarBackgroundColor={'white'}
         statusBarContentStyle={'dark-content'}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <LinearGradient
-            start={{x: 0, y: 2.1}}
-            end={{x: 4, y: 2}}
+            start={{ x: 0, y: 2.1 }}
+            end={{ x: 4, y: 2 }}
             colors={['#00309E', '#79B9F6', '#FFFFFF']}
             style={styles.container}>
             <View
@@ -155,7 +158,7 @@ const LoginScreen = props => {
                   Forget Password?
                 </CustomText>
               </TouchableOpacity>
-              <View style={{marginTop: moderateScale(20, 0.6)}} />
+              <View style={{ marginTop: moderateScale(20, 0.6) }} />
               <CustomButton
                 onPress={() => {
                   onpressSubmit();
@@ -172,6 +175,8 @@ const LoginScreen = props => {
                 marginTop={moderateScale(30, 0.3)}
                 bgColor={'transparent'}
                 isBold
+                loader={isLoading}
+
               />
             </View>
             <CustomText style={styles.text}>don't have an ancount ?</CustomText>
@@ -183,6 +188,7 @@ const LoginScreen = props => {
             </CustomText>
             <View style={styles.text_view}>
               <CustomText
+                loader={loading}
                 style={{
                   color: Color.lightGrey,
                   textAlign: 'center',

@@ -105,7 +105,7 @@ const DashBoard = () => {
                 </View>
             </View>
             <CustomText isBold={true} style={{ fontSize: moderateScale(16, 0.6), textAlign: 'left', width: '90%', marginVertical: moderateScale(10, 0.6), color: Color.blue_color }}>Previous Rides History</CustomText>
-            <FlatList ListFooterComponent={<View style={{ height: moderateScale(20, 0.6) }} />} data={previous_trip_card} renderItem={({ item, index }) => {
+            <FlatList showsVerticalScrollIndicator={false} ListFooterComponent={<View style={{ height: moderateScale(20, 0.6) }} />} data={previous_trip_card} renderItem={({ item, index }) => {
                 return (
                     <View style={styles.history_card}>
                         <View>

@@ -7,25 +7,27 @@ import { moderateScale } from 'react-native-size-matters';
 import CustomText from './CustomText';
 import Color from '../Assets/Utilities/Color';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { imageUrl } from '../Config';
+import moment from 'moment';
 
 const HistoryComponent = ({ data }) => {
   return (
     <View style={styles.main_view}>
       <View style={styles.user_image_view}>
-        <CustomImage source={data?.userImage} style={styles.image} />
+        <CustomImage source={{ uri: imageUrl + data?.rider?.photo }} style={styles.image} />
       </View>
       <View style={{ marginLeft: moderateScale(12, 0.6) }}>
-        <CustomText isBold={true} style={styles.user_name}>{data?.name}</CustomText>
+        <CustomText isBold={true} style={styles.user_name}>{data?.rider?.name}</CustomText>
         <View style={{ flexDirection: 'row', marginTop: moderateScale(2, 0.6) }}>
-          <CustomText style={styles.text}>{data?.date}</CustomText>
+          <CustomText style={styles.text}>{moment(data?.rider?.updated_at).format('MM-DD-YYYY')}</CustomText>
           <CustomText style={[styles.text]}>|</CustomText>
-          <CustomText style={styles.text}>{data?.time}</CustomText>
+          <CustomText style={styles.text}>{moment(data?.rider?.updated_at).format('HH-MM')}</CustomText>
         </View>
       </View>
       <View style={{ marginLeft: moderateScale(60, 0.6), alignItems: 'flex-end', justifyContent: 'flex-end' }}>
-        <CustomText isBold={true} style={styles.price}>{data?.price}</CustomText>
+        <CustomText isBold={true} style={styles.price}>{data?.amount + " $"}</CustomText>
         <View style={{ flexDirection: "row", justifyContent: 'center', alignItems: 'center' }}>
-          <CustomText style={styles.texi_expence}>{data?.taxi_expanse}</CustomText>
+          <CustomText style={styles.texi_expence}>'Taxi Expance'</CustomText>
           <View style={{ height: moderateScale(10, 0.6), width: moderateScale(10, 0.6), backgroundColor: Color.blue, borderRadius: moderateScale(3, 0.6) }}>
             <Icon name='arrowup' as={AntDesign} color={Color.white} size={moderateScale(10, 0.6)} />
           </View>
@@ -40,12 +42,25 @@ export default HistoryComponent;
 const styles = StyleSheet.create({
   main_view: {
     width: windowWidth * 0.9,
-    height: windowHeight * 0.10,
+    height: windowHeight * 0.12,
     marginVertical: moderateScale(6, 0.6),
     paddingVertical: moderateScale(10, 0.6),
+    paddingHorizontal: moderateScale(6, 0.6),
     flexDirection: 'row',
     alignItems: "center",
-    justifyContent: "flex-start"
+    justifyContent: "flex-start",
+    alignSelf: 'center',
+    borderRadius: moderateScale(10, 0.8),
+    shadowColor: Color.lightGrey,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+
   },
   user_image_view: {
     height: moderateScale(50, 0.6),

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -8,13 +8,13 @@ import {
   I18nManager,
   ActivityIndicator,
 } from 'react-native';
-import {Icon, Spinner} from 'native-base';
+import { Icon, Spinner } from 'native-base';
 import LinearGradient from 'react-native-linear-gradient';
-import {moderateScale, scale} from 'react-native-size-matters';
+import { moderateScale, scale } from 'react-native-size-matters';
 import CustomText from './CustomText';
 import Color from '../Assets/Utilities/Color';
 
-const CustomButton = (props ) => {
+const CustomButton = (props) => {
   const {
     activeOpacity,
     onPress,
@@ -42,7 +42,8 @@ const CustomButton = (props ) => {
     alignSelf,
     elevation,
     marginRight,
-    textstyle
+    textstyle,
+    isloader
   } = props;
   return (
     <TouchableOpacity
@@ -53,7 +54,7 @@ const CustomButton = (props ) => {
         {
           width: width,
           height: height,
-          borderWidth :borderWidth ,
+          borderWidth: borderWidth,
           backgroundColor: bgColor,
           borderColor: borderColor,
           marginTop: marginTop || 0,
@@ -103,16 +104,10 @@ const CustomButton = (props ) => {
             justifyContent: 'center',
             borderRadius: moderateScale(30, 0.3),
           }}
-          start={{x: 1, y: 0.2}}
-          end={{x: 1, y:1}}
+          start={{ x: 1, y: 0.2 }}
+          end={{ x: 1, y: 1 }}
           colors={bgColor}>
-          {loader && (
-            <ActivityIndicator
-              style={styles.indicatorStyle}
-              size="small"
-              color={loaderColor ? loaderColor : Color.white}
-            />
-          )}
+
           {iconName && (
             <Icon
               name={iconName}
@@ -120,21 +115,29 @@ const CustomButton = (props ) => {
               style={[styles.iconCustom, iconStyle && iconStyle]}
             />
           )}
-          <CustomText
-            style={[
-              styles.text,
-              {
-                color: textColor,
-                fontSize: fontSize ? fontSize : moderateScale(13, 0.3),
-              },
-              textTransform && {
-                textTransform: textTransform,
-              },
-            ]}
-            isRegular={isBold ? false : true}
-            isBold={isBold ? true : false}>
-            {text}
-          </CustomText>
+          {loader ? (
+            <ActivityIndicator
+              style={styles.indicatorStyle}
+              size="small"
+              color={loaderColor ? loaderColor : Color.white}
+            />
+          ) : (
+            <CustomText
+              style={[
+                styles.text,
+                {
+                  color: textColor,
+                  fontSize: fontSize ? fontSize : moderateScale(13, 0.3),
+                },
+                textTransform && {
+                  textTransform: textTransform,
+                },
+              ]}
+              isRegular={isBold ? false : true}
+              isBold={isBold ? true : false}>
+              {text}
+            </CustomText>
+          )}
         </LinearGradient>
       ) : (
         <>

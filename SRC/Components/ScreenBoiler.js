@@ -56,6 +56,7 @@ const ScreenBoiler = props => {
           showList={showList}
           Notify={Notify}
           hideUser={hideUser}
+          
         />
       )}
       {children}

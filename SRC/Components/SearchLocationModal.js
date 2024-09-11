@@ -1,11 +1,11 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
 import Modal from 'react-native-modal';
 import CustomText from './CustomText';
-import {moderateScale} from 'react-native-size-matters';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import { moderateScale } from 'react-native-size-matters';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 const SearchLocationModal = ({
   isModalVisible,
@@ -55,6 +55,7 @@ const SearchLocationModal = ({
           </TouchableOpacity>
         )}
         <GooglePlacesAutocomplete
+          onFail={error => console.error(error, 'errrrrrorrrr')}
           placeholder="Search"
           textInputProps={{
 
@@ -70,15 +71,15 @@ const SearchLocationModal = ({
             // setInputValue(data?.description)
             locationType == 'pickup'
               ? setPickupLocation({
-                  name: data?.description,
-                  lat: details?.geometry?.location?.lat,
-                  lng: details?.geometry?.location?.lng,
-                })
+                name: data?.description,
+                lat: details?.geometry?.location?.lat,
+                lng: details?.geometry?.location?.lng,
+              })
               : setdropOffLocation({
-                  name: data?.description,
-                  lat: details?.geometry?.location?.lat,
-                  lng: details?.geometry?.location?.lng,
-                });
+                name: data?.description,
+                lat: details?.geometry?.location?.lat,
+                lng: details?.geometry?.location?.lng,
+              });
             setIsModalVisible(false);
           }}
           query={{
@@ -104,7 +105,6 @@ const SearchLocationModal = ({
               width: windowWidth * 0.8,
               marginLeft: moderateScale(5, 0.6),
               borderColor: Color.veryLightGray,
-              backgroundColor: 'red',
             },
             description: {
               color: 'black',

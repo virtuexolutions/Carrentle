@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -7,28 +7,28 @@ import {
   Platform,
   ToastAndroid,
 } from 'react-native';
-import {ScaledSheet, moderateScale} from 'react-native-size-matters';
+import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import navigationService from '../navigationService';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 import CustomButton from '../Components/CustomButton';
-import {ActivityIndicator} from 'react-native';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import { ActivityIndicator } from 'react-native';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 import {
   CodeField,
   Cursor,
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 import CustomStatusBar from '../Components/CustomStatusBar';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {Icon} from 'native-base';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { Icon } from 'native-base';
 import LinearGradient from 'react-native-linear-gradient';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 const VerifyNumber = props => {
   const SelecteduserRole = useSelector(
@@ -44,7 +44,7 @@ const VerifyNumber = props => {
   const [code, setCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const CELL_COUNT = 4;
-  const ref = useBlurOnFulfill({code, cellCount: CELL_COUNT});
+  const ref = useBlurOnFulfill({ code, cellCount: CELL_COUNT });
   const [abcd, getCellOnLayoutHandler] = useClearByFocusCell({
     code,
     setCode,
@@ -64,7 +64,7 @@ const VerifyNumber = props => {
   const sendOTP = async () => {
     const url = 'password/email';
     setIsLoading(true);
-    const response = await Post(url, {email: email}, apiHeader());
+    const response = await Post(url, { email: email }, apiHeader());
     setIsLoading(false);
     if (response != undefined) {
       Platform.OS == 'android'
@@ -77,14 +77,14 @@ const VerifyNumber = props => {
     const url = 'password/code/check';
     setIsLoading(true);
     console.log(code);
-    const response = await Post(url, {code: code}, apiHeader());
+    const response = await Post(url, { code: code }, apiHeader());
     setIsLoading(false);
     if (response != undefined) {
       Platform.OS == 'android'
         ? ToastAndroid.show(`otp verified`, ToastAndroid.SHORT)
         : alert(`otp verified`);
 
-      navigationService.navigate('ResetPassword', {email: email});
+      navigationService.navigate('ResetPassword', { email: email });
     }
   };
 
@@ -109,10 +109,10 @@ const VerifyNumber = props => {
           width: windowWidth,
           height: windowHeight,
         }}
-        start={{x: 0, y: 2.1}}
-        end={{x: 4, y: 2}}
+        start={{ x: 0, y: 2.1 }}
+        end={{ x: 4, y: 2 }}
         colors={['#00309E', '#79B9F6', '#FFFFFF']}
-        // locations ={[0, 0.5, 0.6]}
+      // locations ={[0, 0.5, 0.6]}
       >
         <TouchableOpacity
           activeOpacity={0.8}
@@ -155,7 +155,7 @@ const VerifyNumber = props => {
             Enter the email address and we'll send and email with instructions
             to reset your password{' '}
             {
-              <CustomText isBold style={{color: Color.black}}>
+              <CustomText isBold style={{ color: Color.black }}>
                 {email}
               </CustomText>
             }
@@ -169,19 +169,19 @@ const VerifyNumber = props => {
             rootStyle={styles.codeFieldRoot}
             keyboardType="number-pad"
             textContentType="oneTimeCode"
-            renderCell={({index, symbol, isFocused}) => (
+            renderCell={({ index, symbol, isFocused }) => (
               <View
                 onLayout={getCellOnLayoutHandler(index)}
                 key={index}
                 style={[styles.cellRoot, isFocused && styles.focusCell]}>
                 <CustomText
-                  style={[styles.cellText, isFocused && {color: Color.black}]}>
+                  style={[styles.cellText, isFocused && { color: Color.black }]}>
                   {symbol || (isFocused ? <Cursor /> : null)}
                 </CustomText>
               </View>
             )}
           />
-          <CustomText style={[styles.txt3, {width: windowWidth * 0.6}]}>
+          <CustomText style={[styles.txt3, { width: windowWidth * 0.6 }]}>
             Haven't Recieved Verification Code ?{' '}
             {
               <TouchableOpacity
@@ -214,6 +214,7 @@ const VerifyNumber = props => {
             marginTop={moderateScale(30, 0.3)}
             bgColor={'transparent'}
             isBold
+            loader={isLoading}
             onPress={() => {
               VerifyOTP();
             }}
