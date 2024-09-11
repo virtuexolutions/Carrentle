@@ -218,7 +218,7 @@ const TextInputWithTitle = props => {
                   marginLeft: moderateScale(15, 0.3),
                 },
                 props.color && {
-                  color: Color.black,
+                  color: Color.white,
                 },
                 props.inputColor && {
                   color: props.inputColor,

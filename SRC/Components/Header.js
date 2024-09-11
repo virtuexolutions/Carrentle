@@ -112,7 +112,7 @@ const Header = props => {
             onPress={() => {
               console.log('hello mg ');
               navigationN.toggleDrawer();
-              // navigation.openDrawer()
+              // navigation.openDrawer();
               // navigationN.dispatch(DrawerActions.toggleDrawer());
             }}
           />

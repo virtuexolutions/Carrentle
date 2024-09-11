@@ -19,6 +19,7 @@ const BookingCard = ({
   dropoffLocation,
   distance,
   time,
+  item,
 }) => {
   return (
     <View style={styles.card}>
@@ -39,13 +40,10 @@ const BookingCard = ({
               imageSize={moderateScale(8, 0.3)}
               style={{
                 width: windowWidth * 0.1,
-                // justifyContent: 'center',
-                // backgroundColor: 'green',
               }}
               ratingBackgroundColor={'white'}
             />
             <CustomText
-              //  isBold
               style={{
                 fontSize: moderateScale(9, 0.6),
                 marginLeft: moderateScale(4, 0.3),
