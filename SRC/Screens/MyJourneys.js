@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -8,16 +8,16 @@ import {
   Text,
 } from 'react-native';
 import Header from '../Components/Header';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
 import Color from '../Assets/Utilities/Color';
-import { Image } from 'react-native-svg';
-import { mode } from 'native-base/lib/typescript/theme/tools';
-import { color, position } from 'native-base/lib/typescript/theme/styled-system';
+import {Image} from 'react-native-svg';
+import {mode} from 'native-base/lib/typescript/theme/tools';
+import {color, position} from 'native-base/lib/typescript/theme/styled-system';
 import LinearGradient from 'react-native-linear-gradient';
-import { useSelector } from 'react-redux';
-import { Get } from '../Axios/AxiosInterceptorFunction';
+import {useSelector} from 'react-redux';
+import {Get} from '../Axios/AxiosInterceptorFunction';
 import moment from 'moment';
 import Loader from '../Components/Loader';
 
@@ -26,24 +26,23 @@ const width = Dimensions.get('window').width;
 
 const MyJourneys = () => {
   const [loading, setLoading] = useState(false);
-  const token = useSelector((state) => state.authReducer.token);
+  const token = useSelector(state => state.authReducer.token);
   const [journey_list, setjourneyList] = useState(false);
 
   useEffect(() => {
-    getJourneyList()
-  }, [])
-
+    getJourneyList();
+  }, []);
 
   const getJourneyList = async () => {
-    const url = 'auth/customer/journey'
-    setLoading(true)
-    const reponse = await Get(url, token)
-    console.log(reponse?.data?.data?.rides, 'responseeeeeeeeeeeeeeee')
-    setLoading(false)
+    const url = 'auth/customer/journey';
+    setLoading(true);
+    const reponse = await Get(url, token);
+    console.log(reponse?.data?.data?.rides, 'responseeeeeeeeeeeeeeee');
+    setLoading(false);
     if (reponse != undefined) {
-      setjourneyList(reponse?.data?.data?.rides)
+      setjourneyList(reponse?.data?.data?.rides);
     }
-  }
+  };
 
   const journeyList = [
     {
@@ -93,8 +92,14 @@ const MyJourneys = () => {
             paddingBottom: moderateScale(100, 0.6),
           }}
           showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <CustomText
+              style={{color: 'red', fontSize: moderateScale(12, 0.6)}}>
+              No data Found yet
+            </CustomText>
+          }
           data={journey_list}
-          renderItem={({ item, index }) => {
+          renderItem={({item, index}) => {
             return (
               <View
                 style={{
@@ -120,7 +125,9 @@ const MyJourneys = () => {
                     marginLeft: moderateScale(10, 0.3),
                     marginTop: moderateScale(15, 0.3),
                   }}>
-                  <CustomText style={styles.dateStyle}>{moment(item?.created_at).format('MM-DD-YYYY')}</CustomText>
+                  <CustomText style={styles.dateStyle}>
+                    {moment(item?.created_at).format('MM-DD-YYYY')}
+                  </CustomText>
 
                   <CustomText isBold style={styles.headingStyle}>
                     {item.location_from}
@@ -132,11 +139,11 @@ const MyJourneys = () => {
                     {item.time ? item.time : '10 min'}
                   </CustomText>
                   <LinearGradient
-                    start={{ x: 0, y: 2.1 }}
-                    end={{ x: 4, y: 2 }}
+                    start={{x: 0, y: 2.1}}
+                    end={{x: 4, y: 2}}
                     colors={['#00309E', '#79B9F6', '#FFFFFF']}
                     style={styles.button}>
-                    <CustomText style={{ color: Color.white }}>
+                    <CustomText style={{color: Color.white}}>
                       {item.distance + 'Km'}
                     </CustomText>
                   </LinearGradient>

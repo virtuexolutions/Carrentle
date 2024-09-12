@@ -1,22 +1,28 @@
-import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { moderateScale } from 'react-native-size-matters';
-import { windowHeight, windowWidth } from '../Utillity/utils';
+import {
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {moderateScale} from 'react-native-size-matters';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 import Header from '../Components/Header';
 import Color from '../Assets/Utilities/Color';
 import HistoryComponent from '../Components/HistoryComponent';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
-import { Get } from '../Axios/AxiosInterceptorFunction';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {Get} from '../Axios/AxiosInterceptorFunction';
 import Loader from '../Components/Loader';
 import CustomText from '../Components/CustomText';
 
-
 const PaymentHistory = () => {
   const focused = useIsFocused();
-  const navigation = useNavigation()
-  const token = useSelector((state) => state.authReducer.token);
-  const [history, setHistory] = useState()
+  const navigation = useNavigation();
+  const token = useSelector(state => state.authReducer.token);
+  const [history, setHistory] = useState();
   const [loading, setLoading] = useState(false);
   const [Transactionhistory, setTransactionHistory] = useState([]);
   const [loadMore, setLoadMore] = useState(false);
@@ -24,8 +30,8 @@ const PaymentHistory = () => {
   const [getMore, setGetMore] = useState(false);
 
   useEffect(() => {
-    getPaymentHistory()
-  }, [])
+    getPaymentHistory();
+  }, []);
   useEffect(() => {
     getPaymentHistory();
   }, [focused]);
@@ -53,7 +59,7 @@ const PaymentHistory = () => {
     const url = `auth/transaction?page=${pageNum}`;
     type == 'loadMore' ? setLoadMore(true) : setLoading(true);
     const response = await Get(url, token);
-    console.log(response?.data?.date?.data, 'repomseeeeeeeeeeeee')
+    console.log(response?.data?.date?.data, 'repomseeeeeeeeeeeee');
     type == 'loadMore' ? setLoadMore(false) : setLoading(false);
     setLoading(false);
     if (response != undefined) {
@@ -65,7 +71,7 @@ const PaymentHistory = () => {
     }
   };
 
-  const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+  const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
     const paddingToBottom = 10;
     return (
       layoutMeasurement.height + contentOffset.y >=
@@ -81,7 +87,7 @@ const PaymentHistory = () => {
       time: '10 : 00 AM',
       price: '$15',
       taxi_expanse: 'Taxi Expance',
-      name: "Danial Austin"
+      name: 'Danial Austin',
     },
     {
       id: 2,
@@ -90,7 +96,7 @@ const PaymentHistory = () => {
       time: '10 : 00 AM',
       price: '$15',
       taxi_expanse: 'Taxi Expance',
-      name: "Danial Austin"
+      name: 'Danial Austin',
     },
     {
       id: 3,
@@ -99,8 +105,7 @@ const PaymentHistory = () => {
       time: '10 : 00 AM',
       price: '$15',
       taxi_expanse: 'Taxi Expance',
-      name: "Danial Austin"
-
+      name: 'Danial Austin',
     },
     {
       id: 4,
@@ -109,8 +114,7 @@ const PaymentHistory = () => {
       time: '10 : 00 AM',
       price: '$15',
       taxi_expanse: 'Taxi Expance',
-      name: "Danial Austin"
-
+      name: 'Danial Austin',
     },
     {
       id: 5,
@@ -119,7 +123,7 @@ const PaymentHistory = () => {
       time: '10 : 00 AM',
       price: '$15',
       taxi_expanse: 'Taxi Expance',
-      name: "Danial Austin"
+      name: 'Danial Austin',
     },
     {
       id: 6,
@@ -128,7 +132,7 @@ const PaymentHistory = () => {
       time: '10 : 00 AM',
       price: '$15',
       taxi_expanse: 'Taxi Expance',
-      name: "Danial Austin"
+      name: 'Danial Austin',
     },
     {
       id: 7,
@@ -137,7 +141,7 @@ const PaymentHistory = () => {
       time: '10 : 00 AM',
       price: '$15',
       taxi_expanse: 'Taxi Expance',
-      name: "Danial Austin"
+      name: 'Danial Austin',
     },
     {
       id: 8,
@@ -146,7 +150,7 @@ const PaymentHistory = () => {
       time: '10 : 00 AM',
       price: '$15',
       taxi_expanse: 'Taxi Expance',
-      name: "Danial Austin"
+      name: 'Danial Austin',
     },
     {
       id: 9,
@@ -155,9 +159,8 @@ const PaymentHistory = () => {
       time: '10 : 00 AM',
       price: '$15',
       taxi_expanse: 'Taxi Expance',
-      name: "Danial Austin"
+      name: 'Danial Austin',
     },
-
   ];
 
   return (
@@ -170,14 +173,20 @@ const PaymentHistory = () => {
         minHeight: windowHeight,
         backgroundColor: 'white',
       }}>
-      <Header showBack={true} title={'payment History'} headerColor={['white', 'white']} />
+      <Header
+        showBack={true}
+        title={'payment History'}
+        headerColor={['white', 'white']}
+      />
       {loading ? (
-        <Loader style={{
-          height: '70%',
-          width: 150,
-          alignItems: 'center',
-          alignSelf: 'center',
-        }} />
+        <Loader
+          style={{
+            height: '70%',
+            width: 150,
+            alignItems: 'center',
+            alignSelf: 'center',
+          }}
+        />
       ) : (
         <FlatList
           showsVerticalScrollIndicator={false}
@@ -185,12 +194,16 @@ const PaymentHistory = () => {
             paddingTop: moderateScale(10, 0.6),
             // paddingHorizontal: moderateScale(18, 0.6),
           }}
-          ListEmptyComponent={() => (<CustomText style={{ color: 'red', textAlign: 'center' }}>No data Found</CustomText>)}
+          ListEmptyComponent={() => (
+            <CustomText style={{color: 'red', textAlign: 'center'}}>
+              No data Found yet
+            </CustomText>
+          )}
           contentContainerStyle={{
             paddingBottom: moderateScale(10, 0.6),
           }}
           data={Transactionhistory}
-          onScrollEndDrag={({ nativeEvent }) => {
+          onScrollEndDrag={({nativeEvent}) => {
             {
               if (isCloseToBottom(nativeEvent)) {
                 setPageNum(prev => prev + 1);
@@ -212,7 +225,8 @@ const PaymentHistory = () => {
                     color={Color.themeColor}
                   />
                 </View>
-              ))
+              )
+            );
           }}
           renderItem={(item, index) => {
             return <HistoryComponent data={item?.item} />;
@@ -276,7 +290,6 @@ const styles = StyleSheet.create({
     elevation: 12,
     alignItems: 'center',
     borderRadius: (windowWidth * 0.09) / 2,
-    zIndex: 1
+    zIndex: 1,
   },
-
 });

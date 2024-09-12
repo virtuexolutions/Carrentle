@@ -26,6 +26,7 @@ import SearchLocationModal from '../Components/SearchLocationModal';
 import Header from '../Components/Header';
 import {Post} from '../Axios/AxiosInterceptorFunction';
 import {useSelector} from 'react-redux';
+import ResultModal from '../Components/ResultModal';
 
 const BoardingPointScreen = ({navigation}) => {
   const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
@@ -45,6 +46,7 @@ const BoardingPointScreen = ({navigation}) => {
   const [distance, setDistance] = useState(0);
   const [time, setTime] = useState(0);
   const [fare, setFare] = useState(0);
+  const [resultModalVisible, setResultModalVisible] = useState(false);
 
   const [address, setAddress] = useState('');
 
@@ -118,7 +120,7 @@ const BoardingPointScreen = ({navigation}) => {
           longitude,
         }));
       },
-      error => console.log(error),
+      error => console.log('errrorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr', error),
       {enableHighAccuracy: true, distanceFilter: 10, interval: 1000},
     );
     return () => {
@@ -138,18 +140,17 @@ const BoardingPointScreen = ({navigation}) => {
     const getTravelTime = async () => {
       try {
         const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin.latitude},${origin.longitude}&destinations=${destinations.latitude},${destinations.longitude}&key=${GOOGLE_MAPS_API_KEY}`;
+        console.log(url, 'asdgajsdgjasg');
         const response = await fetch(url);
-
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-
         const data = await response.json();
-
+        // console.log('=============> origin 0', data);
         if (data.status === 'OK') {
           const distanceMatrix = data.rows[0].elements[0];
           const travelTime = distanceMatrix.duration.text;
-          console.log(travelTime, 'travelTime');
+          console.log(travelTime, 'travelTime===============>');
           return setTime(travelTime);
         } else {
           console.error('Error fetching travel time:', data.status);
@@ -163,7 +164,6 @@ const BoardingPointScreen = ({navigation}) => {
   }, [origin, destinations, GOOGLE_MAPS_API_KEY]);
 
   const getCurrentLocation = async () => {
-    getAddressFromCoordinates();
     try {
       const position = await new Promise((resolve, reject) => {
         Geolocation.getCurrentPosition(
@@ -173,6 +173,10 @@ const BoardingPointScreen = ({navigation}) => {
               longitude: position.coords.longitude,
             };
             resolve(coords);
+            getAddressFromCoordinates(
+              position.coords.latitude,
+              position.coords.longitude,
+            );
           },
           error => {
             reject(new Error(error.message));
@@ -193,7 +197,7 @@ const BoardingPointScreen = ({navigation}) => {
   };
 
   const getAddressFromCoordinates = async (latitude, longitude) => {
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${currentPossition?.latitude},${currentPossition?.longitude}&key=${GOOGLE_MAPS_API_KEY}`;
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_API_KEY}`;
     try {
       const response = await fetch(url);
       const data = await response.json();
@@ -208,11 +212,19 @@ const BoardingPointScreen = ({navigation}) => {
     }
   };
 
-  console.log(token, 'asdasdasdasdgjjg');
+  useEffect(() => {
+    if (currentPossition) {
+      getAddressFromCoordinates();
+    }
+  }, []);
+
+  console.log(token, 'asda');
+
   const onPressProceed = async () => {
+    const formData = new FormData();
     const data = {
       location_from: pickupLocation?.name || address,
-      locarion_to: dropOffLocation?.name,
+      location_to: dropOffLocation?.name,
       pickup_location_lat: pickupLocation?.lat || currentPossition?.latitude,
       pickup_location_lng: pickupLocation?.lat || currentPossition?.longitude,
       dropoff_location_lat: dropOffLocation?.lat,
@@ -220,19 +232,22 @@ const BoardingPointScreen = ({navigation}) => {
       distance: distance,
       amount: fare,
     };
-    console.log(data, 'dataaaaaaaa');
-    let url = 'auth/book-ride';
+    for (let key in data) {
+      if (data[key] == '') {
+        return Platform.OS == 'android'
+          ? ToastAndroid.show(` ${key} field is empty`, ToastAndroid.SHORT)
+          : Alert.alert(` ${key} field is empty`);
+      }
+      // formData.append(key, data[key]);
+    }
+    console.log(data, 'formdaraaaaaaaaaaaaaaaaaaaa');
+    const url = 'auth/bookride';
     const response = await Post(url, data, apiHeader(token));
-    return console.log('======......', response);
-    // if (response != undefined) {
-    //   console.log(response?.data, ' =====================>response');
-    // }
-  };
-
-  const isValidCoordinate = coordinate => {
-    return (
-      coordinate && !isNaN(coordinate.latitude) && !isNaN(coordinate.longitude)
-    );
+    console.log('======......', response?.data);
+    if (response != undefined) {
+      setResultModalVisible(true);
+      console.log(response?.data, ' =====================>response');
+    }
   };
 
   return (
@@ -640,6 +655,10 @@ const BoardingPointScreen = ({navigation}) => {
           setIsModalVisible(false);
           setPickUpLocation(currentPossition);
         }}
+      />
+      <ResultModal
+        isVisible={resultModalVisible}
+        setIsVisible={setResultModalVisible}
       />
       {/* </ImageBackground> */}
     </View>
