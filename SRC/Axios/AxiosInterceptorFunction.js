@@ -1,7 +1,7 @@
 import axios from 'axios';
-import {Alert} from 'react-native';
+import { Alert } from 'react-native';
 // import NetworkErrorAlert from "../Components/NetworkErrorAlert";
-import {baseUrl} from '../Config';
+import { baseUrl } from '../Config';
 
 /**
  * @description Sends a Get request to api
@@ -22,7 +22,7 @@ let Get = async (route, token, showAlert = true) => {
     },
   };
   const apiUrl = URL(route);
-  // console.log(apiUrl);
+  console.log(apiUrl);
   try {
     const response = await axios.get(apiUrl, options);
     return response;
@@ -42,7 +42,7 @@ let Get = async (route, token, showAlert = true) => {
               },
             },
           ],
-          {cancelable: false},
+          { cancelable: false },
         );
         // <NetworkErrorAlert/>
       } else {
@@ -57,7 +57,7 @@ let Get = async (route, token, showAlert = true) => {
               },
             },
           ],
-          {cancelable: false},
+          { cancelable: false },
         );
       }
     }
@@ -97,7 +97,7 @@ let Post = async (route, data, headers, showAlert = true) => {
               },
             },
           ],
-          {cancelable: false},
+          { cancelable: false },
         );
         // <NetworkErrorAlert/>
       } else {
@@ -112,7 +112,7 @@ let Post = async (route, data, headers, showAlert = true) => {
               },
             },
           ],
-          {cancelable: false},
+          { cancelable: false },
         );
       }
     }
@@ -148,7 +148,7 @@ let Patch = async (route, data, headers, showAlert = true) => {
               },
             },
           ],
-          {cancelable: false},
+          { cancelable: false },
         );
         console.log('sadasdsad');
         // <NetworkErrorAlert/>
@@ -164,7 +164,7 @@ let Patch = async (route, data, headers, showAlert = true) => {
               },
             },
           ],
-          {cancelable: false},
+          { cancelable: false },
         );
       }
     }
@@ -194,7 +194,7 @@ let Delete = async (route, data, headers, showAlert = true) => {
               },
             },
           ],
-          {cancelable: false},
+          { cancelable: false },
         );
       } else {
         Alert.alert(
@@ -208,11 +208,11 @@ let Delete = async (route, data, headers, showAlert = true) => {
               },
             },
           ],
-          {cancelable: false},
+          { cancelable: false },
         );
       }
     }
   }
 };
 
-export {Post, Get, Patch, Delete};
+export { Post, Get, Patch, Delete };

@@ -1,5 +1,6 @@
-import {Divider, Icon} from 'native-base';
-import React, {useEffect, useRef, useState} from 'react';
+import { getDistance } from 'geolib';
+import { Divider, Icon } from 'native-base';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Platform,
@@ -8,27 +9,27 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import MapView, {Circle, Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import {moderateScale} from 'react-native-size-matters';
+import Geolocation from 'react-native-geolocation-service';
+import MapView, { Circle, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { moderateScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import CustomText from '../Components/CustomText';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import {getDistance, isValidCoordinate} from 'geolib';
-import Geolocation from 'react-native-geolocation-service';
-import MapViewDirections from 'react-native-maps-directions';
+import { useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 import BookingCard from '../Components/BookingCard';
 import CustomButton from '../Components/CustomButton';
-import Loader from '../Components/Loader';
-import SearchLocationModal from '../Components/SearchLocationModal';
+import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
-import {Post} from '../Axios/AxiosInterceptorFunction';
-import {useSelector} from 'react-redux';
+import Loader from '../Components/Loader';
 import ResultModal from '../Components/ResultModal';
+import SearchLocationModal from '../Components/SearchLocationModal';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import { baseUrl } from '../Config';
 
-const BoardingPointScreen = ({navigation}) => {
+const BoardingPointScreen = ({ navigation, route }) => {
+  const { carData } = route.params
   const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
   const mapRef = useRef(null);
 
@@ -40,7 +41,7 @@ const BoardingPointScreen = ({navigation}) => {
   const [dropOffLocation, setDropOffLocation] = useState({});
   const [locationType, setLocationType] = useState('pickup');
   const [isYourLocation, setIsyourLocation] = useState(null);
-  const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
+  const circleCenter = { latitude: 24.8607333, longitude: 67.001135 };
   const circleRadius = 15000;
   const [currentPossition, setcurrentPossition] = useState({});
   const [distance, setDistance] = useState(0);
@@ -50,26 +51,55 @@ const BoardingPointScreen = ({navigation}) => {
 
   const [address, setAddress] = useState('');
 
-  console.log(address, time, 'asdhajsdgjadgj');
 
-  const calculateFare = distance => {
-    const fareBrackets = [
-      {max: 9, base: 10, additional: 1},
-      {max: 75, base: 10, additional: 2},
-      {max: 150, base: 10, additional: 1.75},
-      {max: Infinity, base: 10, additional: 1.5},
-    ];
+  // const calculateFare = distance => {
+  //   const fareBrackets = [
+  //     { max: 9, base: 10, additional: 1 },
+  //     { max: 75, base: 10, additional: 2 },
+  //     { max: 150, base: 10, additional: 1.75 },
+  //     { max: Infinity, base: 10, additional: 1.5 },
+  //   ];
+  //   const bracket = fareBrackets.find(b => distance <= b.max);
+  //   console.log(bracket, 'bracket')
+  //   if (bracket) {
+  //     const additionalMiles = Math.max(distance - bracket.max, 0);
+  //     console.log(additionalMiles, 'additionalMiles')
+  //     const totalFare = bracket.base + additionalMiles * bracket.additional;
+  //     console.log(totalFare, 'totalFare')
+  //     return totalFare.toFixed(2);
+  //   }
+  //   return 0;
+  // };
 
-    const bracket = fareBrackets.find(b => distance <= b.max);
-
-    if (bracket) {
-      const additionalMiles = Math.max(distance - bracket.max, 0);
-      const totalFare = bracket.base + additionalMiles * bracket.additional;
-      return totalFare.toFixed(2);
-    }
-
-    return 0;
+  const fareStructure = {
+    1: { baseFare: 10, additionalFarePerMile: 1 },
+    2: { baseFare: 10, additionalFarePerMile: 2, minDistance: 10, maxDistance: 75 },
+    3: { baseFare: 10, additionalFarePerMile: 1.75, minDistance: 76, maxDistance: 150 },
+    4: { baseFare: 10, additionalFarePerMile: 1.50, minDistance: 151 },
   };
+
+  const calculateFare = (distance) => {
+    let fare = 0;
+    let fareType;
+    let calfare;
+
+    Object.keys(fareStructure).forEach((key) => {
+      const fareTypeObj = fareStructure[key];
+      if (
+        (!fareTypeObj.minDistance || distance >= fareTypeObj.minDistance) &&
+        (!fareTypeObj.maxDistance || distance <= fareTypeObj.maxDistance)
+      ) {
+        fareType = fareTypeObj;
+      }
+    });
+
+    if (fareType) {
+      fare = fareType.baseFare + (distance - 1) * fareType.additionalFarePerMile;
+      calfare = fare.toFixed(0)
+    }
+    return calfare;
+  };
+
 
   const origin = {
     latitude: isYourLocation
@@ -101,11 +131,31 @@ const BoardingPointScreen = ({navigation}) => {
       let km = Math.round(checkDistanceBetween / 1000);
 
       const distanceInMiles = km / 1.60934;
-
-      const fare = calculateFare(distanceInMiles);
-
+      const calculatedFare = calculateFare(distanceInMiles);
+      setFare(calculatedFare);
       setDistance(km);
-      setFare(fare);
+      const getTravelTime = async () => {
+        try {
+          const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin.latitude},${origin.longitude}&destinations=${destinations.latitude},${destinations.longitude}&key=${GOOGLE_MAPS_API_KEY}`;
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const data = await response.json();
+          if (data.status === 'OK') {
+            const distanceMatrix = data.rows[0].elements[0];
+            const travelTime = distanceMatrix.duration.text;
+            console.log(travelTime, 'travelTime')
+            return setTime(travelTime);
+          } else {
+            console.error('Error fetching travel time:', data.status);
+            return null;
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      };
+      getTravelTime();
     }
   }, [dropOffLocation]);
 
@@ -113,15 +163,15 @@ const BoardingPointScreen = ({navigation}) => {
     getCurrentLocation();
     const watchId = Geolocation.watchPosition(
       position => {
-        const {latitude, longitude} = position.coords;
+        const { latitude, longitude } = position.coords;
         setPickUpLocation(prevLocation => ({
           ...prevLocation,
           latitude,
           longitude,
         }));
       },
-      error => console.log('errrorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr', error),
-      {enableHighAccuracy: true, distanceFilter: 10, interval: 1000},
+      error => console.log('errrorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr', error),
+      { enableHighAccuracy: true, distanceFilter: 10, interval: 1000 },
     );
     return () => {
       Geolocation.clearWatch(watchId);
@@ -131,36 +181,13 @@ const BoardingPointScreen = ({navigation}) => {
   useEffect(() => {
     if (!origin || !destinations) return;
     mapRef.current?.fitToSuppliedMarkers(['origin', 'destination'], {
-      edgePadding: {top: 50, right: 50, bottom: 50, left: 50},
+      edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
     });
   }, [origin, destinations]);
 
   useEffect(() => {
     if (!origin || !destinations) return;
-    const getTravelTime = async () => {
-      try {
-        const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin.latitude},${origin.longitude}&destinations=${destinations.latitude},${destinations.longitude}&key=${GOOGLE_MAPS_API_KEY}`;
-        console.log(url, 'asdgajsdgjasg');
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        // console.log('=============> origin 0', data);
-        if (data.status === 'OK') {
-          const distanceMatrix = data.rows[0].elements[0];
-          const travelTime = distanceMatrix.duration.text;
-          console.log(travelTime, 'travelTime===============>');
-          return setTime(travelTime);
-        } else {
-          console.error('Error fetching travel time:', data.status);
-          return null;
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-    getTravelTime();
+
   }, [origin, destinations, GOOGLE_MAPS_API_KEY]);
 
   const getCurrentLocation = async () => {
@@ -218,7 +245,6 @@ const BoardingPointScreen = ({navigation}) => {
     }
   }, []);
 
-  console.log(token, 'asda');
 
   const onPressProceed = async () => {
     const formData = new FormData();
@@ -231,6 +257,7 @@ const BoardingPointScreen = ({navigation}) => {
       dropoff_location_lng: dropOffLocation?.lng,
       distance: distance,
       amount: fare,
+      car_id: carData?.id,
     };
     for (let key in data) {
       if (data[key] == '') {
@@ -240,13 +267,11 @@ const BoardingPointScreen = ({navigation}) => {
       }
       // formData.append(key, data[key]);
     }
-    console.log(data, 'formdaraaaaaaaaaaaaaaaaaaaa');
     const url = 'auth/bookride';
     const response = await Post(url, data, apiHeader(token));
     console.log('======......', response?.data);
     if (response != undefined) {
       setResultModalVisible(true);
-      console.log(response?.data, ' =====================>response');
     }
   };
 
@@ -255,10 +280,11 @@ const BoardingPointScreen = ({navigation}) => {
       <Header
         index
         title={'Boarding Point'}
-        textstyle={{color: Color.darkGray}}
+        textstyle={{ color: Color.darkGray }}
         headerColor={['white', 'white']}
         hideUser={false}
         navigation={navigation}
+        showBack
       />
       <View style={styles.locBox}>
         <View
@@ -278,7 +304,7 @@ const BoardingPointScreen = ({navigation}) => {
             borderRadius: moderateScale(10, 0.2),
             padding: moderateScale(12, 0.2),
           }}>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Icon
               as={Entypo}
               name="dot-single"
@@ -312,20 +338,20 @@ const BoardingPointScreen = ({navigation}) => {
             </TouchableOpacity>
           </View>
           <View style={styles.dotView}>
-            <View style={{gap: -5}}>
+            <View style={{ gap: -5 }}>
               <Icon
                 as={Entypo}
                 name="dots-two-vertical"
                 size={moderateScale(24, 0.2)}
-                style={{color: '#fcf36b'}}
-                // color={}
+                style={{ color: '#fcf36b' }}
+              // color={}
               />
               <Icon
                 as={Entypo}
                 name="dots-two-vertical"
                 size={moderateScale(24, 0.2)}
-                style={{color: '#fcf36b'}}
-                // color={}
+                style={{ color: '#fcf36b' }}
+              // color={}
               />
             </View>
             <Divider
@@ -336,7 +362,7 @@ const BoardingPointScreen = ({navigation}) => {
               borderColor={'#b0adad'}
             />
           </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Icon
               as={Entypo}
               name="dot-single"
@@ -603,7 +629,7 @@ const BoardingPointScreen = ({navigation}) => {
           as={MaterialIcons}
           name="my-location"
           size={moderateScale(24, 0.2)}
-          style={{color: 'blue'}}
+          style={{ color: 'blue' }}
         />
       </TouchableOpacity>
       {Object.keys(pickupLocation).length > 0 &&
@@ -611,12 +637,14 @@ const BoardingPointScreen = ({navigation}) => {
           <>
             <BookingCard
               distance={distance}
-              username={userData?.name}
+              username={carData?.name}
               isSentRequest={true}
               pickupLocation={isYourLocation ? address : pickupLocation?.name}
               dropoffLocation={dropOffLocation?.name}
               time={time}
+              image={baseUrl + carData?.image}
               item={userData}
+              price={'$ ' + fare}
             />
             <View
               style={{

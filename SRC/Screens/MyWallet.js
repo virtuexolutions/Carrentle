@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import { windowHeight, windowWidth } from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
@@ -18,8 +18,22 @@ import Feather from 'react-native-vector-icons/Feather';
 import CustomImage from '../Components/CustomImage';
 import PaymentCard from '../Components/PaymentCard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { Get } from '../Axios/AxiosInterceptorFunction';
+import { useSelector } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
+import Loader from '../Components/Loader';
+import { mode } from 'native-base/lib/typescript/theme/tools';
+import ListEmptyComponent from '../Components/ListEmphtyComponent';
 
 const MyWallet = ({ navigation }) => {
+  const isFoucsed = useIsFocused()
+  const token = useSelector(state => state.authReducer.token);
+  const [loading, setLoading] = useState(false);
+  const [wallet, setWallet] = useState(false);
+  const [journey_list, setjourneyList] = useState(null);
+  console.log(journey_list, 'journey_list')
+  const [journeyloading, setJourneyLoading] = useState(false);
+
   const paymentHistoryList = [
     {
       id: 1,
@@ -49,6 +63,36 @@ const MyWallet = ({ navigation }) => {
       price: 250,
     },
   ];
+
+  useEffect(() => {
+    getWalletHistory();
+    getJourneyList();
+  }, [isFoucsed])
+
+  const getJourneyList = async () => {
+    const url = 'auth/customer/journey';
+    setLoading(true);
+    const reponse = await Get(url, token);
+    console.log(reponse?.data?.data?.rides, 'responseeeeeeeeeeeeeeee');
+    setLoading(false);
+    if (reponse != undefined) {
+      setjourneyList(reponse?.data?.data?.rides);
+    }
+  };
+
+
+  const getWalletHistory = async () => {
+    console.log('asdasd')
+    const url = 'auth/wallet';
+    setJourneyLoading(true);
+    const reponse = await Get(url, token);
+    console.log(reponse?.data, 'responseeeeeeeeeeeeeeee');
+    setJourneyLoading(false);
+    if (reponse != undefined) {
+      setWallet(reponse?.data?.wallet?.balance);
+    };
+  }
+
   return (
     <ScreenBoiler
       showHeader
@@ -64,9 +108,6 @@ const MyWallet = ({ navigation }) => {
           end={{ x: 0.5, y: 1 }}
           colors={['#71B0F0', '#4680D1', '#00309E']}
           locations={[0, 0.5, 1]}
-          // start={{ x: 0.5, y: 0 }}
-          // end={{ x: 0, y: 1.5 }}
-          // colors={['#00309E', '#79B9F6', '#FFFFFF']}
           style={styles.card_view}>
           <View style={styles.tab_bar_view}>
             <TouchableOpacity
@@ -100,7 +141,7 @@ const MyWallet = ({ navigation }) => {
           </View>
           <View>
             <CustomText isBold={true} style={styles.payment}>
-              $326.00
+              {wallet ? wallet : '0.00'}
             </CustomText>
             <CustomText style={styles.text}>Total Earn</CustomText>
           </View>
@@ -127,13 +168,18 @@ const MyWallet = ({ navigation }) => {
             />
           </TouchableOpacity>
         </LinearGradient>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={paymentHistoryList}
-          renderItem={(item, index) => {
-            return <PaymentCard data={item?.item} />;
-          }}
-        />
+        {journey_list ? (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={journey_list}
+            ListEmptyComponent={<ListEmptyComponent animationName={require('../Assets/animations/emphty_wallet.json')} />}
+            renderItem={(item, index) => {
+              return <PaymentCard data={item?.item} />
+            }}
+          />
+        ) : (
+          <Loader />
+        )}
       </View>
     </ScreenBoiler>
   );

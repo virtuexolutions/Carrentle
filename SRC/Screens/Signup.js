@@ -77,7 +77,7 @@ const Signup = () => {
     setIsLoading(false);
     console.log('body ====================> ', body, response?.data);
     if (response != undefined) {
-      navigation.navigate('TaxiAvailability');
+      navigation.navigate('Login');
       console.log(response?.data, 'dataaaaaaaaa');
       console.log(response?.data, 'dataaaaaaaaa');
       dispatch(setUserToken({ token: response?.data?.token }));
@@ -257,31 +257,29 @@ const Signup = () => {
               placeholderColor={Color.white}
             // elevation
             />
-            {user_type === 'Rider' && (
-              <TextInputWithTitle
-                iconHeigth={windowHeight * 0.00005}
-                iconName={'phone'}
-                iconType={FontAwesome}
-                LeftIcon={true}
-                titleText={'Phone Number'}
-                placeholder={'Enter Your Phone Number Here'}
-                setText={setPhoneNumber}
-                value={phoneNumber}
-                // secureText={true}
-                viewHeight={0.06}
-                viewWidth={0.75}
-                inputWidth={0.55}
-                borderBottomWidth={1}
-                // borderRadius={moderateScale(30, 0.3)}
-                // borderColor={'#000'}
-                backgroundColor={'transparent'}
-                marginTop={moderateScale(30, 0.3)}
-                color={Color.white}
-                placeholderColor={Color.white}
-                keyboardType={'numeric'}
-              // elevation
-              />
-            )}
+            <TextInputWithTitle
+              iconHeigth={windowHeight * 0.00005}
+              iconName={'phone'}
+              iconType={FontAwesome}
+              LeftIcon={true}
+              titleText={'Phone Number'}
+              placeholder={'Enter Your Phone Number Here'}
+              setText={setPhoneNumber}
+              value={phoneNumber}
+              // secureText={true}
+              viewHeight={0.06}
+              viewWidth={0.75}
+              inputWidth={0.55}
+              borderBottomWidth={1}
+              // borderRadius={moderateScale(30, 0.3)}
+              // borderColor={'#000'}
+              backgroundColor={'transparent'}
+              marginTop={moderateScale(30, 0.3)}
+              color={Color.white}
+              placeholderColor={Color.white}
+              keyboardType={'numeric'}
+            // elevation
+            />
             {/* <TouchableOpacity
               onPress={() => {
                 setShowNumberModal(true);
@@ -338,7 +336,7 @@ const Signup = () => {
                 // dispatch(setUserToken({ token: 'abc' }));
                 // navigation.goBack();
               }}
-              loader={true}
+              loader={isLoading}
               text={'sign up'}
               textColor={Color.white}
               borderWidth={1}

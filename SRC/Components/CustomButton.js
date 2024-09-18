@@ -43,7 +43,6 @@ const CustomButton = (props) => {
     elevation,
     marginRight,
     textstyle,
-    isloader
   } = props;
   return (
     <TouchableOpacity
@@ -141,13 +140,6 @@ const CustomButton = (props) => {
         </LinearGradient>
       ) : (
         <>
-          {loader && (
-            <ActivityIndicator
-              style={styles.indicatorStyle}
-              size="small"
-              color={loaderColor ? loaderColor : Color.white}
-            />
-          )}
           {iconName && (
             <Icon
               name={iconName}
@@ -155,26 +147,33 @@ const CustomButton = (props) => {
               style={[styles.iconCustom, iconStyle && iconStyle]}
             />
           )}
-          <CustomText
-            style={[
-              styles.text,
-              textstyle,
-              {
-                color: textColor,
-                // fontSize: fontSize ? fontSize : moderateScale(15, 0.3),
-              },
-              textTransform && {
-                textTransform: textTransform,
-              },
-              disabled && {
-                color: Color.white,
-                opacity: 0.6,
-              },
-            ]}
-            isRegular={isBold ? false : true}
-            isBold={isBold ? true : false}>
-            {text}
-          </CustomText>
+          {loader ? (
+            <ActivityIndicator
+              style={styles.indicatorStyle}
+              size="small"
+              color={loaderColor ? loaderColor : Color.white}
+            />) : (
+            <CustomText
+              style={[
+                styles.text,
+                textstyle,
+                {
+                  color: textColor,
+                  // fontSize: fontSize ? fontSize : moderateScale(15, 0.3),
+                },
+                textTransform && {
+                  textTransform: textTransform,
+                },
+                disabled && {
+                  color: Color.white,
+                  opacity: 0.6,
+                },
+              ]}
+              isRegular={isBold ? false : true}
+              isBold={isBold ? true : false}>
+              {text}
+            </CustomText>
+          )}
         </>
       )}
     </TouchableOpacity>

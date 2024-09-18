@@ -1,16 +1,16 @@
 import React from 'react';
-import {SIZES} from '../../constants';
+import { SIZES } from '../../constants';
 import LottieView from 'lottie-react-native';
-import {View} from 'react-native';
-import {moderateScale} from 'react-native-size-matters';
+import { View } from 'react-native';
+import { moderateScale } from 'react-native-size-matters';
 
-const Loader = ({style, color, size}) => {
+const Loader = ({ style, color, viewstyle, size }) => {
   return (
     <View
-      style={{
+      style={[{
         marginTop: moderateScale(50, 0.6),
         alignItems: 'center',
-      }}>
+      }, viewstyle]}>
       <LottieView
         autoPlay
         loop

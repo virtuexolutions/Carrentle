@@ -1,22 +1,22 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React, {useState, useRef} from 'react';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useState, useRef } from 'react';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
+import { windowHeight, windowWidth } from '../Utillity/utils';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import CustomText from '../Components/CustomText';
-import {Divider, Icon} from 'native-base';
+import { Divider, Icon } from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {SetUserRole, setUserLogoutAuth} from '../Store/slices/auth-slice';
-import {setUserLogOut} from '../Store/slices/common';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { SetUserRole, setUserLogoutAuth } from '../Store/slices/auth-slice';
+import { setUserLogOut } from '../Store/slices/common';
 import navigationService from '../navigationService';
 // import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
@@ -28,7 +28,7 @@ const Drawer = () => {
   // console.log('🚀 ~ file: Drawer.js:19 ~ Drawer ~ token:', token);
   const role = useSelector(state => state.authReducer.role);
   // console.log('🚀 ~ file: Drawer.js:29 ~ Drawer ~ role:', role);
-  const {user_type} = useSelector(state => state.authReducer);
+  const { user_type } = useSelector(state => state.authReducer);
 
   const adminData = [
     // {
@@ -212,13 +212,13 @@ const Drawer = () => {
               <CustomImage
                 resizeMode={'cover'}
                 source={require('../Assets/Images/men.png')}
-                style={{width: '100%', height: '100%'}}
+                style={{ width: '100%', height: '100%' }}
               />
             </View>
 
-            <View style={{marginLeft: moderateScale(10, 0.3)}}>
+            <View style={{ marginLeft: moderateScale(10, 0.3) }}>
               <CustomText
-                style={{fontSize: moderateScale(16, 0.6), color: Color.black}}
+                style={{ fontSize: moderateScale(16, 0.6), color: Color.black }}
                 isBold>
                 {/* {userData?.name} */}
                 {'Parsely Montana'}
@@ -275,7 +275,7 @@ const Drawer = () => {
                   alignItems: 'center',
                   justifyContent: 'space-between',
                 }}>
-                <View style={{flexDirection: 'row', width: '90%'}}>
+                <View style={{ flexDirection: 'row', width: '90%' }}>
                   <Icon
                     name={item?.iconName}
                     as={item?.iconType}
@@ -297,7 +297,7 @@ const Drawer = () => {
                   size={moderateScale(20, 0.3)}
                   as={MaterialIcons}
                   color={'#79B9F6'}
-                  style={{position: 'absolute', right: 0}}
+                  style={{ position: 'absolute', right: 0 }}
                 />
               </TouchableOpacity>
               <Divider

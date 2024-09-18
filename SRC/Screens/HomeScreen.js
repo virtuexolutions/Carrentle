@@ -1,27 +1,39 @@
-import React, {useState, useEffect} from 'react';
+import React, { useEffect, useState } from 'react';
+import { FlatList, ScrollView, View } from 'react-native';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import Color from '../Assets/Utilities/Color';
-import {
-  requestLocationPermission,
-  windowHeight,
-  windowWidth,
-} from '../Utillity/utils';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
-import ScreenBoiler from '../Components/ScreenBoiler';
-import LinearGradient from 'react-native-linear-gradient';
-import {View, RefreshControl, ScrollView, FlatList} from 'react-native';
-import CustomText from '../Components/CustomText';
-import {useIsFocused} from '@react-navigation/native';
-import Header from '../Components/Header';
 import BookYourCapComponent from '../Components/BookYourCapComponent';
-import CustomButton from '../Components/CustomButton';
-import BottomSheet from '../Components/BottomSheet';
-import BookingCard from '../Components/BookingCard';
-import ReviewModal from '../Components/ReviewModal';
+import ScreenBoiler from '../Components/ScreenBoiler';
+import {
+  windowHeight,
+  windowWidth
+} from '../Utillity/utils';
+import { useSelector } from 'react-redux';
+import { Get } from '../Axios/AxiosInterceptorFunction';
+import Loader from '../Components/Loader';
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [rbRef, setRbRef] = useState(null);
-  const  [review ,setReview]=useState(false)
+  const [review, setReview] = useState(false)
+  const token = useSelector(state => state.authReducer.token);
+  const [cablist, setCabList] = useState(false);
+
+  useEffect(() => {
+    getCabList();
+  }, []);
+
+  const getCabList = async () => {
+    const url = 'auth/customer/car_list';
+    setIsLoading(true);
+    const reponse = await Get(url, token);
+    console.log(reponse?.data?.data, 'responseeeeeeeeeeeeeeee');
+    setIsLoading(false);
+    if (reponse != undefined) {
+      setCabList(reponse?.data?.data);
+    }
+  };
+
 
   const dummyArray = [
     {
@@ -104,7 +116,7 @@ const HomeScreen = ({navigation}) => {
     <ScreenBoiler
       showHeader
       navigation={navigation}
-      title={'book your cap'}
+      title={'book your cab'}
       headerColor={['white', 'white']}
       hideUser={false}
       statusBarBackgroundColor={'white'}
@@ -112,28 +124,27 @@ const HomeScreen = ({navigation}) => {
     >
       <ScrollView
         contentContainerStyle={{
-          paddingBottom: moderateScale(150, 0.6),
+          paddingBottom: moderateScale(80, 0.6),
         }}
         showsVerticalScrollIndicator={false}
         style={{
           minHeight: windowHeight,
           backgroundColor: 'white',
         }}>
-        <View style={{paddingHorizontal: moderateScale(18, 0.6)}}>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            style={{
-              paddingTop: moderateScale(10, 0.6),
-              paddingHorizontal: moderateScale(18, 0.6),
-            }}
-            contentContainerStyle={{
-              paddingBottom: moderateScale(10, 0.6),
-            }}
-            data={dummyArray}
-            renderItem={(item, index) => {
-              return <BookYourCapComponent item={item?.item} />;
-            }}
-          />
+        <View style={{ paddingHorizontal: moderateScale(18, 0.6) }}>
+          {isLoading ? (<Loader />) : (
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              style={{
+                paddingTop: moderateScale(10, 0.6),
+                paddingHorizontal: moderateScale(18, 0.6),
+              }}
+              data={cablist}
+              renderItem={(item, index) => {
+                return <BookYourCapComponent item={item?.item} />;
+              }}
+            />
+          )}
         </View>
       </ScrollView>
     </ScreenBoiler>

@@ -1,24 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  Dimensions,
-  TouchableOpacity,
-  Text,
-} from 'react-native';
-import Header from '../Components/Header';
-import {moderateScale} from 'react-native-size-matters';
-import CustomText from '../Components/CustomText';
-import CustomImage from '../Components/CustomImage';
-import Color from '../Assets/Utilities/Color';
-import {Image} from 'react-native-svg';
-import {mode} from 'native-base/lib/typescript/theme/tools';
-import {color, position} from 'native-base/lib/typescript/theme/styled-system';
-import LinearGradient from 'react-native-linear-gradient';
-import {useSelector} from 'react-redux';
-import {Get} from '../Axios/AxiosInterceptorFunction';
 import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import {
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  View
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import { moderateScale } from 'react-native-size-matters';
+import { useSelector } from 'react-redux';
+import Color from '../Assets/Utilities/Color';
+import { Get } from '../Axios/AxiosInterceptorFunction';
+import CustomImage from '../Components/CustomImage';
+import CustomText from '../Components/CustomText';
+import Header from '../Components/Header';
 import Loader from '../Components/Loader';
 
 const height = Dimensions.get('window').height;
@@ -94,12 +89,12 @@ const MyJourneys = () => {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <CustomText
-              style={{color: 'red', fontSize: moderateScale(12, 0.6)}}>
+              style={{ color: 'red', fontSize: moderateScale(12, 0.6) }}>
               No data Found yet
             </CustomText>
           }
           data={journey_list}
-          renderItem={({item, index}) => {
+          renderItem={({ item, index }) => {
             return (
               <View
                 style={{
@@ -139,11 +134,11 @@ const MyJourneys = () => {
                     {item.time ? item.time : '10 min'}
                   </CustomText>
                   <LinearGradient
-                    start={{x: 0, y: 2.1}}
-                    end={{x: 4, y: 2}}
+                    start={{ x: 0, y: 2.1 }}
+                    end={{ x: 4, y: 2 }}
                     colors={['#00309E', '#79B9F6', '#FFFFFF']}
                     style={styles.button}>
-                    <CustomText style={{color: Color.white}}>
+                    <CustomText style={{ color: Color.white }}>
                       {item.distance + 'Km'}
                     </CustomText>
                   </LinearGradient>
