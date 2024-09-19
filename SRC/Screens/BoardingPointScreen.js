@@ -51,26 +51,6 @@ const BoardingPointScreen = ({ navigation, route }) => {
 
   const [address, setAddress] = useState('');
 
-
-  // const calculateFare = distance => {
-  //   const fareBrackets = [
-  //     { max: 9, base: 10, additional: 1 },
-  //     { max: 75, base: 10, additional: 2 },
-  //     { max: 150, base: 10, additional: 1.75 },
-  //     { max: Infinity, base: 10, additional: 1.5 },
-  //   ];
-  //   const bracket = fareBrackets.find(b => distance <= b.max);
-  //   console.log(bracket, 'bracket')
-  //   if (bracket) {
-  //     const additionalMiles = Math.max(distance - bracket.max, 0);
-  //     console.log(additionalMiles, 'additionalMiles')
-  //     const totalFare = bracket.base + additionalMiles * bracket.additional;
-  //     console.log(totalFare, 'totalFare')
-  //     return totalFare.toFixed(2);
-  //   }
-  //   return 0;
-  // };
-
   const fareStructure = {
     1: { baseFare: 10, additionalFarePerMile: 1 },
     2: { baseFare: 10, additionalFarePerMile: 2, minDistance: 10, maxDistance: 75 },

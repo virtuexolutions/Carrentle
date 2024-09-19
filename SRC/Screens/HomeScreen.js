@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { FlatList, ScrollView, View } from 'react-native';
-import { moderateScale, ScaledSheet } from 'react-native-size-matters';
+import React, {useEffect, useState} from 'react';
+import {FlatList, ScrollView, View} from 'react-native';
+import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import Color from '../Assets/Utilities/Color';
 import BookYourCapComponent from '../Components/BookYourCapComponent';
 import ScreenBoiler from '../Components/ScreenBoiler';
-import {
-  windowHeight,
-  windowWidth
-} from '../Utillity/utils';
-import { useSelector } from 'react-redux';
-import { Get } from '../Axios/AxiosInterceptorFunction';
+import {windowHeight, windowWidth} from '../Utillity/utils';
+import {useSelector} from 'react-redux';
+import {Get} from '../Axios/AxiosInterceptorFunction';
 import Loader from '../Components/Loader';
+import RideRequestModal from '../Components/RideRequestModal';
+import ResultModal from '../Components/ResultModal';
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [rbRef, setRbRef] = useState(null);
-  const [review, setReview] = useState(false)
+  const [review, setReview] = useState(false);
   const token = useSelector(state => state.authReducer.token);
   const [cablist, setCabList] = useState(false);
 
@@ -33,7 +32,6 @@ const HomeScreen = ({ navigation }) => {
       setCabList(reponse?.data?.data);
     }
   };
-
 
   const dummyArray = [
     {
@@ -120,8 +118,7 @@ const HomeScreen = ({ navigation }) => {
       headerColor={['white', 'white']}
       hideUser={false}
       statusBarBackgroundColor={'white'}
-      statusBarContentStyle={'dark-content'}
-    >
+      statusBarContentStyle={'dark-content'}>
       <ScrollView
         contentContainerStyle={{
           paddingBottom: moderateScale(80, 0.6),
@@ -131,8 +128,10 @@ const HomeScreen = ({ navigation }) => {
           minHeight: windowHeight,
           backgroundColor: 'white',
         }}>
-        <View style={{ paddingHorizontal: moderateScale(18, 0.6) }}>
-          {isLoading ? (<Loader />) : (
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <View style={{paddingHorizontal: moderateScale(18, 0.6)}}>
             <FlatList
               showsVerticalScrollIndicator={false}
               style={{
@@ -144,8 +143,9 @@ const HomeScreen = ({ navigation }) => {
                 return <BookYourCapComponent item={item?.item} />;
               }}
             />
-          )}
-        </View>
+          </View>
+        )}
+        {/* <RideRequestModal /> */}
       </ScrollView>
     </ScreenBoiler>
   );

@@ -64,6 +64,14 @@ const Drawer = () => {
       },
     },
     {
+      name: 'notifications ',
+      iconName: 'compass-outline',
+      iconType: Ionicons,
+      onPress: () => {
+        navigation.navigate('MyJourneys');
+      },
+    },
+    {
       name: 'my wallet ',
       iconName: 'wallet',
       iconType: AntDesign,
