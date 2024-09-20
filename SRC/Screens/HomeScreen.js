@@ -26,7 +26,6 @@ const HomeScreen = ({navigation}) => {
     const url = 'auth/customer/car_list';
     setIsLoading(true);
     const reponse = await Get(url, token);
-    console.log(reponse?.data?.data, 'responseeeeeeeeeeeeeeee');
     setIsLoading(false);
     if (reponse != undefined) {
       setCabList(reponse?.data?.data);
@@ -128,10 +127,10 @@ const HomeScreen = ({navigation}) => {
           minHeight: windowHeight,
           backgroundColor: 'white',
         }}>
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <View style={{paddingHorizontal: moderateScale(18, 0.6)}}>
+        <View style={{paddingHorizontal: moderateScale(18, 0.6)}}>
+          {isLoading ? (
+            <Loader style={{width: 70, height: 70}} />
+          ) : (
             <FlatList
               showsVerticalScrollIndicator={false}
               style={{
@@ -143,8 +142,8 @@ const HomeScreen = ({navigation}) => {
                 return <BookYourCapComponent item={item?.item} />;
               }}
             />
-          </View>
-        )}
+          )}
+        </View>
         {/* <RideRequestModal /> */}
       </ScrollView>
     </ScreenBoiler>

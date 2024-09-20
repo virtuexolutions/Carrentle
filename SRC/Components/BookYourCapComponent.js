@@ -1,29 +1,29 @@
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Rating } from 'react-native-ratings';
-import { moderateScale } from 'react-native-size-matters';
+import {StyleSheet, View} from 'react-native';
+import {Rating} from 'react-native-ratings';
+import {moderateScale} from 'react-native-size-matters';
 import Color from '../Assets/Utilities/Color';
-import { baseUrl } from '../Config';
-import { windowHeight, windowWidth } from '../Utillity/utils';
+import {baseUrl} from '../Config';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 import CustomButton from './CustomButton';
 import CustomImage from './CustomImage';
 import CustomText from './CustomText';
 
-const BookYourCapComponent = ({ item }) => {
+const BookYourCapComponent = ({item}) => {
   const navigation = useNavigation();
   return (
     <View style={[styles.container, styles.shadowprops]}>
       <View style={styles.imageContainer}>
         <CustomImage
-          style={{ height: '100%', width: '100%' }}
-          source={{ uri: baseUrl + item?.image }}
+          style={{height: '100%', width: '100%'}}
+          source={{uri: baseUrl + item?.image}}
         />
       </View>
       <View style={styles.row}>
         <View style={styles.rowInnerView}>
           <CustomText style={styles.text}>{item?.no}</CustomText>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Rating
               type="custom"
               startingValue={item?.ratings}
@@ -51,9 +51,9 @@ const BookYourCapComponent = ({ item }) => {
         {item?.name}
       </CustomText>
       <View style={styles.distanceView}>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={{flexDirection: 'row'}}>
           <View
-            style={{ height: windowHeight * 0.028, width: windowWidth * 0.1 }}>
+            style={{height: windowHeight * 0.028, width: windowWidth * 0.1}}>
             <CustomImage
               style={{
                 height: '100%',
@@ -78,8 +78,22 @@ const BookYourCapComponent = ({ item }) => {
           <CustomText isBold style={styles.text2}>
             status
           </CustomText>
-          <View style={{ flexDirection: 'row', alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }}>
-            <View style={{ backgroundColor: item?.status === 'active' ? 'green' : 'red', height: 8, width: 8, borderRadius: moderateScale(20, 0.3), marginRight: moderateScale(2, 0.6) }} />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignSelf: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <View
+              style={{
+                backgroundColor: item?.status === 'active' ? 'green' : 'red',
+                height: 8,
+                width: 8,
+                borderRadius: moderateScale(20, 0.3),
+                marginRight: moderateScale(2, 0.6),
+              }}
+            />
             <CustomText style={styles.text1}>{item?.status}</CustomText>
           </View>
         </View>
@@ -160,7 +174,7 @@ const BookYourCapComponent = ({ item }) => {
       </View> */}
       <CustomButton
         onPress={() => {
-          navigation.navigate('BoardingPointScreen', { carData: item });
+          navigation.navigate('BoardingPointScreen', {carData: item});
         }}
         text={'Book your cab'}
         textColor={Color.white}
@@ -223,7 +237,7 @@ const styles = StyleSheet.create({
   },
   text1: {
     fontSize: moderateScale(9, 0.6),
-    textAlign: 'center'
+    textAlign: 'center',
   },
   heading: {
     paddingHorizontal: moderateScale(15, 0.6),

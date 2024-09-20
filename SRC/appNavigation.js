@@ -56,6 +56,7 @@ import VerifyNumber from './Screens/VerifyNumber';
 import EnterPhone from './Screens/VerifyEmail';
 import VerifyEmail from './Screens/VerifyEmail';
 import Notifications from './Screens/Notifications';
+import WaitingScreen from './Screens/WaitingScreen';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -134,6 +135,7 @@ const AppNavigator = () => {
           <RootNav.Screen name="BookingRequest" component={BookingRequest} />
           <RootNav.Screen name="CencalTexi" component={CencalTexi} />
           <RootNav.Screen name="Notifications" component={Notifications} />
+          <RootNav.Screen name="WaitingScreen" component={WaitingScreen} />
         </RootNav.Navigator>
       </NavigationContainer>
     );

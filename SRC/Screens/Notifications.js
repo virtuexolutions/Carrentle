@@ -1,70 +1,130 @@
+import {useNavigation} from '@react-navigation/native';
+import {format, isToday, parse} from 'date-fns';
+import React, {useEffect, useState} from 'react';
 import {
+  FlatList,
   Image,
   StyleSheet,
-  FlatList,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
-import ScreenBoiler from '../Components/ScreenBoiler';
-import {useNavigation} from '@react-navigation/native';
-import Header from '../Components/Header';
-import {useSelector} from 'react-redux';
-import CustomText from '../Components/CustomText';
 import {moderateScale} from 'react-native-size-matters';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
+import Header from '../Components/Header';
+import {windowWidth} from '../Utillity/utils';
+import CustomText from '../Components/CustomText';
+import {Get} from '../Axios/AxiosInterceptorFunction';
 
 const Notifications = () => {
   const navigation = useNavigation();
   const token = useSelector(state => state.authReducer.token);
+  const [opened, setIsOpened] = useState(null);
+  const [loading, setLoading] = useState(null);
+  const [notification, setNotifications] = useState(null);
+  console.log(notification, 'notificationnnnnnnnnnnnnnnnn');
   const notificationArray = [
     {
       id: 1,
       text: 'Lorem Ipsum is simply dummy text',
       image: require('../Assets/Images/dummyman1.png'),
+      date: new Date(),
     },
     {
       id: 2,
       text: 'Lorem Ipsum is simply dummy text',
       image: require('../Assets/Images/dummyman1.png'),
+      date: new Date(),
     },
     {
       id: 3,
       text: 'Lorem Ipsum is simply dummy text',
       image: require('../Assets/Images/dummyman1.png'),
+      date: '24-12-2018',
     },
     {
       id: 4,
       text: 'Lorem Ipsum is simply dummy text',
       image: require('../Assets/Images/dummyman1.png'),
+      date: '24-12-2018',
     },
     {
       id: 5,
       text: 'Lorem Ipsum is simply dummy text',
       image: require('../Assets/Images/dummyman1.png'),
+      date: '24-12-2018',
     },
     {
       id: 6,
       text: 'Lorem Ipsum is simply dummy text',
       image: require('../Assets/Images/dummyman1.png'),
+      date: '24-12-2016',
     },
     {
       id: 7,
       text: 'Lorem Ipsum is simply dummy text',
       image: require('../Assets/Images/dummyman1.png'),
+      date: '24-12-2016',
     },
     {
       id: 8,
       text: 'Lorem Ipsum is simply dummy text',
       image: require('../Assets/Images/dummyman1.png'),
+      date: '24-12-2016',
     },
     {
       id: 9,
       text: 'Lorem Ipsum is simply dummy text',
+      date: '24-12-2016',
       image: require('../Assets/Images/dummyman1.png'),
     },
   ];
+  const groupByDate = notifications => {
+    const groupedNotifications = {};
+
+    notifications.forEach(notification => {
+      const notificationDate =
+        typeof notification.date === 'string'
+          ? parse(notification.date, 'dd-MM-yyyy', new Date())
+          : notification.date;
+
+      const dateKey = isToday(notificationDate)
+        ? 'Today'
+        : format(notificationDate, 'dd-MM-yyyy');
+
+      if (!groupedNotifications[dateKey]) {
+        groupedNotifications[dateKey] = [];
+      }
+
+      groupedNotifications[dateKey].push(notification);
+    });
+
+    return groupedNotifications;
+  };
+
+  useEffect(() => {
+    getNotificationList();
+  }, []);
+
+  const getNotificationList = async () => {
+    const url = 'auth/notification';
+    setLoading(true);
+    const reponse = await Get(url, token);
+    setLoading(false);
+    if (reponse != undefined) {
+      setNotifications(reponse?.data?.notification);
+    }
+  };
+
+  const groupedNotifications = groupByDate(notificationArray);
+
+  const renderNotification = ({item}) => console.log(item, 'item');
+  // <TouchableOpacity style={styles.noti_view}>
+  //   <View style={styles.imageView}>
+  //     <Image source={item?.image} style={styles.image} />
+  //   </View>
+  //   <CustomText style={styles.noti_text}>{item?.text}</CustomText>
+  // </TouchableOpacity>
 
   return (
     <View>
@@ -73,22 +133,29 @@ const Notifications = () => {
         title={'Notifications'}
         showBack={true}
       />
-
       <View style={styles.main_view}>
         <FlatList
-          data={notificationArray}
+          data={Object.keys(groupedNotifications)}
+          keyExtractor={item => item.id}
           style={{marginBottom: moderateScale(10, 0.6)}}
           showsVerticalScrollIndicator={false}
-          renderItem={({item, index}) => {
-            return (
-              <TouchableOpacity style={styles.noti_view}>
-                <View style={styles.imageView}>
-                  <Image source={item?.image} style={styles.image} />
-                </View>
-                <CustomText style={styles.noti_text}>{item?.text}</CustomText>
-              </TouchableOpacity>
-            );
-          }}
+          renderItem={({item: dateKey}) => (
+            <View>
+              <CustomText
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 16,
+                  marginVertical: moderateScale(10, 0.6),
+                }}>
+                {dateKey}
+              </CustomText>
+              <FlatList
+                data={groupedNotifications[dateKey]}
+                keyExtractor={item => item.id.toString()}
+                renderItem={renderNotification}
+              />
+            </View>
+          )}
         />
       </View>
     </View>
