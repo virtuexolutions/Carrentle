@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Icon } from 'native-base';
+import React, {useState} from 'react';
+import {Icon} from 'native-base';
 import {
   View,
   Platform,
@@ -8,21 +8,21 @@ import {
   ToastAndroid,
   Alert,
 } from 'react-native';
-import { DrawerActions, useNavigation } from '@react-navigation/native';
+import {DrawerActions, useNavigation} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { moderateScale, ScaledSheet } from 'react-native-size-matters';
+import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import Color from '../Assets/Utilities/Color';
-import { windowHeight, windowWidth } from '../Utillity/utils';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 import CustomText from './CustomText';
 import CustomImage from './CustomImage';
-const { height, width } = Dimensions.get('window');
+const {height, width} = Dimensions.get('window');
 import Feather from 'react-native-vector-icons/Feather';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { imageUrl } from '../Config';
-import { setUserLogout, setUserLogoutAuth } from '../Store/slices/auth-slice';
+import {useDispatch, useSelector} from 'react-redux';
+import {imageUrl} from '../Config';
+import {setUserLogout, setUserLogoutAuth} from '../Store/slices/auth-slice';
 import LinearGradient from 'react-native-linear-gradient';
-import { setUserLogOut } from '../Store/slices/common';
+import {setUserLogOut} from '../Store/slices/common';
 import navigationService from '../navigationService';
 
 const Header = props => {
@@ -53,10 +53,10 @@ const Header = props => {
   const userRole = useSelector(state => state.commonReducer.selectedRole);
   const token = useSelector(state => state.authReducer.token);
   const statusArray = [
-    { label: 'Change Password', value: 'ChangePassword' },
-    { label: 'Terms & Conditions', value: 'TermsAndConditions' },
-    { label: 'Financial Breakdown', value: 'FinancialBreakDown' },
-    { label: 'Logout', value: 'Logout' },
+    {label: 'Change Password', value: 'ChangePassword'},
+    {label: 'Terms & Conditions', value: 'TermsAndConditions'},
+    {label: 'Financial Breakdown', value: 'FinancialBreakDown'},
+    {label: 'Logout', value: 'Logout'},
   ];
 
   const Confirm = () => {
@@ -78,9 +78,9 @@ const Header = props => {
 
   return (
     <LinearGradient
-      style={[styles.header2, index && { zIndex: 1 }]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
+      style={[styles.header2, index && {zIndex: 1}]}
+      start={{x: 0, y: 0}}
+      end={{x: 1, y: 1}}
       colors={headerColor ? headerColor : Color.themeBgColor}>
       <View
         style={{
@@ -118,9 +118,11 @@ const Header = props => {
         )}
       </View>
       {title ? (
-        <CustomText style={[styles.text, textstyle]} isBold>
-          {title}
-        </CustomText>
+        <>
+          <CustomText style={[styles.text, textstyle]} isBold>
+            {title}
+          </CustomText>
+        </>
       ) : (
         <CustomImage
           resizeMode={'contain'}
@@ -198,7 +200,7 @@ const Header = props => {
           }}>
           <CustomImage
             source={require('../Assets/Images/Group13.png')}
-            style={{ width: windowHeight * 0.04, height: windowHeight * 0.04 }}
+            style={{width: windowHeight * 0.04, height: windowHeight * 0.04}}
           />
         </View>
       )}
@@ -221,6 +223,10 @@ const styles = ScaledSheet.create({
     shadowRadius: 6.68,
 
     elevation: 11,
+  },
+  user_name: {
+    fontSize: moderateScale(20, 0.6),
+    color: Color.blue,
   },
   text: {
     fontSize: moderateScale(18, 0.6),

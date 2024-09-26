@@ -240,39 +240,39 @@ const BoardingPointScreen = ({navigation, route}) => {
   }, []);
 
   const onPressProceed = async () => {
-    const formData = new FormData();
-    const data = {
-      location_from: pickupLocation?.name || address,
-      location_to: dropOffLocation?.name,
-      pickup_location_lat: pickupLocation?.lat || currentPossition?.latitude,
-      pickup_location_lng: pickupLocation?.lat || currentPossition?.longitude,
-      dropoff_location_lat: dropOffLocation?.lat,
-      dropoff_location_lng: dropOffLocation?.lng,
-      distance: distance,
-      amount: fare,
-      car_id: carData?.id,
-    };
-    for (let key in data) {
-      if (data[key] == '') {
-        return Platform.OS == 'android'
-          ? ToastAndroid.show(` ${key} field is empty`, ToastAndroid.SHORT)
-          : Alert.alert(` ${key} field is empty`);
-      }
-      // formData.append(key, data[key]);
-    }
+    // const formData = new FormData();
+    // const data = {
+    //   location_from: pickupLocation?.name || address,
+    //   location_to: dropOffLocation?.name,
+    //   pickup_location_lat: pickupLocation?.lat || currentPossition?.latitude,
+    //   pickup_location_lng: pickupLocation?.lat || currentPossition?.longitude,
+    //   dropoff_location_lat: dropOffLocation?.lat,
+    //   dropoff_location_lng: dropOffLocation?.lng,
+    //   distance: distance,
+    //   amount: fare,
+    //   car_id: carData?.id,
+    // };
+    // for (let key in data) {
+    //   if (data[key] == '') {
+    //     return Platform.OS == 'android'
+    //       ? ToastAndroid.show(` ${key} field is empty`, ToastAndroid.SHORT)
+    //       : Alert.alert(` ${key} field is empty`);
+    //   }
+    //   // formData.append(key, data[key]);
+    // }
     const paramsData = {
       currentLocationLatitude: currentPossition,
       pickupLocation: pickupLocation,
       dropOffLocation: dropOffLocation,
     };
-    setLoading(true);
-    const url = 'auth/bookride';
-    const response = await Post(url, data, apiHeader(token));
-    console.log('======......', response?.data);
-    if (response != undefined) {
-      setLoading(false);
-      navigation.navigate('WaitingScreen', {data: paramsData});
-    }
+    // setLoading(true);
+    // const url = 'auth/bookride';
+    // const response = await Post(url, data, apiHeader(token));
+    // console.log('======......', response?.data);
+    // if (response != undefined) {
+    //   setLoading(false);
+    navigation.navigate('WaitingScreen', {data: paramsData});
+    // }
   };
 
   return (
@@ -528,7 +528,7 @@ const BoardingPointScreen = ({navigation, route}) => {
         isVisible={resultModalVisible}
         setIsVisible={setResultModalVisible}
       />
-      
+
       {/* </ImageBackground> */}
     </View>
   );

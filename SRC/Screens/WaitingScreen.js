@@ -8,37 +8,31 @@ import {useSelector} from 'react-redux';
 import MapView, {Circle, Marker} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import {isValidCoordinate} from 'geolib';
+import LottieView from 'lottie-react-native';
+import RippleEffect from '../Components/RippleEffect';
+import {position} from 'native-base/lib/typescript/theme/styled-system';
+import {moderateScale} from 'react-native-size-matters';
 
 const WaitingScreen = ({route}) => {
   const {data} = route.params;
   console.log('WaitingScreen', data);
   const navigation = useNavigation();
-  const user = useSelector(state => state.authReducer.user);
+  const userData = useSelector(state => state.commonReducer?.userData);
+  console.log('🚀 ~ WaitingScreen ~ userData:', userData);
   const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
   const mapRef = useRef(null);
   const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
-  const scaleValue = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    const startAnimation = () => {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(scaleValue, {
-            toValue: 1.5,
-            duration: 1000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(scaleValue, {
-            toValue: 1,
-            duration: 1000,
-            useNativeDriver: true,
-          }),
-        ]),
-      ).start();
-    };
-
-    startAnimation();
-  }, [scaleValue]);
+    if (mapRef.current) {
+      mapRef.current.setNativeProps({
+        scrollEnabled: false,
+        zoomEnabled: false,
+        rotateEnabled: false,
+        pitchEnabled: false,
+      });
+    }
+  }, []);
 
   const origin = {
     latitude:
@@ -52,16 +46,18 @@ const WaitingScreen = ({route}) => {
     latitude: data?.dropOffLocation?.lat || null,
     longitude: data?.dropOffLocation?.lng || null,
   };
+
   return (
     <View style={styles.container}>
       <Header
         index
-        title={'Hello'}
-        textstyle={{color: Color.darkGray}}
+        title={'Hello  ' + userData?.name}
+        textstyle={{color: Color.black, fontSize: moderateScale(22, 0.6)}}
         headerColor={['white', 'white']}
         hideUser={true}
         navigation={navigation}
         showBack
+        username={userData?.name}
       />
       <MapView
         initialRegion={{
@@ -70,23 +66,12 @@ const WaitingScreen = ({route}) => {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
+        scrollEnabled={false}
+        zoomEnabled={false}
+        rotateEnabled={false}
+        pitchEnabled={false}
         style={styles.map}>
-        <Animated.View
-          style={[
-            styles.circle,
-            {
-              transform: [{scale: scaleValue}],
-            },
-          ]}
-        />
-        {/* Inner circle or car icon (You can add an actual car icon here) */}
-        <View style={styles.innerCircle}>
-          <View style={styles.icon} />
-        </View>
-        <Marker
-          coordinate={data?.currentLocationLatitude}
-          title="Your Are Here Now"
-        />
+        <Marker title="You are Here" coordinate={origin} />
         <Circle
           center={circleCenter}
           radius={15000}
@@ -95,36 +80,34 @@ const WaitingScreen = ({route}) => {
           fillColor={'rgba(51, 170, 51, .2)'}
           zIndex={1}
         />
-
-        {/* {Object.keys(data?.pickupLocation).length > 0 &&
-        Object.keys(data?.dropOffLocation).length > 0 ? (
-          <MapViewDirections
-            origin={origin}
-            destination={destinations}
-            apikey="AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM"
-            strokeWidth={5}
-            strokeColor={Color.blue}
-            mode="DRIVING"
-            onStart={params => {
-              console.log(
-                `Started routing between "${params.origin}" and "${params.destination}"`,
-              );
-            }}
-            tappable={true}
-          />
-        ) : null}
-        {Object.keys(data?.dropOffLocation).length > 0 &&
-          isValidCoordinate(data?.dropOffLocation) && (
-            <Marker
-              coordinate={{
-                latitude: data?.dropOffLocation?.lat,
-                longitude: data?.dropOffLocation?.lng,
-              }}
-              title="Drop-off Location"
-              pinColor="green"
-            />
-          )} */}
       </MapView>
+      <RippleEffect style={{top: -40}} />
+      <View
+        style={{
+          backgroundColor: Color.white,
+          width: windowWidth * 0.9,
+          height: windowHeight * 0.25,
+          marginBottom: moderateScale(20, 0.6),
+          borderRadius: moderateScale(20, 0.6),
+        }}>
+        <View
+          style={{
+            width: moderateScale(100, 0.6),
+            height: moderateScale(100, 0.6),
+          }}>
+          <LottieView
+            autoPlay
+            loop
+            style={{
+              height: '100%',
+              width: '1000%',
+              alignItems: 'center',
+              alignSelf: 'center',
+            }}
+            source={require('../Assets/animations/not_found.json')}
+          />
+        </View>
+      </View>
     </View>
   );
 };
@@ -136,7 +119,6 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     height: windowHeight,
     width: windowWidth,
-    // justifyContent: 'flex-end',
     alignItems: 'center',
   },
   map: {
@@ -162,5 +144,12 @@ const styles = StyleSheet.create({
     height: 20,
     backgroundColor: 'white',
     borderRadius: 10,
+  },
+  rippleContainer: {
+    position: 'absolute',
+    top: windowHeight / 2 - 150,
+    left: windowWidth / 2 - 150,
+    zIndex: 2,
+    backgroundColor: 'red',
   },
 });
