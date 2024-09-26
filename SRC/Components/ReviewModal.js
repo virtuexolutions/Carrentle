@@ -27,9 +27,27 @@ const ReviewModal = ({item, setRef, rbRef, setClientReview}) => {
   const [review, setReview] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const sendReview = async () =>{
+    const url ='auth/customer/review';
+    const body={
+      ride_id :2,
+      rating: rating,
+      text:review
+    }
+    setLoading(true);
+    const response = await Post(url, body, apiHeader(token));
+    setLoading(false)
+    if(response != undefined){
+    console.log("🚀 ~ sendReview ~ response:", response?.data)
+
+      rbRef.current.close();
+    }
+  }
+
   return (
     <RBSheet
       ref={ref => setRef(ref)}
+      // ref={rbRef}
       closeOnDragDown={true}
       height={450}
       dragFromTopOnly={true}
@@ -111,7 +129,9 @@ const ReviewModal = ({item, setRef, rbRef, setClientReview}) => {
           width={windowWidth * 0.6}
           height={windowHeight * 0.06}
           marginTop={moderateScale(20, 0.3)}
-          onPress={() => {}}
+          onPress={() => {
+            sendReview()
+          }}
           borderRadius={moderateScale(30, 0.3)}
           fontSize={moderateScale(15, 0.3)}
           bgColor={Color.cartheme}

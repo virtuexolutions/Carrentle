@@ -528,6 +528,7 @@ const BoardingPointScreen = ({navigation, route}) => {
         isVisible={resultModalVisible}
         setIsVisible={setResultModalVisible}
       />
+      
       {/* </ImageBackground> */}
     </View>
   );

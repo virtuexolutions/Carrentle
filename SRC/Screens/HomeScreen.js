@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {FlatList, ScrollView, View} from 'react-native';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import Color from '../Assets/Utilities/Color';
@@ -10,17 +10,18 @@ import {Get} from '../Axios/AxiosInterceptorFunction';
 import Loader from '../Components/Loader';
 import RideRequestModal from '../Components/RideRequestModal';
 import ResultModal from '../Components/ResultModal';
+import ReviewModal from '../Components/ReviewModal';
+import { Button } from 'native-base';
 
 const HomeScreen = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [rbRef, setRbRef] = useState(null);
+  // const rbRef= useRef(null)
   const [review, setReview] = useState(false);
   const token = useSelector(state => state.authReducer.token);
   const [cablist, setCabList] = useState(false);
+  
 
-  useEffect(() => {
-    getCabList();
-  }, []);
 
   const getCabList = async () => {
     const url = 'auth/customer/car_list';
@@ -31,6 +32,9 @@ const HomeScreen = ({navigation}) => {
       setCabList(reponse?.data?.data);
     }
   };
+  useEffect(() => {
+    getCabList();
+  }, []);
 
   const dummyArray = [
     {
@@ -127,6 +131,10 @@ const HomeScreen = ({navigation}) => {
           minHeight: windowHeight,
           backgroundColor: 'white',
         }}>
+          {/* open bottom sheet */}
+        {/* <Button onPress={() =>{
+          rbRef.current.open()
+        }}></Button> */}
         <View style={{paddingHorizontal: moderateScale(18, 0.6)}}>
           {isLoading ? (
             <Loader style={{width: 70, height: 70}} />
@@ -144,7 +152,14 @@ const HomeScreen = ({navigation}) => {
             />
           )}
         </View>
+
         {/* <RideRequestModal /> */}
+        {/* <ReviewModal
+        rbRef={rbRef}
+        setRef={setRbRef}
+
+        
+        /> */}
       </ScrollView>
     </ScreenBoiler>
   );
