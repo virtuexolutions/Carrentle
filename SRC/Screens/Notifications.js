@@ -15,6 +15,7 @@ import Header from '../Components/Header';
 import {windowWidth} from '../Utillity/utils';
 import CustomText from '../Components/CustomText';
 import {Get} from '../Axios/AxiosInterceptorFunction';
+import ListEmptyComponent from '../Components/ListEmphtyComponent';
 
 const Notifications = () => {
   const navigation = useNavigation();
@@ -79,28 +80,30 @@ const Notifications = () => {
       image: require('../Assets/Images/dummyman1.png'),
     },
   ];
-  const groupByDate = notifications => {
-    const groupedNotifications = {};
+  // const groupByDate = notifications => {
+  //   if (notification != null) {
+  //     const groupedNotifications = {};
 
-    notifications.forEach(notification => {
-      const notificationDate =
-        typeof notification.date === 'string'
-          ? parse(notification.date, 'dd-MM-yyyy', new Date())
-          : notification.date;
+  //     notification.forEach(notification => {
+  //       const notificationDate =
+  //         typeof notification.date === 'string'
+  //           ? parse(notification.date, 'dd-MM-yyyy', new Date())
+  //           : notification.date;
 
-      const dateKey = isToday(notificationDate)
-        ? 'Today'
-        : format(notificationDate, 'dd-MM-yyyy');
+  //       const dateKey = isToday(notificationDate)
+  //         ? 'Today'
+  //         : format(notificationDate, 'dd-MM-yyyy');
 
-      if (!groupedNotifications[dateKey]) {
-        groupedNotifications[dateKey] = [];
-      }
+  //       if (!groupedNotifications[dateKey]) {
+  //         groupedNotifications[dateKey] = [];
+  //       }
 
-      groupedNotifications[dateKey].push(notification);
-    });
+  //       groupedNotifications[dateKey].push(notification);
+  //     });
 
-    return groupedNotifications;
-  };
+  //     return groupedNotifications;
+  //   }
+  // };
 
   useEffect(() => {
     getNotificationList();
@@ -110,21 +113,28 @@ const Notifications = () => {
     const url = 'auth/notification';
     setLoading(true);
     const reponse = await Get(url, token);
+    console.log('🚀 ~ getNotificationList ~ reponse:', reponse);
     setLoading(false);
     if (reponse != undefined) {
       setNotifications(reponse?.data?.notification);
     }
   };
 
-  const groupedNotifications = groupByDate(notificationArray);
+  notification?.map(item => {
+    console.log(item, 'itemmmmmmmmmmmmmmmm');
+  });
+  // const groupedNotifications = groupByDate(notificationArray);
 
-  const renderNotification = ({item}) => console.log(item, 'item');
-  // <TouchableOpacity style={styles.noti_view}>
-  //   <View style={styles.imageView}>
-  //     <Image source={item?.image} style={styles.image} />
-  //   </View>
-  //   <CustomText style={styles.noti_text}>{item?.text}</CustomText>
-  // </TouchableOpacity>
+  const renderNotification = ({item}) => {
+    return (
+      <TouchableOpacity style={styles.noti_view}>
+        <View style={styles.imageView}>
+          <Image source={item?.image} style={styles.image} />
+        </View>
+        <CustomText style={styles.noti_text}>{item?.text}</CustomText>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View>
@@ -134,11 +144,20 @@ const Notifications = () => {
         showBack={true}
       />
       <View style={styles.main_view}>
-        <FlatList
+        <CustomText
+          style={{
+            color: 'red',
+            marginTop: moderateScale(10, 0.6),
+            textAlign: 'center',
+          }}>
+          no data found yet
+        </CustomText>
+        {/* <FlatList
           data={Object.keys(groupedNotifications)}
           keyExtractor={item => item.id}
           style={{marginBottom: moderateScale(10, 0.6)}}
           showsVerticalScrollIndicator={false}
+          ListEmptyComponent={<ListEmptyComponent />}
           renderItem={({item: dateKey}) => (
             <View>
               <CustomText
@@ -148,15 +167,30 @@ const Notifications = () => {
                   marginVertical: moderateScale(10, 0.6),
                 }}>
                 {dateKey}
-              </CustomText>
-              <FlatList
-                data={groupedNotifications[dateKey]}
-                keyExtractor={item => item.id.toString()}
-                renderItem={renderNotification}
-              />
-            </View>
+              </CustomText> */}
+        {/* <FlatList
+          data={notification}
+          keyExtractor={item => item.id.toString()}
+          renderItem={renderNotification}
+          ListEmptyComponent={
+            <CustomText
+              style={{
+                color: 'red',
+                marginTop: moderateScale(10, 0.6),
+                textAlign: 'center',
+              }}>
+              no data found yet
+            </CustomText>
+            // <ListEmptyComponent
+            //   animationName={require('../Assets/animations/emphty_inbox.json')}
+            //   text={'Inbox is Emphty'}
+            //   style={{width: 100, height: 100}}
+            // />
+          }
+        /> */}
+        {/* </View>
           )}
-        />
+        /> */}
       </View>
     </View>
   );

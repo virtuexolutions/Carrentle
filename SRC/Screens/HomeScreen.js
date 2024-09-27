@@ -11,17 +11,20 @@ import Loader from '../Components/Loader';
 import RideRequestModal from '../Components/RideRequestModal';
 import ResultModal from '../Components/ResultModal';
 import ReviewModal from '../Components/ReviewModal';
-import { Button } from 'native-base';
+import {Button} from 'native-base';
+import AcceptRideModal from '../Components/AcceptRideModal';
 
 const HomeScreen = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [rbRef, setRbRef] = useState(null);
-  // const rbRef= useRef(null)
   const [review, setReview] = useState(false);
   const token = useSelector(state => state.authReducer.token);
+  console.log('🚀 ~ HomeScreen ~ token:', token);
   const [cablist, setCabList] = useState(false);
-  
 
+  useEffect(() => {
+    getCabList();
+  }, []);
 
   const getCabList = async () => {
     const url = 'auth/customer/car_list';
@@ -32,9 +35,6 @@ const HomeScreen = ({navigation}) => {
       setCabList(reponse?.data?.data);
     }
   };
-  useEffect(() => {
-    getCabList();
-  }, []);
 
   const dummyArray = [
     {
@@ -131,7 +131,7 @@ const HomeScreen = ({navigation}) => {
           minHeight: windowHeight,
           backgroundColor: 'white',
         }}>
-          {/* open bottom sheet */}
+        {/* open bottom sheet */}
         {/* <Button onPress={() =>{
           rbRef.current.open()
         }}></Button> */}
@@ -152,13 +152,10 @@ const HomeScreen = ({navigation}) => {
             />
           )}
         </View>
-
         {/* <RideRequestModal /> */}
         {/* <ReviewModal
         rbRef={rbRef}
         setRef={setRbRef}
-
-        
         /> */}
       </ScrollView>
     </ScreenBoiler>

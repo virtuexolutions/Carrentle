@@ -28,6 +28,7 @@ import SearchLocationModal from '../Components/SearchLocationModal';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {baseUrl} from '../Config';
 import MapViewDirections from 'react-native-maps-directions';
+import LottieView from 'lottie-react-native';
 
 const BoardingPointScreen = ({navigation, route}) => {
   const {carData} = route.params;
@@ -240,39 +241,42 @@ const BoardingPointScreen = ({navigation, route}) => {
   }, []);
 
   const onPressProceed = async () => {
-    // const formData = new FormData();
-    // const data = {
-    //   location_from: pickupLocation?.name || address,
-    //   location_to: dropOffLocation?.name,
-    //   pickup_location_lat: pickupLocation?.lat || currentPossition?.latitude,
-    //   pickup_location_lng: pickupLocation?.lat || currentPossition?.longitude,
-    //   dropoff_location_lat: dropOffLocation?.lat,
-    //   dropoff_location_lng: dropOffLocation?.lng,
-    //   distance: distance,
-    //   amount: fare,
-    //   car_id: carData?.id,
-    // };
-    // for (let key in data) {
-    //   if (data[key] == '') {
-    //     return Platform.OS == 'android'
-    //       ? ToastAndroid.show(` ${key} field is empty`, ToastAndroid.SHORT)
-    //       : Alert.alert(` ${key} field is empty`);
-    //   }
-    //   // formData.append(key, data[key]);
-    // }
-    const paramsData = {
-      currentLocationLatitude: currentPossition,
-      pickupLocation: pickupLocation,
-      dropOffLocation: dropOffLocation,
+    const formData = new FormData();
+    const data = {
+      location_from: pickupLocation?.name || address,
+      location_to: dropOffLocation?.name,
+      pickup_location_lat: pickupLocation?.lat || currentPossition?.latitude,
+      pickup_location_lng: pickupLocation?.lat || currentPossition?.longitude,
+      dropoff_location_lat: dropOffLocation?.lat,
+      dropoff_location_lng: dropOffLocation?.lng,
+      distance: distance,
+      amount: fare,
+      car_id: carData?.id,
     };
-    // setLoading(true);
-    // const url = 'auth/bookride';
-    // const response = await Post(url, data, apiHeader(token));
-    // console.log('======......', response?.data);
-    // if (response != undefined) {
-    //   setLoading(false);
-    navigation.navigate('WaitingScreen', {data: paramsData});
-    // }
+    for (let key in data) {
+      if (data[key] == '') {
+        return Platform.OS == 'android'
+          ? ToastAndroid.show(` ${key} field is empty`, ToastAndroid.SHORT)
+          : Alert.alert(` ${key} field is empty`);
+      }
+      formData.append(key, data[key]);
+    }
+    setLoading(true);
+    const url = 'auth/bookride';
+    const response = await Post(url, data, apiHeader(token));
+    console.log('🚀 ~ onPressProceed ~ response:', response?.data);
+    console.log('======......', response?.data?.data?.id);
+    if (response?.data?.data != null) {
+      const paramsData = {
+        currentLocationLatitude: currentPossition,
+        pickupLocation: pickupLocation,
+        dropOffLocation: dropOffLocation,
+        carData: carData,
+        ride_id: response?.data?.data?.id,
+      };
+      setLoading(false);
+      navigation.navigate('WaitingScreen', {data: paramsData});
+    }
   };
 
   return (
@@ -326,7 +330,9 @@ const BoardingPointScreen = ({navigation, route}) => {
                   // backgroundColor : 'red'
                 }}>
                 {Object.keys(pickupLocation).length > 0
-                  ? pickupLocation?.name || 'Your Live Location'
+                  ? pickupLocation?.name || isYourLocation
+                    ? 'Your Live Location'
+                    : 'Choose Pickup Location'
                   : 'Pick Location'}
               </CustomText>
               <Icon
@@ -381,11 +387,10 @@ const BoardingPointScreen = ({navigation, route}) => {
                 numberOfLines={3}
                 style={{
                   width: windowWidth * 0.6,
-                  // backgroundColor : 'red'
                 }}>
                 {Object.keys(dropOffLocation).length > 0
                   ? dropOffLocation?.name
-                  : 'Drop Location'}{' '}
+                  : 'Choose Drop Location'}
               </CustomText>
               <Icon
                 as={AntDesign}
@@ -416,7 +421,25 @@ const BoardingPointScreen = ({navigation, route}) => {
             fillColor={'rgba(51, 170, 51, .2)'}
             zIndex={1}
           />
-          <Marker coordinate={currentPossition} title="Your Are Here Now" />
+          <Marker coordinate={currentPossition} title="Your Are Here Now">
+            <View
+              style={{
+                width: moderateScale(60, 0.6),
+                height: moderateScale(60, 0.6),
+              }}>
+              <LottieView
+                autoPlay
+                loop
+                style={{
+                  height: '100%',
+                  width: '100%',
+                  alignItems: 'center',
+                  alignSelf: 'center',
+                }}
+                source={require('../Assets/animations/location_pin.json')}
+              />
+            </View>
+          </Marker>
           {Object.keys(pickupLocation).length > 0 &&
           Object.keys(dropOffLocation).length > 0 ? (
             <MapViewDirections
@@ -484,6 +507,7 @@ const BoardingPointScreen = ({navigation, route}) => {
               image={baseUrl + carData?.image}
               item={userData}
               price={'$ ' + fare}
+              // onPressMessageBtn={() => navigation.navigate('MessagesScreen')}
             />
             <View
               style={{
@@ -528,8 +552,6 @@ const BoardingPointScreen = ({navigation, route}) => {
         isVisible={resultModalVisible}
         setIsVisible={setResultModalVisible}
       />
-
-      {/* </ImageBackground> */}
     </View>
   );
 };

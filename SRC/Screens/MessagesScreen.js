@@ -1,5 +1,5 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React, {useCallback, useState ,useEffect} from 'react';
+import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import React, {useCallback, useState, useEffect} from 'react';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import {FlatList, Icon} from 'native-base';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
@@ -13,6 +13,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomImage from '../Components/CustomImage';
 import {Pusher} from '@pusher/pusher-websocket-react-native';
 import {useNavigation} from '@react-navigation/native';
+import Header from '../Components/Header';
 
 const MessagesScreen = () => {
   const userRole = useSelector(state => state.commonReducer.selectedRole);
@@ -26,7 +27,6 @@ const MessagesScreen = () => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  
   useEffect(() => {
     setMessages([
       {
@@ -49,88 +49,66 @@ const MessagesScreen = () => {
           avatar: 'https://placeimg.com/140/140/any',
         },
       },
-    ])
-  }, [])
+    ]);
+  }, []);
 
   const onSend = useCallback((messages = []) => {
     setMessages(previousMessages =>
       GiftedChat.append(previousMessages, messages),
-    )
-  }, [])
-
-
+    );
+  }, []);
 
   return (
-    <ScreenBoiler
-      statusBarBackgroundColor={
-        userRole == 'Qbid Member'
-          ? Color.themeBgColor
-          : userRole == 'Qbid Negotiator'
-          ? Color.themeBgColorNegotiator
-          : Color.themebgBusinessQbidder
-      }
-      statusBarContentStyle={'light-content'}>
-      <LinearGradient
-        style={{
-          height: windowHeight * 0.97,
-        }}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 0}}
-        colors={
-          userRole == 'Qbid Member'
-            ? Color.themeBgColor
-            : userRole == 'Qbid Negotiator'
-            ? Color.themeBgColorNegotiator
-            : Color.themebgBusinessQbidder
-        }>
-        <View style={styles.row}>
-          <Icon
-            onPress={() => {
-              navigation.goBack();
-            }}
-            as={Ionicons}
-            name="arrow-back"
-            size={moderateScale(22, 0.6)}
-            color={Color.white}
-          />
-          <View style={styles.image}>
-            <CustomImage
-              source={{uri: image}}
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-              resizeMode={'cover'}
-            />
-          </View>
-          <View
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+      <Header headerColor={['white', 'white']} title={'Chat'} showBack={true} />
+      <View style={styles.row}>
+        <View>
+          <CustomText
+            isBold
             style={{
-              width: windowWidth * 0.7,
+              fontSize: moderateScale(20, 0.6),
+              color: Color.darkGray,
             }}>
-            <CustomText isBold style={styles.text}>
-              {name}
-            </CustomText>
-            {/* <CustomText style={styles.text2}>from</CustomText> */}
-          </View>
+            Parsley Montana
+          </CustomText>
+          <CustomText
+            style={{fontSize: moderateScale(18, 0.6), color: Color.grey}}>
+            San Francisco
+          </CustomText>
         </View>
-        <GiftedChat
-          textInputStyle={{
-            color: Color.black,
-            marginTop: moderateScale(5, 0.3),
-          }}
-          placeholderTextColor={Color.lightGrey}
-          messages={messages}
-          isTyping={false}
-          onSend={messages => onSend(messages)}
-          key={item => item?.id}
-          user={{
-            _id:2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any'
-          }}
-        />
-      </LinearGradient>
-    </ScreenBoiler>
+        <View
+          style={{
+            width: moderateScale(60, 0.6),
+            height: moderateScale(60, 0.6),
+            borderRadius: moderateScale(30, 0.6),
+          }}>
+          <CustomImage
+            source={require('../Assets/Images/dummyUser1.png')}
+            style={{
+              width: '100%',
+              height: '100%',
+              borderRadius: moderateScale(30, 0.6),
+            }}
+          />
+        </View>
+      </View>
+      <GiftedChat
+        textInputStyle={{
+          color: Color.black,
+          marginTop: moderateScale(5, 0.3),
+        }}
+        placeholderTextColor={Color.lightGrey}
+        messages={messages}
+        isTyping={false}
+        onSend={messages => onSend(messages)}
+        key={item => item?.id}
+        user={{
+          _id: 2,
+          name: 'React Native',
+          avatar: 'https://placeimg.com/140/140/any',
+        }}
+      />
+    </SafeAreaView>
   );
 };
 
@@ -157,9 +135,11 @@ const styles = ScaledSheet.create({
   row: {
     width: windowWidth,
     height: windowHeight * 0.06,
-    paddingHorizontal: moderateScale(10, 0.6),
+    paddingHorizontal: moderateScale(20, 0.6),
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: moderateScale(20, 0.6),
+    justifyContent: 'space-between',
   },
   text2: {
     fontSize: moderateScale(10, 0.6),

@@ -57,6 +57,8 @@ import EnterPhone from './Screens/VerifyEmail';
 import VerifyEmail from './Screens/VerifyEmail';
 import Notifications from './Screens/Notifications';
 import WaitingScreen from './Screens/WaitingScreen';
+import {Get} from './Axios/AxiosInterceptorFunction';
+import AcceptRideModal from './Components/AcceptRideModal';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -251,40 +253,92 @@ export const MyDrawer = () => {
   const DrawerNavigation = createDrawerNavigator();
   const {user_type} = useSelector(state => state.authReducer);
   const firstScreen = user_type === 'Rider' ? 'DashBoard' : 'HomeScreen';
+  const token = useSelector(state => state.authReducer.token);
+  const [loading, setLoading] = useState(false);
+  const [modalvisible, setModalVisible] = useState(false);
+  const [latestRide, setlatestRide] = useState(null);
+  const [hasShownModal, setHasShownModal] = useState(false);
+  console.log('🚀 ~ MyDrawer ~ hasShownModal:', hasShownModal);
+
+  useEffect(() => {
+    if (user_type === 'Rider') {
+      const interval = setInterval(() => {
+        if (!hasShownModal) {
+          getRideHistory();
+        }
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [hasShownModal]);
+
+  const getRideHistory = async type => {
+    const url = `auth/rider/assign-ride`;
+    setLoading(true);
+    const response = await Get(url, token);
+    setLoading(false);
+    if (response != undefined) {
+      setLoading(false);
+      setlatestRide(response?.data?.ride_info);
+      if (hasShownModal != true) {
+        setModalVisible(true);
+        setHasShownModal(true);
+      }
+    }
+  };
   return (
-    <DrawerNavigation.Navigator
-      drawerContent={props => <Drawer {...props} />}
-      initialRouteName={firstScreen}
-      screenOptions={{
-        headerShown: false,
+    <>
+      <DrawerNavigation.Navigator
+        drawerContent={props => <Drawer {...props} />}
+        initialRouteName={firstScreen}
+        screenOptions={{
+          headerShown: false,
+          drawerStyle: {width: '80%'},
+        }}>
+        <DrawerNavigation.Screen name="HomeScreen" component={HomeScreen} />
+        <DrawerNavigation.Screen name="DashBoard" component={DashBoard} />
 
-        drawerStyle: {width: '80%'},
-      }}>
-      <DrawerNavigation.Screen name="HomeScreen" component={HomeScreen} />
-      <DrawerNavigation.Screen name="DashBoard" component={DashBoard} />
+        <DrawerNavigation.Screen
+          name="PaymentHistory"
+          component={PaymentHistory}
+        />
+        <DrawerNavigation.Screen
+          name="PaymentScreen"
+          component={PaymentScreen}
+        />
 
-      <DrawerNavigation.Screen
-        name="PaymentHistory"
-        component={PaymentHistory}
-      />
-      <DrawerNavigation.Screen name="PaymentScreen" component={PaymentScreen} />
-
-      <DrawerNavigation.Screen
-        name="BoardingPointSearchScreen"
-        component={BoardingPointSearchScreen}
-      />
-      <DrawerNavigation.Screen
-        name="BoardingPointScreen"
-        component={BoardingPointScreen}
-      />
-      <DrawerNavigation.Screen
-        name="TermsAndConditions"
-        component={TermsAndConditions}
-      />
-      <DrawerNavigation.Screen name="Help" component={Help} />
-      <DrawerNavigation.Screen name="MyWallet" component={MyWallet} />
-      <DrawerNavigation.Screen name="MyJourneys" component={MyJourneys} />
-    </DrawerNavigation.Navigator>
+        <DrawerNavigation.Screen
+          name="BoardingPointSearchScreen"
+          component={BoardingPointSearchScreen}
+        />
+        <DrawerNavigation.Screen
+          name="BoardingPointScreen"
+          component={BoardingPointScreen}
+        />
+        <DrawerNavigation.Screen
+          name="TermsAndConditions"
+          component={TermsAndConditions}
+        />
+        <DrawerNavigation.Screen name="Help" component={Help} />
+        <DrawerNavigation.Screen name="MyWallet" component={MyWallet} />
+        <DrawerNavigation.Screen name="MyJourneys" component={MyJourneys} />
+      </DrawerNavigation.Navigator>
+      {modalvisible && (
+        <AcceptRideModal
+          username={latestRide?.user?.name}
+          image={'https://car-rental.cstmpanel.com' + latestRide?.user?.photo}
+          pickupLocation={latestRide?.location_to}
+          dropoffLocation={latestRide?.location_from}
+          distance={latestRide?.distance}
+          seats={latestRide?.carinfo?.seats}
+          CarNumber={latestRide?.carinfo?.no}
+          carName={latestRide?.carinfo?.name}
+          price={latestRide?.amount + ' $'}
+          visible={modalvisible}
+          isRider={true}
+          onpressClose={() => setModalVisible(false)}
+        />
+      )}
+    </>
   );
 };
 

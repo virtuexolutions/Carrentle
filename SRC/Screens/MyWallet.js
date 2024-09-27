@@ -6,32 +6,33 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import ScreenBoiler from '../Components/ScreenBoiler';
-import { windowHeight, windowWidth } from '../Utillity/utils';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import CustomText from '../Components/CustomText';
 import LinearGradient from 'react-native-linear-gradient';
-import { Icon } from 'native-base';
+import {Icon} from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
 import CustomImage from '../Components/CustomImage';
 import PaymentCard from '../Components/PaymentCard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { Get } from '../Axios/AxiosInterceptorFunction';
-import { useSelector } from 'react-redux';
-import { useIsFocused } from '@react-navigation/native';
+import {Get} from '../Axios/AxiosInterceptorFunction';
+import {useSelector} from 'react-redux';
+import {useIsFocused} from '@react-navigation/native';
 import Loader from '../Components/Loader';
-import { mode } from 'native-base/lib/typescript/theme/tools';
+import {mode} from 'native-base/lib/typescript/theme/tools';
 import ListEmptyComponent from '../Components/ListEmphtyComponent';
+import LottieView from 'lottie-react-native';
 
-const MyWallet = ({ navigation }) => {
-  const isFoucsed = useIsFocused()
+const MyWallet = ({navigation}) => {
+  const isFoucsed = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
   const [loading, setLoading] = useState(false);
   const [wallet, setWallet] = useState(false);
   const [journey_list, setjourneyList] = useState(null);
-  console.log(journey_list, 'journey_list')
+  console.log(journey_list, 'journey_list');
   const [journeyloading, setJourneyLoading] = useState(false);
 
   const paymentHistoryList = [
@@ -67,7 +68,7 @@ const MyWallet = ({ navigation }) => {
   useEffect(() => {
     getWalletHistory();
     getJourneyList();
-  }, [isFoucsed])
+  }, [isFoucsed]);
 
   const getJourneyList = async () => {
     const url = 'auth/customer/journey';
@@ -80,9 +81,8 @@ const MyWallet = ({ navigation }) => {
     }
   };
 
-
   const getWalletHistory = async () => {
-    console.log('asdasd')
+    console.log('asdasd');
     const url = 'auth/wallet';
     setJourneyLoading(true);
     const reponse = await Get(url, token);
@@ -90,8 +90,8 @@ const MyWallet = ({ navigation }) => {
     setJourneyLoading(false);
     if (reponse != undefined) {
       setWallet(reponse?.data?.wallet?.balance);
-    };
-  }
+    }
+  };
 
   return (
     <ScreenBoiler
@@ -104,8 +104,8 @@ const MyWallet = ({ navigation }) => {
       statusBarContentStyle={'dark-content'}>
       <View style={styles.container}>
         <LinearGradient
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 1 }}
+          start={{x: 0.5, y: 0}}
+          end={{x: 0.5, y: 1}}
           colors={['#71B0F0', '#4680D1', '#00309E']}
           locations={[0, 0.5, 1]}
           style={styles.card_view}>
@@ -120,7 +120,7 @@ const MyWallet = ({ navigation }) => {
                   backgroundColor: Color.white,
                 },
               ]}>
-              <CustomText style={[styles.tab_bar_text, { color: Color.black }]}>
+              <CustomText style={[styles.tab_bar_text, {color: Color.black}]}>
                 Cash
               </CustomText>
             </TouchableOpacity>
@@ -134,7 +134,7 @@ const MyWallet = ({ navigation }) => {
                   backgroundColor: 'transparent',
                 },
               ]}>
-              <CustomText style={[styles.tab_bar_text, { color: Color.white }]}>
+              <CustomText style={[styles.tab_bar_text, {color: Color.white}]}>
                 Discount
               </CustomText>
             </TouchableOpacity>
@@ -172,9 +172,38 @@ const MyWallet = ({ navigation }) => {
           <FlatList
             showsVerticalScrollIndicator={false}
             data={journey_list}
-            ListEmptyComponent={<ListEmptyComponent animationName={require('../Assets/animations/emphty_wallet.json')} />}
+            ListEmptyComponent={
+              <CustomText
+                style={{color: 'red', marginTop: moderateScale(10, 0.6)}}>
+                no data found yet
+              </CustomText>
+              // <View
+              //   style={[
+              //     {
+              //       marginTop: moderateScale(50, 0.6),
+              //       alignItems: 'center',
+              //       width: moderateScale(100, 0.7),
+              //       height: moderateScale(100, 0.7),
+              //       backgroundColor: 'red',
+              //     },
+              //   ]}>
+              //   <LottieView
+              //     autoPlay
+              //     loop
+              //     style={[
+              //       {
+              //         height: '100%',
+              //         width: '100%',
+              //         alignItems: 'center',
+              //         alignSelf: 'center',
+              //       },
+              //     ]}
+              //     source={require('../Assets/animations/emphty_wallet.json')}
+              //   />
+              // </View>
+            }
             renderItem={(item, index) => {
-              return <PaymentCard data={item?.item} />
+              return <PaymentCard data={item?.item} />;
             }}
           />
         ) : (
@@ -289,6 +318,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4.84,
     elevation: 5,
   },
-  tab_bar_text: { fontSize: moderateScale(12, 0.3), color: Color.black },
-  selected_tab_text: { fontSize: moderateScale(12, 0.3), color: Color.white },
+  tab_bar_text: {fontSize: moderateScale(12, 0.3), color: Color.black},
+  selected_tab_text: {fontSize: moderateScale(12, 0.3), color: Color.white},
 });

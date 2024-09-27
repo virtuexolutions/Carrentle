@@ -1,16 +1,11 @@
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
-import {
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  View
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Dimensions, FlatList, StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { moderateScale } from 'react-native-size-matters';
-import { useSelector } from 'react-redux';
+import {moderateScale} from 'react-native-size-matters';
+import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Get } from '../Axios/AxiosInterceptorFunction';
+import {Get} from '../Axios/AxiosInterceptorFunction';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
@@ -89,12 +84,12 @@ const MyJourneys = () => {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <CustomText
-              style={{ color: 'red', fontSize: moderateScale(12, 0.6) }}>
+              style={{color: 'red', fontSize: moderateScale(12, 0.6)}}>
               No data Found yet
             </CustomText>
           }
           data={journey_list}
-          renderItem={({ item, index }) => {
+          renderItem={({item, index}) => {
             return (
               <View
                 style={{
@@ -134,11 +129,11 @@ const MyJourneys = () => {
                     {item.time ? item.time : '10 min'}
                   </CustomText>
                   <LinearGradient
-                    start={{ x: 0, y: 2.1 }}
-                    end={{ x: 4, y: 2 }}
+                    start={{x: 0, y: 2.1}}
+                    end={{x: 4, y: 2}}
                     colors={['#00309E', '#79B9F6', '#FFFFFF']}
                     style={styles.button}>
-                    <CustomText style={{ color: Color.white }}>
+                    <CustomText style={{color: Color.white}}>
                       {item.distance + 'Km'}
                     </CustomText>
                   </LinearGradient>

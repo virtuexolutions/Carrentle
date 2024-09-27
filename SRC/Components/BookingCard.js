@@ -22,6 +22,7 @@ const BookingCard = ({
   item,
   price,
   image,
+  onPressMessageBtn,
 }) => {
   return (
     <View style={styles.card}>
@@ -54,12 +55,12 @@ const BookingCard = ({
             </CustomText>
           </View>
         </View>
-        <TouchableOpacity style={styles.btn}>
+        {/* <TouchableOpacity style={styles.btn}>
           <CustomImage source={require('../Assets/Images/phone.png')} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btn}>
+        </TouchableOpacity> */}
+        {/* <TouchableOpacity style={styles.btn} onPress={onPressMessageBtn}>
           <CustomImage source={require('../Assets/Images/message.png')} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       {isSentRequest ? null : (
         <CustomText isBold style={styles.heading}>
@@ -267,7 +268,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     height: windowHeight * 0.04,
-    width: windowHeight * 0.04,
+    width: windowHeight * 0.01,
     borderRadius: (windowHeight * 0.04) / 2,
     backgroundColor: '#0779fa',
     alignItems: 'center',

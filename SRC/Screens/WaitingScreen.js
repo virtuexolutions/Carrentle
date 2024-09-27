@@ -1,5 +1,12 @@
-import {StyleSheet, Animated, View} from 'react-native';
-import React, {useEffect, useRef} from 'react';
+import {
+  StyleSheet,
+  Animated,
+  View,
+  Platform,
+  ToastAndroid,
+  Alert,
+} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import Header from '../Components/Header';
 import Color from '../Assets/Utilities/Color';
@@ -12,16 +19,24 @@ import LottieView from 'lottie-react-native';
 import RippleEffect from '../Components/RippleEffect';
 import {position} from 'native-base/lib/typescript/theme/styled-system';
 import {moderateScale} from 'react-native-size-matters';
+import CustomText from '../Components/CustomText';
+import {Get} from '../Axios/AxiosInterceptorFunction';
+import AcceptRideModal from '../Components/AcceptRideModal';
 
 const WaitingScreen = ({route}) => {
   const {data} = route.params;
-  console.log('WaitingScreen', data);
+  console.log('🚀 ~ WaitingScreen ~ data:', data);
   const navigation = useNavigation();
   const userData = useSelector(state => state.commonReducer?.userData);
-  console.log('🚀 ~ WaitingScreen ~ userData:', userData);
+  const token = useSelector(state => state.authReducer.token);
+  console.log('🚀 ~ WaitingScreen ~ token:', token);
   const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
   const mapRef = useRef(null);
   const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
+  const [loading, setLoading] = useState(false);
+  const [rideData, setRideData] = useState(null);
+  console.log('🚀 ~ WaitingScreen ~ rideData:', rideData);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     if (mapRef.current) {
@@ -32,7 +47,23 @@ const WaitingScreen = ({route}) => {
         pitchEnabled: false,
       });
     }
+    const interval = setInterval(() => {
+      getRiderInfo();
+    }, 5000);
+    return () => clearInterval(interval);
   }, []);
+
+  const getRiderInfo = async () => {
+    const url = `auth/ride/${data?.ride_id}`;
+    setLoading(true);
+    const response = await Get(url, token);
+    console.log('🚀 ~ getRiderInfo ~ response:', response?.data);
+    setLoading(false);
+    if (response?.data?.ride_info?.status === 'confirm') {
+      setRideData(response?.data?.ride_info);
+      setModalVisible(true);
+    }
+  };
 
   const origin = {
     latitude:
@@ -81,37 +112,63 @@ const WaitingScreen = ({route}) => {
           zIndex={1}
         />
       </MapView>
-      <RippleEffect style={{top: -40}} />
       <View
         style={{
-          backgroundColor: Color.white,
-          width: windowWidth * 0.9,
-          height: windowHeight * 0.25,
-          marginBottom: moderateScale(20, 0.6),
-          borderRadius: moderateScale(20, 0.6),
+          position: 'relative',
         }}>
-        <View
+        <RippleEffect
           style={{
-            width: moderateScale(100, 0.6),
-            height: moderateScale(100, 0.6),
-          }}>
-          <LottieView
-            autoPlay
-            loop
-            style={{
-              height: '100%',
-              width: '1000%',
-              alignItems: 'center',
-              alignSelf: 'center',
-            }}
-            source={require('../Assets/animations/not_found.json')}
-          />
-        </View>
+            position: 'absolute',
+            top: 300,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+        />
       </View>
+      {rideData != null ? (
+        <AcceptRideModal
+          visible={modalVisible}
+          setVisible={setModalVisible}
+          username={rideData?.rider?.name}
+          image={'https://car-rental.cstmpanel.com' + rideData?.rider?.photo}
+          pickupLocation={rideData?.location_to}
+          dropoffLocation={rideData?.location_from}
+          distance={rideData?.distance}
+          seats={rideData?.carinfo?.seats}
+          CarNumber={rideData?.carinfo?.no}
+          carName={rideData?.carinfo?.name}
+          price={rideData?.amount + ' $'}
+          onpressClose={() => navigation.navigate('HomeScreen')}
+          onPressMessageBtn={() =>
+            Platform.OS == 'android'
+              ? ToastAndroid.show(
+                  `We are Currently unavailable`,
+                  ToastAndroid.SHORT,
+                )
+              : Alert.alert(`We are Currently unavailable`)
+          }
+        />
+      ) : (
+        <View style={styles.waiting_main_view}>
+          <View style={styles.waiting_sub_view}>
+            <View style={styles.animation_view}>
+              <LottieView
+                autoPlay
+                loop
+                style={styles.waiting_animation}
+                source={require('../Assets/animations/waiting.json')}
+              />
+            </View>
+            <CustomText isBold style={{fontSize: moderateScale(18, 0.6)}}>
+              Wating Rider to Accept Your Ride
+            </CustomText>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
-
 export default WaitingScreen;
 
 const styles = StyleSheet.create({
@@ -151,5 +208,51 @@ const styles = StyleSheet.create({
     left: windowWidth / 2 - 150,
     zIndex: 2,
     backgroundColor: 'red',
+  },
+  waiting_main_view: {
+    width: windowWidth,
+    height: windowHeight * 0.25,
+    position: 'absolute',
+    bottom: 10,
+    left: 0,
+    right: 0,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.44,
+    shadowRadius: 10.32,
+    elevation: 16,
+  },
+  waiting_sub_view: {
+    backgroundColor: Color.white,
+    width: windowWidth * 0.9,
+    height: windowHeight * 0.25,
+    alignSelf: 'center',
+    borderRadius: moderateScale(20, 0.6),
+    paddingHorizontal: moderateScale(20, 0.7),
+    paddingVertical: moderateScale(10, 0.6),
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.44,
+    shadowRadius: 10.32,
+
+    elevation: 16,
+  },
+  animation_view: {
+    width: moderateScale(100, 0.6),
+    height: moderateScale(100, 0.6),
+    marginTop: moderateScale(15, 0.6),
+  },
+  waiting_animation: {
+    height: '100%',
+    width: '1000%',
+    alignItems: 'center',
+    alignSelf: 'center',
   },
 });
