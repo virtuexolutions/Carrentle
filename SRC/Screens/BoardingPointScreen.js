@@ -29,6 +29,7 @@ import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {baseUrl} from '../Config';
 import MapViewDirections from 'react-native-maps-directions';
 import LottieView from 'lottie-react-native';
+import AskLocationComponent from '../Components/AskLocationComponent';
 
 const BoardingPointScreen = ({navigation, route}) => {
   const {carData} = route.params;
@@ -50,6 +51,7 @@ const BoardingPointScreen = ({navigation, route}) => {
   const [time, setTime] = useState(0);
   const [fare, setFare] = useState(0);
   const [resultModalVisible, setResultModalVisible] = useState(false);
+  const [additionStops, setAdditionStops] = useState(false);
 
   const [loading, setLoading] = useState(0);
   const [address, setAddress] = useState('');
@@ -231,6 +233,27 @@ const BoardingPointScreen = ({navigation, route}) => {
     }
   };
 
+  // const startLiveLocationTracking = () => {
+  //   const watchId = Geolocation.watchPosition(
+  //     position => {
+  //       console.log('🚀 ~ startLiveLocationTracking ~ position:', position);
+  //       const {latitude, longitude} = position.coords;
+  //       setLocation({latitude, longitude});
+  //     },
+  //     error => {
+  //       console.log('Error getting location: ', error);
+  //     },
+  //     {
+  //       enableHighAccuracy: true,
+  //       distanceFilter: 0, // Update on every change
+  //       interval: 5000, // Update every 5 seconds
+  //       fastestInterval: 2000, // Minimum 2 seconds between updates
+  //     },
+  //   );
+  // };
+
+  // startLiveLocationTracking();
+
   useEffect(() => {
     if (currentPossition) {
       getAddressFromCoordinates(
@@ -277,6 +300,11 @@ const BoardingPointScreen = ({navigation, route}) => {
       setLoading(false);
       navigation.navigate('WaitingScreen', {data: paramsData});
     }
+  };
+
+  const handleMultipleStopsUpdate = updatedStops => {
+    console.log("🚀 ~ handleMultipleStopsUpdate ~ updatedStops:", updatedStops)
+    // setStops(updatedStops);
   };
 
   return (
@@ -408,10 +436,13 @@ const BoardingPointScreen = ({navigation, route}) => {
           style={styles.map}
           initialRegion={{
             latitude: currentPossition.latitude || 0,
+            // latitude: 40.367474,
+            // longitude: -82.996216,
             longitude: currentPossition.longitude || 0,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
+          // region=
           ref={mapRef}>
           <Circle
             center={circleCenter}
@@ -514,7 +545,7 @@ const BoardingPointScreen = ({navigation, route}) => {
                 alignSelf: 'center',
                 position: 'absolute',
                 // bottom: 50, old
-                bottom: 70,
+                bottom: 30,
                 zIndex: 1,
               }}>
               <CustomButton
@@ -533,9 +564,29 @@ const BoardingPointScreen = ({navigation, route}) => {
                 isGradient
                 loader={loading}
               />
+              <CustomButton
+                text={'Add Additional Stops'}
+                textColor={Color.white}
+                width={windowWidth * 0.8}
+                height={windowHeight * 0.06}
+                onPress={() => {
+                  setAdditionStops(true);
+                }}
+                bgColor={Color.cartheme}
+                borderColor={Color.white}
+                borderWidth={1}
+                borderRadius={moderateScale(30, 0.3)}
+                isGradient
+                marginTop={moderateScale(10, 0.3)}
+              />
             </View>
           </>
         )}
+      <AskLocationComponent
+        visible={additionStops}
+        setIsVisible={setAdditionStops}
+        onUpdateStops={handleMultipleStopsUpdate}
+      />
       <SearchLocationModal
         isModalVisible={isModalVisible}
         setIsModalVisible={setIsModalVisible}
