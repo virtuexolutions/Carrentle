@@ -1,26 +1,23 @@
-import {FlatList, StyleSheet, Text, View} from 'react-native';
-import React, {useRef, useState} from 'react';
-import TextInputWithTitle from './TextInputWithTitle';
-import Feather from 'react-native-vector-icons/Feather';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale} from 'react-native-size-matters';
-import Color from '../Assets/Utilities/Color';
+import { Icon } from 'native-base';
+import React, { useRef, useState } from 'react';
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Modal from 'react-native-modal';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-import CustomText from './CustomText';
-import {Icon} from 'native-base';
+import { moderateScale } from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
+import Color from '../Assets/Utilities/Color';
+import { windowHeight, windowWidth } from '../Utillity/utils';
+import CustomButton from './CustomButton';
+import CustomText from './CustomText';
 
 const AskLocationComponent = ({visible, setIsVisible, onUpdateStops}) => {
   const [inputValue, setInputValue] = useState('');
   const [multipleStops, setMultipleStops] = useState([]);
-  console.log('🚀 ~ AskLocationComponent ~ multipleStops:', multipleStops);
-  console.log('🚀 ~ AskLocationComponent ~ InputValue:', inputValue);
   const googlePlacesRef = useRef(null);
 
   const updateStops = updatedStops => {
     setMultipleStops(updatedStops);
-    onUpdateStops(updatedStops); // Step 5: Call the callback function with the updated stops
+    // onUpdateStops(updatedStops);
   };
 
   return (
@@ -32,6 +29,14 @@ const AskLocationComponent = ({visible, setIsVisible, onUpdateStops}) => {
         alignItems: 'center',
       }}>
       <View style={styles.box}>
+        <CustomText
+          isBold
+          style={{
+            fontSize: moderateScale(16, 0.6),
+            marginTop: moderateScale(15, 0.6),
+          }}>
+          Add Your Stops
+        </CustomText>
         <View
           style={{
             flexDirection: 'row',
@@ -54,7 +59,12 @@ const AskLocationComponent = ({visible, setIsVisible, onUpdateStops}) => {
                   borderRadius: moderateScale(50, 0.6),
                   marginLeft: moderateScale(12, 0.6),
                 }}>
-                <View
+                <TouchableOpacity
+                  onPress={() => {
+                    let newArray = [...multipleStops];
+                    newArray.splice(index, 1);
+                    setMultipleStops(newArray);
+                  }}
                   style={{
                     width: moderateScale(15, 0.6),
                     height: moderateScale(15, 0.6),
@@ -67,7 +77,7 @@ const AskLocationComponent = ({visible, setIsVisible, onUpdateStops}) => {
                     bottom: 20,
                   }}>
                   <Icon as={Entypo} name="cross" color={Color.white} />
-                </View>
+                </TouchableOpacity>
                 <CustomText numberOfLines={1} key={index}>
                   {item?.name}
                 </CustomText>
@@ -84,23 +94,16 @@ const AskLocationComponent = ({visible, setIsVisible, onUpdateStops}) => {
               placeholderTextColor: '#5d5d5d',
             }}
             onPress={(data, details = null) => {
-              setInputValue('');
-              console.log('Location ========>>>>', {
-                name: data?.description,
-                lat: details?.geometry?.location?.lat,
-                lng: details?.geometry?.location?.lng,
-              });
-              setInputValue(data?.description);
-              const updatedStops = [
-                ...multipleStops,
-                {
-                  name: data?.description,
-                  lat: details?.geometry?.location?.lat,
-                  lng: details?.geometry?.location?.lng,
-                },
-              ];
-              updateStops(updatedStops);
-              googlePlacesRef.current?.clear();
+              if (details) {
+                const newStop = {
+                  name: data.description,
+                  lat: details.geometry.location.lat,
+                  lng: details.geometry.location.lng,
+                };
+                const updatedStops = [...multipleStops, newStop];
+                updateStops(updatedStops);
+                googlePlacesRef.current?.clear();
+              }
             }}
             query={{
               key: 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM',
@@ -117,10 +120,11 @@ const AskLocationComponent = ({visible, setIsVisible, onUpdateStops}) => {
               textInput: {
                 height: windowHeight * 0.06,
                 color: '#5d5d5d',
-                fontSize: 16,
+                fontSize: 14,
                 borderWidth: 2,
                 borderColor: Color.lightGrey,
                 borderRadius: moderateScale(20, 0.6),
+                paddingLeft: moderateScale(12, 0.6),
               },
               listView: {
                 width: windowWidth * 0.8,
@@ -133,6 +137,22 @@ const AskLocationComponent = ({visible, setIsVisible, onUpdateStops}) => {
             }}
           />
         </View>
+        <CustomButton
+          text={'Add Stops'}
+          textColor={Color.white}
+          width={windowWidth * 0.8}
+          height={windowHeight * 0.06}
+          marginTop={moderateScale(20, 0.3)}
+          bgColor={Color.cartheme}
+          borderColor={Color.white}
+          borderWidth={1}
+          borderRadius={moderateScale(30, 0.3)}
+          isGradient
+          onPress={() => {
+            setIsVisible(false);
+            onUpdateStops(multipleStops);
+          }}
+        />
       </View>
     </Modal>
   );
@@ -147,7 +167,6 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(10, 6),
     borderWidth: 1,
     borderColor: 'blue',
-    marginBottom: moderateScale(20, 0.6),
     backgroundColor: '#e8e8e8',
     alignItems: 'center',
   },

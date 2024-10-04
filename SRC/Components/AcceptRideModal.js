@@ -30,7 +30,8 @@ const AcceptRideModal = ({
   CarNumber,
   carName,
   onpressClose,
-  isRider
+  isRider,
+  onpressSeeLocation
 }) => {
   return (
     <Modal
@@ -196,7 +197,8 @@ const AcceptRideModal = ({
             borderWidth={1}
             borderRadius={moderateScale(30, 0.3)}
             isGradient
-            disabled={true}
+            onPress={onpressSeeLocation}
+            // disabled={true}
           />
         </View>
       </View>

@@ -18,11 +18,9 @@ const BookingCard = ({
   pickupLocation,
   dropoffLocation,
   distance,
-  time,
-  item,
   price,
   image,
-  onPressMessageBtn,
+  stops,
 }) => {
   return (
     <View style={styles.card}>
@@ -185,17 +183,17 @@ const BookingCard = ({
             </CustomText>
             <CustomText style={styles.text1}>{distance + ' Km'}</CustomText>
           </View>
-          {/* <View style={{ marginLeft: moderateScale(20, 0.3) }}>
-            <CustomText isBold style={styles.text2}>
-              time
-            </CustomText>
-            <CustomText style={styles.text1}>{time}</CustomText>
-          </View> */}
           <View style={{marginLeft: moderateScale(20, 0.3)}}>
             <CustomText isBold style={styles.text2}>
               price
             </CustomText>
             <CustomText style={styles.text1}>{price}</CustomText>
+          </View>
+          <View style={{marginLeft: moderateScale(20, 0.3)}}>
+            <CustomText isBold style={styles.text2}>
+              Additional Stops
+            </CustomText>
+            <CustomText style={styles.text1}>{stops + ' Stop'}</CustomText>
           </View>
         </View>
       </View>
@@ -212,7 +210,7 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(10, 6),
     borderWidth: 2,
     borderColor: '#29478A',
-    marginBottom: moderateScale(20, 0.6),
+    marginBottom: moderateScale(23, 0.6),
     backgroundColor: Color.white,
     justifyContent: 'center',
     alignSelf: 'center',

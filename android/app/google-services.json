@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "95315066003",
+    "project_id": "carrentle-aefaa",
+    "storage_bucket": "carrentle-aefaa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95315066003:android:9db076bf5028ac7eb06166",
+        "android_client_info": {
+          "package_name": "com.carrentle"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqIX1RMjXSzQzgzo93PGr210lKrQtY_Pc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

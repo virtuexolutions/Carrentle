@@ -23,13 +23,13 @@ import CustomButton from '../Components/CustomButton';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import Loader from '../Components/Loader';
-import ResultModal from '../Components/ResultModal';
 import SearchLocationModal from '../Components/SearchLocationModal';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {baseUrl} from '../Config';
 import MapViewDirections from 'react-native-maps-directions';
 import LottieView from 'lottie-react-native';
 import AskLocationComponent from '../Components/AskLocationComponent';
+import database from '@react-native-firebase/database';
 
 const BoardingPointScreen = ({navigation, route}) => {
   const {carData} = route.params;
@@ -52,9 +52,25 @@ const BoardingPointScreen = ({navigation, route}) => {
   const [fare, setFare] = useState(0);
   const [resultModalVisible, setResultModalVisible] = useState(false);
   const [additionStops, setAdditionStops] = useState(false);
+  const [stops, setStops] = useState([]);
+  console.log('🚀 ~ BoardingPointScreen ~ stops:', stops);
 
   const [loading, setLoading] = useState(0);
   const [address, setAddress] = useState('');
+
+  useEffect(() => {
+    updateLocationInFirebase();
+  }, []);
+
+  const updateLocationInFirebase = (lat, lng) => {
+    database()
+      .ref(`/locations/${'userId'}`)
+      .set({
+        latitude: 'lat',
+        longitude: 'lng',
+      })
+      .then(() => console.log('Location updated in Firebase!'));
+  };
 
   const fareStructure = {
     1: {baseFare: 10, additionalFarePerMile: 1},
@@ -275,6 +291,7 @@ const BoardingPointScreen = ({navigation, route}) => {
       distance: distance,
       amount: fare,
       car_id: carData?.id,
+      stop: stops,
     };
     for (let key in data) {
       if (data[key] == '') {
@@ -298,13 +315,16 @@ const BoardingPointScreen = ({navigation, route}) => {
         ride_id: response?.data?.data?.id,
       };
       setLoading(false);
-      navigation.navigate('WaitingScreen', {data: paramsData});
+      navigation.navigate('WaitingScreen', {
+        data: paramsData,
+        type: 'fromBoardingPoints',
+      });
     }
   };
 
   const handleMultipleStopsUpdate = updatedStops => {
-    console.log("🚀 ~ handleMultipleStopsUpdate ~ updatedStops:", updatedStops)
-    // setStops(updatedStops);
+    console.log('🚀 ~ handleMultipleStopsUpdate ~ updatedStops:', updatedStops);
+    setStops(updatedStops);
   };
 
   return (
@@ -471,6 +491,18 @@ const BoardingPointScreen = ({navigation, route}) => {
               />
             </View>
           </Marker>
+          {stops.map((stop, index) => (
+            <Marker
+              key={index}
+              coordinate={{latitude: stop.lat, longitude: stop.lng}}
+              title={`Stop ${index + 1}`}
+              description={
+                stop.name ||
+                `Stop at latitude: ${stop.lat}, longitude: ${stop.lng}`
+              }
+              pinColor="blue"
+            />
+          ))}
           {Object.keys(pickupLocation).length > 0 &&
           Object.keys(dropOffLocation).length > 0 ? (
             <MapViewDirections
@@ -538,6 +570,7 @@ const BoardingPointScreen = ({navigation, route}) => {
               image={baseUrl + carData?.image}
               item={userData}
               price={'$ ' + fare}
+              stops={stops?.length}
               // onPressMessageBtn={() => navigation.navigate('MessagesScreen')}
             />
             <View
@@ -553,7 +586,7 @@ const BoardingPointScreen = ({navigation, route}) => {
                 textColor={Color.white}
                 width={windowWidth * 0.8}
                 height={windowHeight * 0.06}
-                marginTop={moderateScale(20, 0.3)}
+                marginTop={moderateScale(22, 0.3)}
                 onPress={() => {
                   onPressProceed();
                 }}
@@ -599,10 +632,10 @@ const BoardingPointScreen = ({navigation, route}) => {
           setPickUpLocation(currentPossition);
         }}
       />
-      <ResultModal
+      {/* <ResultModal
         isVisible={resultModalVisible}
         setIsVisible={setResultModalVisible}
-      />
+      /> */}
     </View>
   );
 };

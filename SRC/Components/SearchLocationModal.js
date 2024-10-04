@@ -1,11 +1,11 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
-import { windowHeight, windowWidth } from '../Utillity/utils';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useState} from 'react';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
 import Modal from 'react-native-modal';
 import CustomText from './CustomText';
-import { moderateScale } from 'react-native-size-matters';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import {moderateScale} from 'react-native-size-matters';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
 const SearchLocationModal = ({
   isModalVisible,
@@ -58,7 +58,6 @@ const SearchLocationModal = ({
           onFail={error => console.error(error, 'errrrrrorrrr')}
           placeholder="Search"
           textInputProps={{
-
             placeholderTextColor: '#5d5d5d',
             // value: inputValue,
           }}
@@ -71,15 +70,15 @@ const SearchLocationModal = ({
             // setInputValue(data?.description)
             locationType == 'pickup'
               ? setPickupLocation({
-                name: data?.description,
-                lat: details?.geometry?.location?.lat,
-                lng: details?.geometry?.location?.lng,
-              })
+                  name: data?.description,
+                  lat: details?.geometry?.location?.lat,
+                  lng: details?.geometry?.location?.lng,
+                })
               : setdropOffLocation({
-                name: data?.description,
-                lat: details?.geometry?.location?.lat,
-                lng: details?.geometry?.location?.lng,
-              });
+                  name: data?.description,
+                  lat: details?.geometry?.location?.lat,
+                  lng: details?.geometry?.location?.lng,
+                });
             setIsModalVisible(false);
           }}
           query={{

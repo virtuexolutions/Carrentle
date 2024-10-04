@@ -255,8 +255,10 @@ export const MyDrawer = () => {
   const firstScreen = user_type === 'Rider' ? 'DashBoard' : 'HomeScreen';
   const token = useSelector(state => state.authReducer.token);
   const [loading, setLoading] = useState(false);
-  const [modalvisible, setModalVisible] = useState(false);
+  const [modalvisible, setModalVisible] = useState(true);
+  console.log('🚀 ~ MyDrawer ~ modalvisible:', modalvisible);
   const [latestRide, setlatestRide] = useState(null);
+  console.log('🚀 ~ MyDrawer ~ latestRide:', latestRide);
   const [hasShownModal, setHasShownModal] = useState(false);
   console.log('🚀 ~ MyDrawer ~ hasShownModal:', hasShownModal);
 
@@ -275,8 +277,9 @@ export const MyDrawer = () => {
     const url = `auth/rider/assign-ride`;
     setLoading(true);
     const response = await Get(url, token);
+    console.log('🚀 ~ getRideHistory ~ response:', response?.data);
     setLoading(false);
-    if (response != undefined) {
+    if (response?.data?.ride_info != null) {
       setLoading(false);
       setlatestRide(response?.data?.ride_info);
       if (hasShownModal != true) {
@@ -336,6 +339,9 @@ export const MyDrawer = () => {
           visible={modalvisible}
           isRider={true}
           onpressClose={() => setModalVisible(false)}
+          onpressSeeLocation={() =>
+            navigationService.navigate('WaitingScreen', {data: null, type : 'fromRequest'})
+          }
         />
       )}
     </>
