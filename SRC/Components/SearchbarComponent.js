@@ -28,8 +28,6 @@ const SearchbarComponent = ({
   setSearch,
   disable
 }) => {
-  console.log("🚀 ~ file: SearchbarComponent.js:28 ~ arrayItem:", arrayItem)
-  console.log("🚀 ~ file: SearchbarComponent.js:28 ~ array:", array)
   // const [search, setSearch] = useState('');
   const orderData = useSelector(state => state.commonReducer.order);
 

@@ -109,7 +109,6 @@ const Header = props => {
             size={moderateScale(25, 0.3)}
             color={Color.black}
             onPress={() => {
-              console.log('hello mg ');
               navigationN.toggleDrawer();
               // navigation.openDrawer();
               // navigationN.dispatch(DrawerActions.toggleDrawer());

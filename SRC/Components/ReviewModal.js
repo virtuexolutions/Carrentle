@@ -38,9 +38,6 @@ const ReviewModal = ({item, setRef, rbRef, setClientReview}) => {
     const response = await Post(url, body, apiHeader(token));
     setLoading(false)
     if(response != undefined){
-    console.log("🚀 ~ sendReview ~ response:", response?.data)
-
-      rbRef.current.close();
     }
   }
 

@@ -1,33 +1,28 @@
+import {Icon} from 'native-base';
+import React, {useState} from 'react';
 import {
   Alert,
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
-import Header from '../Components/Header';
+import {moderateScale} from 'react-native-size-matters';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {useSelector} from 'react-redux';
+import Color from '../Assets/Utilities/Color';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
-import { moderateScale } from 'react-native-size-matters';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
-import { Icon } from 'native-base';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import ReviewComponent from '../Components/ReviewComponent';
-import TextInputWithTitle from '../Components/TextInputWithTitle';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Color from '../Assets/Utilities/Color';
-import { background } from 'native-base/lib/typescript/theme/styled-system';
-import CustomButton from '../Components/CustomButton';
-import { Post } from '../Axios/AxiosInterceptorFunction';
-import { setUserToken } from '../Store/slices/auth-slice';
-import { setUserData } from '../Store/slices/common';
-import { useSelector } from 'react-redux';
+import Header from '../Components/Header';
 import ImagePickerModal from '../Components/ImagePickerModal';
-import navigationService from '../navigationService';
+import TextInputWithTitle from '../Components/TextInputWithTitle';
+import {setUserToken} from '../Store/slices/auth-slice';
+import {setUserData} from '../Store/slices/common';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
 const EditProfile = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -37,8 +32,7 @@ const EditProfile = () => {
   const [DOB, setDOB] = useState('');
   const [image, setImage] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const token = useSelector((state) => state.authReducer.token);
-  const user = useSelector((state) => state.authReducer.user);
+  const token = useSelector(state => state.authReducer.token);
 
   const onpressSubmit = async () => {
     const url = 'auth/profile  ';
@@ -47,9 +41,9 @@ const EditProfile = () => {
       phone: phonenumber,
       gender: gender,
       dob: DOB,
-      image: image?.uri
+      image: image?.uri,
     };
-    console.log(body, 'dataaaaaa')
+    console.log(body, 'dataaaaaa');
     for (let key in body) {
       if (body[key] == '') {
         return Platform.OS == 'android'
@@ -65,7 +59,7 @@ const EditProfile = () => {
       Platform.OS == 'android'
         ? ToastAndroid.show(`Profile Update Succesfully`, ToastAndroid.SHORT)
         : Alert.alert(`Profile Update Succesfully`);
-      dispatch(setUserToken({ token: response?.data?.token }));
+      dispatch(setUserToken({token: response?.data?.token}));
       dispatch(setUserData(response?.data?.user_info));
     }
   };
@@ -115,7 +109,13 @@ const EditProfile = () => {
       </View>
       <View style={styles.profileDetails}>
         <TextInputWithTitle
-          titleStlye={{ fontSize: moderateScale(16, 0.6), marginTop: moderateScale(20, 0.6), textAlign: 'left', color: Color.black, fontWeight: 'bold' }}
+          titleStlye={{
+            fontSize: moderateScale(16, 0.6),
+            marginTop: moderateScale(20, 0.6),
+            textAlign: 'left',
+            color: Color.black,
+            fontWeight: 'bold',
+          }}
           title={'Name'}
           placeholder={'Name'}
           setText={setName}
@@ -130,7 +130,7 @@ const EditProfile = () => {
           color={Color.white}
           placeholderColor={Color.darkGray}
           elevation={{
-            shadowColor: "#000",
+            shadowColor: '#000',
             shadowOffset: {
               width: 0,
               height: 1,
@@ -142,7 +142,12 @@ const EditProfile = () => {
           }}
         />
         <TextInputWithTitle
-          titleStlye={{ fontSize: moderateScale(16, 0.6), textAlign: 'left', color: Color.black, fontWeight: 'bold' }}
+          titleStlye={{
+            fontSize: moderateScale(16, 0.6),
+            textAlign: 'left',
+            color: Color.black,
+            fontWeight: 'bold',
+          }}
           title={'Phone Number'}
           placeholder={'Phone Number'}
           setText={setPhonenumber}
@@ -157,7 +162,7 @@ const EditProfile = () => {
           color={Color.white}
           placeholderColor={Color.darkGray}
           elevation={{
-            shadowColor: "#000",
+            shadowColor: '#000',
             shadowOffset: {
               width: 0,
               height: 1,
@@ -169,7 +174,12 @@ const EditProfile = () => {
           }}
         />
         <TextInputWithTitle
-          titleStlye={{ fontSize: moderateScale(16, 0.6), textAlign: 'left', color: Color.black, fontWeight: 'bold' }}
+          titleStlye={{
+            fontSize: moderateScale(16, 0.6),
+            textAlign: 'left',
+            color: Color.black,
+            fontWeight: 'bold',
+          }}
           title={'Gender'}
           placeholder={'Gender'}
           setText={setGender}
@@ -184,7 +194,7 @@ const EditProfile = () => {
           color={Color.white}
           placeholderColor={Color.darkGray}
           elevation={{
-            shadowColor: "#000",
+            shadowColor: '#000',
             shadowOffset: {
               width: 0,
               height: 1,
@@ -196,7 +206,12 @@ const EditProfile = () => {
           }}
         />
         <TextInputWithTitle
-          titleStlye={{ fontSize: moderateScale(16, 0.6), textAlign: 'left', color: Color.black, fontWeight: 'bold' }}
+          titleStlye={{
+            fontSize: moderateScale(16, 0.6),
+            textAlign: 'left',
+            color: Color.black,
+            fontWeight: 'bold',
+          }}
           title={'Date Of Birth'}
           placeholder={'Date of Birth'}
           setText={setDOB}
@@ -211,7 +226,7 @@ const EditProfile = () => {
           color={Color.white}
           placeholderColor={Color.darkGray}
           elevation={{
-            shadowColor: "#000",
+            shadowColor: '#000',
             shadowOffset: {
               width: 0,
               height: 1,
@@ -255,7 +270,11 @@ const EditProfile = () => {
           loader={isLoading}
         />
       </View>
-      <ImagePickerModal show={modalVisible} setShow={setModalVisible} setFileObject={setImage} />
+      <ImagePickerModal
+        show={modalVisible}
+        setShow={setModalVisible}
+        setFileObject={setImage}
+      />
       {/* <ReviewComponent show={modalVisible} setShow={setModalVisible} /> */}
     </ScrollView>
   );
@@ -272,8 +291,8 @@ const styles = StyleSheet.create({
     gap: moderateScale(12, 0.4),
   },
   imageContainer: {
-    width: windowWidth * 0.30,
-    height: windowWidth * 0.30,
+    width: windowWidth * 0.3,
+    height: windowWidth * 0.3,
     borderRadius: (windowWidth * 0.35) / 2,
     overflow: 'hidden',
   },
@@ -312,7 +331,7 @@ const styles = StyleSheet.create({
     gap: moderateScale(12, 0.3),
   },
   field: {
-    width: windowWidth * 0.90,
+    width: windowWidth * 0.9,
     borderColor: '#093AA429',
     borderWidth: 0.7,
     flexDirection: 'row',

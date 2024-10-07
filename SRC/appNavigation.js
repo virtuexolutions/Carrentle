@@ -59,6 +59,7 @@ import Notifications from './Screens/Notifications';
 import WaitingScreen from './Screens/WaitingScreen';
 import {Get} from './Axios/AxiosInterceptorFunction';
 import AcceptRideModal from './Components/AcceptRideModal';
+import TrackingScreen from './Screens/TrackingScreen';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -68,7 +69,6 @@ const AppNavigator = () => {
   const token = useSelector(state => state.authReducer.token);
 
   const {user_type} = useSelector(state => state.authReducer);
-  console.log(user_type, 'userrtypeeeeee');
 
   const RootNav = createNativeStackNavigator();
   const RootNavLogged = createNativeStackNavigator();
@@ -138,6 +138,7 @@ const AppNavigator = () => {
           <RootNav.Screen name="CencalTexi" component={CencalTexi} />
           <RootNav.Screen name="Notifications" component={Notifications} />
           <RootNav.Screen name="WaitingScreen" component={WaitingScreen} />
+          <RootNav.Screen name="TrackingScreen" component={TrackingScreen} />
         </RootNav.Navigator>
       </NavigationContainer>
     );
@@ -254,11 +255,8 @@ export const MyDrawer = () => {
   const {user_type} = useSelector(state => state.authReducer);
   const firstScreen = user_type === 'Rider' ? 'DashBoard' : 'HomeScreen';
   const token = useSelector(state => state.authReducer.token);
-  const [loading, setLoading] = useState(false);
-  const [modalvisible, setModalVisible] = useState(true);
-  console.log('🚀 ~ MyDrawer ~ modalvisible:', modalvisible);
+  const [modalvisible, setModalVisible] = useState(false);
   const [latestRide, setlatestRide] = useState(null);
-  console.log('🚀 ~ MyDrawer ~ latestRide:', latestRide);
   const [hasShownModal, setHasShownModal] = useState(false);
   console.log('🚀 ~ MyDrawer ~ hasShownModal:', hasShownModal);
 
@@ -275,12 +273,8 @@ export const MyDrawer = () => {
 
   const getRideHistory = async type => {
     const url = `auth/rider/assign-ride`;
-    setLoading(true);
     const response = await Get(url, token);
-    console.log('🚀 ~ getRideHistory ~ response:', response?.data);
-    setLoading(false);
     if (response?.data?.ride_info != null) {
-      setLoading(false);
       setlatestRide(response?.data?.ride_info);
       if (hasShownModal != true) {
         setModalVisible(true);
@@ -340,7 +334,10 @@ export const MyDrawer = () => {
           isRider={true}
           onpressClose={() => setModalVisible(false)}
           onpressSeeLocation={() =>
-            navigationService.navigate('WaitingScreen', {data: null, type : 'fromRequest'})
+            navigationService.navigate('WaitingScreen', {
+              data: null,
+              type: 'fromRequest',
+            })
           }
         />
       )}

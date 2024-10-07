@@ -50,7 +50,7 @@ const AcceptRideModal = ({
             />
           </View>
           <View style={styles.rowInnerView}>
-            <CustomText style={styles.text}>{'username'}</CustomText>
+            <CustomText style={styles.text}>{username}</CustomText>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Rating
                 type="custom"

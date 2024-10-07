@@ -18,12 +18,14 @@ import {useDispatch, useSelector} from 'react-redux';
 import {SetUserRole, setUserLogoutAuth} from '../Store/slices/auth-slice';
 import {setUserLogOut} from '../Store/slices/common';
 import navigationService from '../navigationService';
+import {imageUrl} from '../Config';
 // import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
 const Drawer = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const userData = useSelector(state => state.commonReducer.userData);
+  console.log('🚀 ~ Drawer ~ userData:', userData);
   const token = useSelector(state => state.authReducer.token);
   // console.log('🚀 ~ file: Drawer.js:19 ~ Drawer ~ token:', token);
   const role = useSelector(state => state.authReducer.role);
@@ -227,7 +229,7 @@ const Drawer = () => {
             <View style={styles.Profile}>
               <CustomImage
                 resizeMode={'cover'}
-                source={require('../Assets/Images/men.png')}
+                source={{uri: imageUrl + userData?.photo}}
                 style={{width: '100%', height: '100%'}}
               />
             </View>
@@ -236,8 +238,7 @@ const Drawer = () => {
               <CustomText
                 style={{fontSize: moderateScale(16, 0.6), color: Color.black}}
                 isBold>
-                {/* {userData?.name} */}
-                {'Parsely Montana'}
+                {userData?.name}
               </CustomText>
 
               <CustomText
@@ -246,9 +247,7 @@ const Drawer = () => {
                   fontSize: moderateScale(11, 0.6),
                   color: Color.grey,
                 }}>
-                {/* {userData?.email}
-                 */}
-                San Fransisco
+                {userData?.email}
               </CustomText>
             </View>
             <View

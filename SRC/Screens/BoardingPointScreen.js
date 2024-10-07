@@ -291,7 +291,6 @@ const BoardingPointScreen = ({navigation, route}) => {
       distance: distance,
       amount: fare,
       car_id: carData?.id,
-      stop: stops,
     };
     for (let key in data) {
       if (data[key] == '') {
@@ -301,6 +300,8 @@ const BoardingPointScreen = ({navigation, route}) => {
       }
       formData.append(key, data[key]);
     }
+    let newObj = {...data, stops: stops};
+    console.log('🚀 ~ onPressProceed ~ newObj:', newObj);
     setLoading(true);
     const url = 'auth/bookride';
     const response = await Post(url, data, apiHeader(token));
@@ -710,3 +711,4 @@ const styles = StyleSheet.create({
     borderRadius: (windowHeight * 0.06) / 2,
   },
 });
+                                    

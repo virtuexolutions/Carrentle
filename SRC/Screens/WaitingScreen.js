@@ -23,7 +23,6 @@ import AcceptRideModal from '../Components/AcceptRideModal';
 
 const WaitingScreen = ({route}) => {
   const {data, type} = route.params;
-  console.log('🚀 ~ WaitingScreen ~ data:', data, type);
   const navigation = useNavigation();
   const userData = useSelector(state => state.commonReducer?.userData);
   const token = useSelector(state => state.authReducer.token);
@@ -88,7 +87,18 @@ const WaitingScreen = ({route}) => {
         username={userData?.name}
       />
       {type === 'fromRequest' ? (
-        <View></View>
+        <MapView
+          initialRegion={{
+            latitude: 37.78825,
+            longitude: -122.432,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+          style={styles.map}
+          scrollEnabled={false}
+          zoomEnabled={false}
+          rotateEnabled={false}
+          pitchEnabled={false}></MapView>
       ) : (
         <>
           <MapView
@@ -151,6 +161,7 @@ const WaitingScreen = ({route}) => {
                     )
                   : Alert.alert(`We are Currently unavailable`)
               }
+              onpressSeeLocation={() => navigation.navigate('TrackingScreen', {data : rideData})}
             />
           ) : (
             <View style={styles.waiting_main_view}>
