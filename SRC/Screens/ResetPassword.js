@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Image,
   Dimensions,
@@ -8,11 +8,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { ScaledSheet, moderateScale } from 'react-native-size-matters';
+import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {useDispatch, useSelector} from 'react-redux';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import navigationService from '../navigationService';
 
@@ -21,13 +21,13 @@ import Color from '../Assets/Utilities/Color';
 import CustomStatusBar from '../Components/CustomStatusBar';
 import CustomText from '../Components/CustomText';
 
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import CustomButton from '../Components/CustomButton';
-import { ActivityIndicator } from 'react-native';
-import { Post } from '../Axios/AxiosInterceptorFunction';
-import { Icon } from 'native-base';
-import { useNavigation } from '@react-navigation/native';
-import { setUserToken } from '../Store/slices/auth-slice';
+import {ActivityIndicator} from 'react-native';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import {Icon} from 'native-base';
+import {useNavigation} from '@react-navigation/native';
+import {setUserToken} from '../Store/slices/auth-slice';
 import LinearGradient from 'react-native-linear-gradient';
 
 const width = Dimensions.get('window').width;
@@ -71,8 +71,8 @@ const ResetPassword = props => {
           width: windowWidth,
           height: windowHeight,
         }}
-        start={{ x: 0, y: 2.1 }}
-        end={{ x: 4, y: 2 }}
+        start={{x: 0, y: 2.1}}
+        end={{x: 4, y: 2}}
         colors={['#00309E', '#79B9F6', '#FFFFFF']}>
         <TouchableOpacity
           activeOpacity={0.8}
@@ -170,9 +170,9 @@ const ResetPassword = props => {
             borderWidth={1}
             borderColor={Color.white}
             bgColor={'transparent'}
-          // borderColor={Color.white}
-          // borderWidth={2}
-          // borderRadius={moderateScale(30, 0.3)}
+            // borderColor={Color.white}
+            // borderWidth={2}
+            // borderRadius={moderateScale(30, 0.3)}
           />
         </KeyboardAwareScrollView>
       </LinearGradient>

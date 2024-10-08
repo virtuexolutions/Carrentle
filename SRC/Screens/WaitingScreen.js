@@ -161,7 +161,9 @@ const WaitingScreen = ({route}) => {
                     )
                   : Alert.alert(`We are Currently unavailable`)
               }
-              onpressSeeLocation={() => navigation.navigate('TrackingScreen', {data : rideData})}
+              onpressSeeLocation={() =>
+                navigation.navigate('TrackingScreen', {data: rideData})
+              }
             />
           ) : (
             <View style={styles.waiting_main_view}>

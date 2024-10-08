@@ -35,10 +35,8 @@ const BoardingPointScreen = ({navigation, route}) => {
   const {carData} = route.params;
   const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
   const mapRef = useRef(null);
-
   const token = useSelector(state => state.authReducer.token);
   const userData = useSelector(state => state.commonReducer.userData);
-
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pickupLocation, setPickUpLocation] = useState({});
   const [dropOffLocation, setDropOffLocation] = useState({});
@@ -54,7 +52,6 @@ const BoardingPointScreen = ({navigation, route}) => {
   const [additionStops, setAdditionStops] = useState(false);
   const [stops, setStops] = useState([]);
   console.log('🚀 ~ BoardingPointScreen ~ stops:', stops);
-
   const [loading, setLoading] = useState(0);
   const [address, setAddress] = useState('');
 
@@ -124,7 +121,6 @@ const BoardingPointScreen = ({navigation, route}) => {
     latitude: dropOffLocation?.lat || null,
     longitude: dropOffLocation?.lng || null,
   };
-
   useEffect(() => {
     const checkIfMarkerInsideCircle = () => {
       const dropoffdistance = getDistance(circleCenter, dropOffLocation);
@@ -711,4 +707,3 @@ const styles = StyleSheet.create({
     borderRadius: (windowHeight * 0.06) / 2,
   },
 });
-                                    

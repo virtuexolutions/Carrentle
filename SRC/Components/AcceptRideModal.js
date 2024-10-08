@@ -1,18 +1,20 @@
-import React from 'react';
-import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 
 import {Icon} from 'native-base';
 import Modal from 'react-native-modal';
 import {Rating} from 'react-native-ratings';
 import {moderateScale} from 'react-native-size-matters';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Color from '../Assets/Utilities/Color';
-import CustomImage from '../Components/CustomImage';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import CustomText from './CustomText';
-import {mode} from 'native-base/lib/typescript/theme/tools';
-import CustomButton from './CustomButton';
 import Entypo from 'react-native-vector-icons/Entypo';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {useSelector} from 'react-redux';
+import Color from '../Assets/Utilities/Color';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import CustomImage from '../Components/CustomImage';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import CustomButton from './CustomButton';
+import CustomText from './CustomText';
+
 const AcceptRideModal = ({
   username,
   isSentRequest,
@@ -31,8 +33,28 @@ const AcceptRideModal = ({
   carName,
   onpressClose,
   isRider,
-  onpressSeeLocation
+  location,
+  rider_id
 }) => {
+  const [accept, setAccept] = useState(false);
+  const {user_type} = useSelector(state => state.authReducer);
+  const userData = useSelector(state => state.commonReducer.userData);
+  console.log('🚀 ~ userData:', userData);
+  const token = useSelector(state => state.authReducer.token);
+  console.log('🚀 ~ token:', token);
+
+  const onpressAccept = async () => {
+    const body = {
+      lat: location?.latitude,
+      lng: location?.longitude,
+      status: accept === true ? 'accept' : 'reject',
+    };
+    console.log(body, 'shdad');
+    const url = `auth/rider/ride_update/${rider_id}`;
+    const response = await Post(url, body, apiHeader(token));
+    console.log(response, 'reponseeeeeeeeeeeeeeeeeee');
+  };
+
   return (
     <Modal
       isVisible={visible}
@@ -174,12 +196,18 @@ const AcceptRideModal = ({
             alignItems: 'center',
           }}>
           <CustomButton
-            text={'Chat'}
+            text={'Accept'}
             textColor={Color.white}
             width={windowWidth * 0.4}
             height={windowHeight * 0.06}
             marginTop={moderateScale(30, 0.3)}
-            onPress={onPressMessageBtn}
+            onPress={() => {
+              if (user_type === 'Rider') {
+                setAccept(true);
+                onpressAccept();
+              }
+              onPressMessageBtn;
+            }}
             bgColor={Color.cartheme}
             borderColor={Color.white}
             borderWidth={1}
@@ -187,7 +215,7 @@ const AcceptRideModal = ({
             isGradient
           />
           <CustomButton
-            text={isRider ?'See User Location' : 'Track Rider' }
+            text={isRider ? 'Reject' : 'Track Rider'}
             textColor={Color.white}
             width={windowWidth * 0.4}
             height={windowHeight * 0.06}
@@ -197,7 +225,13 @@ const AcceptRideModal = ({
             borderWidth={1}
             borderRadius={moderateScale(30, 0.3)}
             isGradient
-            onPress={onpressSeeLocation}
+            onPress={() => {
+              if (user_type === 'Rider') {
+                setAccept(false);
+                onpressAccept();
+              }
+              onPressMessageBtn;
+            }}
             // disabled={true}
           />
         </View>

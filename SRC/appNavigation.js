@@ -57,9 +57,10 @@ import EnterPhone from './Screens/VerifyEmail';
 import VerifyEmail from './Screens/VerifyEmail';
 import Notifications from './Screens/Notifications';
 import WaitingScreen from './Screens/WaitingScreen';
-import {Get} from './Axios/AxiosInterceptorFunction';
+import {Get, Post} from './Axios/AxiosInterceptorFunction';
 import AcceptRideModal from './Components/AcceptRideModal';
 import TrackingScreen from './Screens/TrackingScreen';
+import Geolocation from '@react-native-community/geolocation';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -257,8 +258,10 @@ export const MyDrawer = () => {
   const token = useSelector(state => state.authReducer.token);
   const [modalvisible, setModalVisible] = useState(false);
   const [latestRide, setlatestRide] = useState(null);
+  console.log("🚀 ~ MyDrawer ~ latestRide:", latestRide)
   const [hasShownModal, setHasShownModal] = useState(false);
-  console.log('🚀 ~ MyDrawer ~ hasShownModal:', hasShownModal);
+  const [currentPossition, setcurrentPossition] = useState({});
+  console.log("🚀 ~ MyDrawer ~ currentPossition:", currentPossition)
 
   useEffect(() => {
     if (user_type === 'Rider') {
@@ -282,6 +285,39 @@ export const MyDrawer = () => {
       }
     }
   };
+
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
+
+  const getCurrentLocation = async () => {
+    try {
+      const position = await new Promise((resolve, reject) => {
+        Geolocation.getCurrentPosition(
+          position => {
+            const coords = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            };
+            resolve(coords);
+          },
+          error => {
+            reject(new Error(error.message));
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 10000,
+          },
+        );
+      });
+      setcurrentPossition(position);
+    } catch (error) {
+      console.error('Error getting location:', error);
+      throw error;
+    }
+  };
+
   return (
     <>
       <DrawerNavigation.Navigator
@@ -333,12 +369,14 @@ export const MyDrawer = () => {
           visible={modalvisible}
           isRider={true}
           onpressClose={() => setModalVisible(false)}
-          onpressSeeLocation={() =>
+          onpressSeeLocation={() => {
             navigationService.navigate('WaitingScreen', {
               data: null,
               type: 'fromRequest',
-            })
-          }
+            });
+          }}
+          location={currentPossition}
+          rider_id={latestRide?.id}
         />
       )}
     </>

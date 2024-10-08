@@ -12,6 +12,7 @@ import Geolocation from '@react-native-community/geolocation';
 import Loader from '../Components/Loader';
 import MapViewDirections from 'react-native-maps-directions';
 import {isValidCoordinate} from 'geolib';
+import {customMapStyle} from '../Utillity/mapstyle';
 
 const TrackingScreen = ({route}) => {
   const {data} = route.params;
@@ -26,6 +27,24 @@ const TrackingScreen = ({route}) => {
   useEffect(() => {
     getCurrentLocation();
   }, []);
+
+  useEffect(() => {
+    if (
+      mapRef.current &&
+      data?.pickup_location_lat &&
+      data?.pickup_location_lng
+    ) {
+      mapRef.current.animateToRegion(
+        {
+          latitude: data.pickup_location_lat,
+          longitude: data.pickup_location_lng,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        },
+        1000,
+      );
+    }
+  }, [data]);
 
   const getCurrentLocation = async () => {
     try {
@@ -61,8 +80,8 @@ const TrackingScreen = ({route}) => {
   };
 
   const destinations = {
-    latitude: parseFloat(data?.pickup_location_lat),
-    longitude: parseFloat(data?.pickup_location_lng),
+    latitude: parseFloat(data?.dropoff_location_lat),
+    longitude: parseFloat(data?.dropoff_location_lng),
   };
 
   console.log('🚀 ~ TrackingScreen ~ destinations:', destinations);
@@ -79,8 +98,11 @@ const TrackingScreen = ({route}) => {
         showBack
         username={userData?.name}
       />
-      {Object.keys(currentPossition).length > 0 ? (
+      {Object.keys(currentPossition).length > 0 &&
+      data?.pickup_location_lat &&
+      data?.pickup_location_lng ? (
         <MapView
+          customMapStyle={customMapStyle}
           initialRegion={{
             latitude: currentPossition?.latitude,
             longitude: currentPossition?.longitude,
@@ -108,7 +130,6 @@ const TrackingScreen = ({route}) => {
               />
             </View>
           </Marker>
-          {/* {data ? ( */}
           <MapViewDirections
             origin={origin}
             destination={destinations}
@@ -123,17 +144,14 @@ const TrackingScreen = ({route}) => {
             }}
             tappable={true}
           />
-          {destinations && isValidCoordinate(destinations) && (
-            <Marker
-              coordinate={{
-                latitude: destinations?.latitude,
-                longitude: destinations?.latitude,
-              }}
-              title="Drop-off Location"
-              pinColor="green"
-            />
-          )}
-          {/* //   ) : null} */}
+          <Marker
+            coordinate={{
+              latitude: destinations?.latitude,
+              longitude: destinations?.longitude,
+            }}
+            title="Drop-off Location"
+            pinColor="green"
+          />
         </MapView>
       ) : (
         <Loader />
