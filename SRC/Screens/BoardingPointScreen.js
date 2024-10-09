@@ -1,5 +1,5 @@
 import {getDistance, isValidCoordinate} from 'geolib';
-import {Divider, Icon} from 'native-base';
+import {Divider, Icon, Modal} from 'native-base';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   Alert,
@@ -30,9 +30,12 @@ import MapViewDirections from 'react-native-maps-directions';
 import LottieView from 'lottie-react-native';
 import AskLocationComponent from '../Components/AskLocationComponent';
 import database from '@react-native-firebase/database';
+import DatePicker from 'react-native-date-picker';
 
 const BoardingPointScreen = ({navigation, route}) => {
-  const {carData} = route.params;
+  const {carData, date} = route.params;
+  console.log('🚀 ~ BoardingPointScreen ~ date:', date);
+
   const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
   const mapRef = useRef(null);
   const token = useSelector(state => state.authReducer.token);
@@ -54,6 +57,8 @@ const BoardingPointScreen = ({navigation, route}) => {
   console.log('🚀 ~ BoardingPointScreen ~ stops:', stops);
   const [loading, setLoading] = useState(0);
   const [address, setAddress] = useState('');
+  const [bookdate, setbookDate] = useState(new Date());
+  const [BookingDateModal, setBookingDateModal] = useState(false);
 
   useEffect(() => {
     updateLocationInFirebase();
@@ -568,6 +573,19 @@ const BoardingPointScreen = ({navigation, route}) => {
               item={userData}
               price={'$ ' + fare}
               stops={stops?.length}
+              date={
+                date === 'BFN'
+                  ? new Date().getDate() +
+                    ' - ' +
+                    new Date().getMonth() +
+                    ' - ' +
+                    new Date().getFullYear()
+                  : 'askdasdh'
+              }
+              disable={date === 'BFN' ? true : false}
+              onpressSetDate={() => {
+                setBookingDateModal(true);
+              }}
               // onPressMessageBtn={() => navigation.navigate('MessagesScreen')}
             />
             <View
@@ -629,6 +647,33 @@ const BoardingPointScreen = ({navigation, route}) => {
           setPickUpLocation(currentPossition);
         }}
       />
+      <Modal
+        visible={BookingDateModal}
+        transparent={true}
+        animationType="slide">
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+          }}>
+          <View
+            style={{backgroundColor: 'white', padding: 20, borderRadius: 10}}>
+            <DatePicker
+              date={date}
+              onDateChange={setDate}
+              mode="date" // You can change to "time" or "datetime" as needed
+            />
+            <TouchableOpacity
+              onPress={() => setBookingDateModal(false)}
+              style={{marginTop: 20}}>
+              <Text style={{color: 'blue'}}>Confirm</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       {/* <ResultModal
         isVisible={resultModalVisible}
         setIsVisible={setResultModalVisible}

@@ -34,14 +34,16 @@ const AcceptRideModal = ({
   onpressClose,
   isRider,
   location,
-  rider_id
+  rider_id,
+  AcceptRide,
+  RejectRide,
 }) => {
-  const [accept, setAccept] = useState(false);
   const {user_type} = useSelector(state => state.authReducer);
   const userData = useSelector(state => state.commonReducer.userData);
   console.log('🚀 ~ userData:', userData);
   const token = useSelector(state => state.authReducer.token);
   console.log('🚀 ~ token:', token);
+  const [accept, setAccept] = useState(false);
 
   const onpressAccept = async () => {
     const body = {
@@ -50,9 +52,16 @@ const AcceptRideModal = ({
       status: accept === true ? 'accept' : 'reject',
     };
     console.log(body, 'shdad');
+    setLoading(true);
     const url = `auth/rider/ride_update/${rider_id}`;
     const response = await Post(url, body, apiHeader(token));
-    console.log(response, 'reponseeeeeeeeeeeeeeeeeee');
+    setLoading(false);
+    if (response?.data?.ride_info?.status === 'accept') {
+      AcceptRide();
+    }
+    {
+      RejectRide();
+    }
   };
 
   return (
@@ -213,6 +222,7 @@ const AcceptRideModal = ({
             borderWidth={1}
             borderRadius={moderateScale(30, 0.3)}
             isGradient
+            loader={loading}
           />
           <CustomButton
             text={isRider ? 'Reject' : 'Track Rider'}
@@ -232,6 +242,7 @@ const AcceptRideModal = ({
               }
               onPressMessageBtn;
             }}
+            loader={loading}
             // disabled={true}
           />
         </View>

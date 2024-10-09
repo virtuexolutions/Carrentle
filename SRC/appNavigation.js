@@ -258,10 +258,10 @@ export const MyDrawer = () => {
   const token = useSelector(state => state.authReducer.token);
   const [modalvisible, setModalVisible] = useState(false);
   const [latestRide, setlatestRide] = useState(null);
-  console.log("🚀 ~ MyDrawer ~ latestRide:", latestRide)
+  console.log('🚀 ~ MyDrawer ~ latestRide:', latestRide);
   const [hasShownModal, setHasShownModal] = useState(false);
   const [currentPossition, setcurrentPossition] = useState({});
-  console.log("🚀 ~ MyDrawer ~ currentPossition:", currentPossition)
+  console.log('🚀 ~ MyDrawer ~ currentPossition:', currentPossition);
 
   useEffect(() => {
     if (user_type === 'Rider') {
@@ -377,6 +377,11 @@ export const MyDrawer = () => {
           }}
           location={currentPossition}
           rider_id={latestRide?.id}
+          // AcceptRide={()=> }
+          RejectRide={() => {
+            setModalVisible(false);
+            setHasShownModal(true);
+          }}
         />
       )}
     </>

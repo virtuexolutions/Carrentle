@@ -21,6 +21,9 @@ const BookingCard = ({
   price,
   image,
   stops,
+  date,
+  disable,
+  onpressSetDate
 }) => {
   return (
     <View style={styles.card}>
@@ -195,6 +198,15 @@ const BookingCard = ({
             </CustomText>
             <CustomText style={styles.text1}>{stops + ' Stop'}</CustomText>
           </View>
+          <TouchableOpacity
+            disabled={disable}
+            onPress={onpressSetDate}
+            style={{marginLeft: moderateScale(20, 0.3)}}>
+            <CustomText isBold style={styles.text2}>
+              Booking Date
+            </CustomText>
+            <CustomText style={styles.text1}>{date}</CustomText>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
