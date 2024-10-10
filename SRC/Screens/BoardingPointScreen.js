@@ -31,11 +31,11 @@ import LottieView from 'lottie-react-native';
 import AskLocationComponent from '../Components/AskLocationComponent';
 import database from '@react-native-firebase/database';
 import DatePicker from 'react-native-date-picker';
+import moment from 'moment';
 
 const BoardingPointScreen = ({navigation, route}) => {
   const {carData, date} = route.params;
   console.log('🚀 ~ BoardingPointScreen ~ date:', date);
-
   const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
   const mapRef = useRef(null);
   const token = useSelector(state => state.authReducer.token);
@@ -58,6 +58,7 @@ const BoardingPointScreen = ({navigation, route}) => {
   const [loading, setLoading] = useState(0);
   const [address, setAddress] = useState('');
   const [bookdate, setbookDate] = useState(new Date());
+  console.log('🚀 ~ BoardingPointScreen ~ bookdate:', bookdate);
   const [BookingDateModal, setBookingDateModal] = useState(false);
 
   useEffect(() => {
@@ -292,6 +293,10 @@ const BoardingPointScreen = ({navigation, route}) => {
       distance: distance,
       amount: fare,
       car_id: carData?.id,
+      date:
+        date === 'BFL'
+          ? moment(bookdate).format('DD-MM-YYYY')
+          : moment(date).format('DD-MM-YYYY'),
     };
     for (let key in data) {
       if (data[key] == '') {
@@ -327,6 +332,18 @@ const BoardingPointScreen = ({navigation, route}) => {
   const handleMultipleStopsUpdate = updatedStops => {
     console.log('🚀 ~ handleMultipleStopsUpdate ~ updatedStops:', updatedStops);
     setStops(updatedStops);
+  };
+
+  const handleConfirm = date => {
+    const today = new Date();
+    const minDate = new Date();
+    minDate.setDate(today.getDate() - 7);
+    if (date < minDate) {
+      Alert.alert('Please select a date within the last 7 days.');
+    } else {
+      setbookDate(date);
+    }
+    setBookingDateModal(false);
   };
 
   return (
@@ -580,7 +597,9 @@ const BoardingPointScreen = ({navigation, route}) => {
                     new Date().getMonth() +
                     ' - ' +
                     new Date().getFullYear()
-                  : 'askdasdh'
+                  : bookdate
+                  ? moment(bookdate).format('DD-MM-YYYY')
+                  : 'Add You booking date'
               }
               disable={date === 'BFN' ? true : false}
               onpressSetDate={() => {
@@ -647,37 +666,18 @@ const BoardingPointScreen = ({navigation, route}) => {
           setPickUpLocation(currentPossition);
         }}
       />
-      <Modal
-        visible={BookingDateModal}
-        transparent={true}
-        animationType="slide">
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-          }}>
-          <View
-            style={{backgroundColor: 'white', padding: 20, borderRadius: 10}}>
-            <DatePicker
-              date={date}
-              onDateChange={setDate}
-              mode="date" // You can change to "time" or "datetime" as needed
-            />
-            <TouchableOpacity
-              onPress={() => setBookingDateModal(false)}
-              style={{marginTop: 20}}>
-              <Text style={{color: 'blue'}}>Confirm</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {/* <ResultModal
-        isVisible={resultModalVisible}
-        setIsVisible={setResultModalVisible}
-      /> */}
+      <DatePicker
+        modal
+        mode="date"
+        open={BookingDateModal}
+        date={bookdate}
+        onConfirm={date => {
+          handleConfirm(date);
+        }}
+        onCancel={() => {
+          setBookingDateModal(false);
+        }}
+      />
     </View>
   );
 };
@@ -689,12 +689,10 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     height: windowHeight,
     width: windowWidth,
-    // justifyContent: 'flex-end',
     alignItems: 'center',
   },
   map: {
     ...StyleSheet.absoluteFillObject,
-    // backgroundColor: 'red',
   },
   locBox: {
     width: windowWidth * 0.85,
@@ -737,10 +735,7 @@ const styles = StyleSheet.create({
     paddingLeft: moderateScale(5, 0.2),
   },
   locationPickerBtn: {
-    // marginTop: moderateScale(6, 0.2),
-    // width: windowWidth * 0.8,
     padding: moderateScale(7, 0.2),
-
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

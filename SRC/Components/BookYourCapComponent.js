@@ -9,6 +9,7 @@ import {windowHeight, windowWidth} from '../Utillity/utils';
 import CustomButton from './CustomButton';
 import CustomImage from './CustomImage';
 import CustomText from './CustomText';
+import {mode} from 'native-base/lib/typescript/theme/tools';
 
 const BookYourCapComponent = ({item}) => {
   const navigation = useNavigation();
@@ -180,6 +181,7 @@ const BookYourCapComponent = ({item}) => {
           alignSelf: 'center',
           justifyContent: 'space-between',
           paddingHorizontal: moderateScale(12, 0.6),
+          marginTop: moderateScale(10, 0.6),
         }}>
         <CustomButton
           onPress={() => {
@@ -229,19 +231,12 @@ const BookYourCapComponent = ({item}) => {
 export default BookYourCapComponent;
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor :'red',
     height: windowHeight * 0.45,
     borderRadius: moderateScale(10, 6),
     borderWidth: 1.5,
     borderColor: '#DA30296B',
     marginVertical: moderateScale(20, 0.6),
     paddingHorizontal: moderateScale(6, 0.6),
-    // marginVertical: SIZES.padding2
-    // marginBottom: moderateScale(20, 0.6),
-    // shadowColor: '#00000052',
-    // shadowOffset: {width: -2, height: 4},
-    // shadowOpacity: 0.5,
-    // shadowRadius: 30,
   },
   imageContainer: {
     height: windowHeight * 0.2,
@@ -277,12 +272,12 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(17, 0.6),
   },
   distanceView: {
-    // backgroundColor:'red',
     paddingVertical: moderateScale(10, 0.6),
     justifyContent: 'space-between',
     flexDirection: 'row',
     borderBottomWidth: 0.2,
     borderColor: 'red',
+    marginTop: moderateScale(6, 0.6),
     marginHorizontal: moderateScale(15, 0.6),
   },
   seatView: {

@@ -5,20 +5,14 @@ import {View} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 import CustomText from './CustomText';
 
-const ListEmptyComponent = ({
-  style,
-  color,
-  viewstyle,
-  size,
-  text,
-  animationName,
-}) => {
+const ListEmptyComponent = ({style, viewstyle, text, animationName}) => {
   return (
     <View
       style={[
         {
           marginTop: moderateScale(20, 0.6),
           alignItems: 'center',
+          backgroundColor: 'red',
         },
         viewstyle,
       ]}>
@@ -37,7 +31,7 @@ const ListEmptyComponent = ({
           source={
             animationName
               ? animationName
-              : require('../Assets/animations/no_data_found.json')
+              : require('../Assets/animations/null_data_found.json')
           }
         />
       </View>
