@@ -35,31 +35,37 @@ import moment from 'moment';
 
 const BoardingPointScreen = ({navigation, route}) => {
   const {carData, date} = route.params;
-  console.log('🚀 ~ BoardingPointScreen ~ date:', date);
   const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
   const mapRef = useRef(null);
   const token = useSelector(state => state.authReducer.token);
+  console.log('🚀 ~ BoardingPointScreen ~ token:', token);
   const userData = useSelector(state => state.commonReducer.userData);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pickupLocation, setPickUpLocation] = useState({});
   const [dropOffLocation, setDropOffLocation] = useState({});
   const [locationType, setLocationType] = useState('pickup');
   const [isYourLocation, setIsyourLocation] = useState(null);
-  const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
-  const circleRadius = 15000;
+  const circleCenter = {
+    latitude: 40.293089282600036,
+    longitude: -82.63155390045767,
+  };
+  const circleRadius = 350000;
   const [currentPossition, setcurrentPossition] = useState({});
   const [distance, setDistance] = useState(0);
   const [time, setTime] = useState(0);
   const [fare, setFare] = useState(0);
+  const [Flatprice, setFlatprice] = useState(0);
   const [resultModalVisible, setResultModalVisible] = useState(false);
   const [additionStops, setAdditionStops] = useState(false);
   const [stops, setStops] = useState([]);
-  console.log('🚀 ~ BoardingPointScreen ~ stops:', stops);
   const [loading, setLoading] = useState(0);
   const [address, setAddress] = useState('');
   const [bookdate, setbookDate] = useState(new Date());
-  console.log('🚀 ~ BoardingPointScreen ~ bookdate:', bookdate);
   const [BookingDateModal, setBookingDateModal] = useState(false);
+  const [pickupCityName, setPickupCityName] = useState(null);
+  console.log('🚀 ~ BoardingPointScreen ~ pickupCityName:', pickupCityName);
+  const [DropoffCityName, setDropOffCityName] = useState(null);
+  const [regiontype, setRegionType] = useState('');
 
   useEffect(() => {
     updateLocationInFirebase();
@@ -127,48 +133,25 @@ const BoardingPointScreen = ({navigation, route}) => {
     latitude: dropOffLocation?.lat || null,
     longitude: dropOffLocation?.lng || null,
   };
-  useEffect(() => {
-    const checkIfMarkerInsideCircle = () => {
-      const dropoffdistance = getDistance(circleCenter, dropOffLocation);
-      const pickupDistance = getDistance(circleCenter, pickupLocation);
-      if (dropoffdistance > circleRadius) {
-        Alert.alert('Warning', ' Your DropOff Location is outside the region');
-      } else if (pickupDistance > circleCenter) {
-        Alert.alert('Warning', ' Your PickUp Location is outside the region');
-      }
-    };
-    checkIfMarkerInsideCircle();
 
+  useEffect(() => {
+    // const checkIfMarkerInsideCircle = () => {
+    //   const dropoffdistance = getDistance(circleCenter, dropOffLocation);
+    //   const pickupDistance = getDistance(circleCenter, pickupLocation);
+    //   if (dropoffdistance > circleRadius) {
+    //     Alert.alert('Warning', ' Your DropOff Location is outside the region');
+    //   } else if (pickupDistance > circleCenter) {
+    //     Alert.alert('Warning', ' Your PickUp Location is outside the region');
+    //   }
+    // };
+    // checkIfMarkerInsideCircle();
     if (dropOffLocation && pickupLocation) {
       const checkDistanceBetween = getDistance(pickupLocation, dropOffLocation);
       let km = Math.round(checkDistanceBetween / 1000);
-
       const distanceInMiles = km / 1.60934;
       const calculatedFare = calculateFare(distanceInMiles);
       setFare(calculatedFare);
       setDistance(km);
-      const getTravelTime = async () => {
-        try {
-          const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin.latitude},${origin.longitude}&destinations=${destinations.latitude},${destinations.longitude}`;
-          const response = await fetch(url);
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const data = await response.json();
-          if (data.status === 'OK') {
-            const distanceMatrix = data.rows[0].elements[0];
-            const travelTime = distanceMatrix.duration.text;
-            console.log(travelTime, 'travelTime');
-            return setTime(travelTime);
-          } else {
-            console.error('Error fetching travel time:', data.status);
-            return null;
-          }
-        } catch (error) {
-          console.error('Error:', error);
-        }
-      };
-      getTravelTime();
     }
   }, [dropOffLocation]);
 
@@ -200,6 +183,7 @@ const BoardingPointScreen = ({navigation, route}) => {
 
   useEffect(() => {
     if (!origin || !destinations) return;
+    checkThePoints();
   }, [origin, destinations, GOOGLE_MAPS_API_KEY]);
 
   const getCurrentLocation = async () => {
@@ -241,6 +225,14 @@ const BoardingPointScreen = ({navigation, route}) => {
       const response = await fetch(url);
       const data = await response.json();
       if (data.status === 'OK') {
+        const results = data.results;
+        if (results && results.length > 0) {
+          for (const component of results[0].address_components) {
+            if (component.types.includes('locality')) {
+              setPickupCityName(component.long_name);
+            }
+          }
+        }
         const givenaddress = data.results[0].formatted_address;
         setAddress(givenaddress);
       } else {
@@ -297,7 +289,10 @@ const BoardingPointScreen = ({navigation, route}) => {
         date === 'BFL'
           ? moment(bookdate).format('DD-MM-YYYY')
           : moment(date).format('DD-MM-YYYY'),
+      cityFrom: pickupCityName,
+      cityTo: DropoffCityName,
     };
+    console.log(data, '======================>data');
     for (let key in data) {
       if (data[key] == '') {
         return Platform.OS == 'android'
@@ -329,6 +324,37 @@ const BoardingPointScreen = ({navigation, route}) => {
     }
   };
 
+  useEffect(() => {
+    if (pickupCityName && DropoffCityName) {
+      getPriceFromRegion();
+    }
+  }, [pickupCityName, DropoffCityName]);
+
+  console.log(pickupCityName, DropoffCityName, 'asdagjasdgj');
+  const getPriceFromRegion = async () => {
+    const url = 'auth/city_price';
+    const formData = new FormData();
+    const data = {
+      cityFrom: pickupCityName,
+      cityTo: DropoffCityName,
+    };
+    for (let key in data) {
+      if (data[key] == '') {
+        return Platform.OS == 'android'
+          ? ToastAndroid.show(` ${key} field is empty`, ToastAndroid.SHORT)
+          : Alert.alert(` ${key} field is empty`);
+      }
+      formData.append(key, data[key]);
+    }
+    console.log(data, '================>');
+    const response = await Post(url, data, apiHeader(token));
+    console.log('🚀 ~ getPriceFromRegion ~ response:', response?.data);
+    if (response?.data?.data?.price != null) {
+      setFare(response?.data?.data?.price);
+      console.log(response?.data?.data?.price, 'response?.data?.data?.price');
+    }
+  };
+
   const handleMultipleStopsUpdate = updatedStops => {
     console.log('🚀 ~ handleMultipleStopsUpdate ~ updatedStops:', updatedStops);
     setStops(updatedStops);
@@ -344,6 +370,33 @@ const BoardingPointScreen = ({navigation, route}) => {
       setbookDate(date);
     }
     setBookingDateModal(false);
+  };
+
+  const RegionOne = ['Bryan', 'Defiance', 'Napoleon'];
+
+  const RegionTwo = ['Bowling Green', 'Findlay'];
+
+  const checkThePoints = () => {
+    if (pickupCityName && DropoffCityName) {
+      if (
+        RegionOne.includes(pickupCityName) &&
+        RegionOne.includes(DropoffCityName)
+      ) {
+        setRegionType('RegionOne');
+      } else if (
+        RegionTwo.includes(pickupCityName) &&
+        RegionTwo.includes(DropoffCityName)
+      ) {
+        setRegionType('RegionTow');
+      } else if (
+        (RegionOne.includes(pickupCityName) &&
+          RegionTwo.includes(DropoffCityName)) ||
+        (RegionTwo.includes(pickupCityName) &&
+          RegionOne.includes(DropoffCityName))
+      ) {
+        setRegionType('OutOfRegion');
+      }
+    }
   };
 
   return (
@@ -483,14 +536,14 @@ const BoardingPointScreen = ({navigation, route}) => {
           }}
           // region=
           ref={mapRef}>
-          <Circle
+          {/* <Circle
             center={circleCenter}
             radius={15000}
             strokeWidth={2}
             strokeColor={'red'}
             fillColor={'rgba(51, 170, 51, .2)'}
             zIndex={1}
-          />
+          /> */}
           <Marker coordinate={currentPossition} title="Your Are Here Now">
             <View
               style={{
@@ -660,6 +713,8 @@ const BoardingPointScreen = ({navigation, route}) => {
         setPickupLocation={setPickUpLocation}
         setdropOffLocation={setDropOffLocation}
         locationType={locationType}
+        setPickUpCityName={setPickupCityName}
+        setDropOffCityName={setDropOffCityName}
         onPressCurrentLocation={() => {
           setIsyourLocation(true);
           setIsModalVisible(false);

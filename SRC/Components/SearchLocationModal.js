@@ -16,6 +16,8 @@ const SearchLocationModal = ({
   setdropOffLocation,
   onPressCurrentLocation,
   isyourLocation = false,
+  setPickUpCityName,
+  setDropOffCityName,
 }) => {
   return (
     <Modal
@@ -59,27 +61,43 @@ const SearchLocationModal = ({
           placeholder="Search"
           textInputProps={{
             placeholderTextColor: '#5d5d5d',
-            // value: inputValue,
           }}
           onPress={(data, details = null) => {
-            console.log('Location ========>>>>', {
-              name: data?.description,
-              lat: details?.geometry?.location?.lat,
-              lng: details?.geometry?.location?.lng,
-            });
-            // setInputValue(data?.description)
-            locationType == 'pickup'
-              ? setPickupLocation({
-                  name: data?.description,
-                  lat: details?.geometry?.location?.lat,
-                  lng: details?.geometry?.location?.lng,
-                })
-              : setdropOffLocation({
-                  name: data?.description,
-                  lat: details?.geometry?.location?.lat,
-                  lng: details?.geometry?.location?.lng,
-                });
-            setIsModalVisible(false);
+            if (details) {
+              const cityName =
+                details.address_components &&
+                Array.isArray(details.address_components)
+                  ? details.address_components.find(component =>
+                      component.types.includes('locality'),
+                    )?.long_name
+                  : 'City name not found';
+
+              console.log(cityName);
+              locationType === 'pickup'
+                ? setPickUpCityName(cityName)
+                : setDropOffCityName(cityName);
+              console.log('Location ========>>>>', {
+                name: data?.description,
+                lat: details?.geometry?.location?.lat,
+                lng: details?.geometry?.location?.lng,
+              });
+              console.log(data?.description, 'data?.description');
+              locationType === 'pickup'
+                ? setPickupLocation({
+                    name: data?.description,
+                    lat: details?.geometry?.location?.lat,
+                    lng: details?.geometry?.location?.lng,
+                  })
+                : setdropOffLocation({
+                    name: data?.description,
+                    lat: details?.geometry?.location?.lat,
+                    lng: details?.geometry?.location?.lng,
+                  });
+
+              setIsModalVisible(false);
+            } else {
+              console.error('Location details not available');
+            }
           }}
           query={{
             key: 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM',

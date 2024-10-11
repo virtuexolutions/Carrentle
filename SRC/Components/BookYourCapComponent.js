@@ -173,7 +173,29 @@ const BookYourCapComponent = ({item}) => {
           </CustomText>
         </View>
       </View> */}
-      <View
+
+      <CustomButton
+        onPress={() => {
+          navigation.navigate('BoardingPointScreen', {
+            carData: item,
+            date: 'BFN',
+          });
+        }}
+        text={'Book Now'}
+        textColor={Color.white}
+        borderWidth={2}
+        borderColor={Color.white}
+        borderRadius={moderateScale(30, 0.3)}
+        width={windowWidth * 0.7}
+        height={windowHeight * 0.06}
+        marginTop={moderateScale(10, 0.3)}
+        bgColor={Color.cartheme}
+        isBold
+        isGradient
+        textTransform={'capitalize'}
+      />
+
+      {/* <View
         style={{
           flexDirection: 'row',
           alignItems: 'center',
@@ -223,7 +245,7 @@ const BookYourCapComponent = ({item}) => {
           isGradient
           textTransform={'capitalize'}
         />
-      </View>
+      </View> */}
     </View>
   );
 };

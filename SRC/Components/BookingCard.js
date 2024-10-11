@@ -23,7 +23,7 @@ const BookingCard = ({
   stops,
   date,
   disable,
-  onpressSetDate
+  onpressSetDate,
 }) => {
   return (
     <View style={styles.card}>
@@ -192,7 +192,8 @@ const BookingCard = ({
             </CustomText>
             <CustomText style={styles.text1}>{price}</CustomText>
           </View>
-          <View style={{marginLeft: moderateScale(20, 0.3)}}>
+          <View
+            style={{marginLeft: moderateScale(20, 0.3), alignItems: 'center'}}>
             <CustomText isBold style={styles.text2}>
               Additional Stops
             </CustomText>
