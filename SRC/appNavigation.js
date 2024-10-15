@@ -19,8 +19,8 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import {Icon} from 'native-base';
 import LinearGradient from 'react-native-linear-gradient';
-import {View} from 'react-native';
-import {windowHeight} from './Utillity/utils';
+import {Alert, View} from 'react-native';
+import {apiHeader, windowHeight} from './Utillity/utils';
 import Profile from './Screens/Profile';
 import PrivacyPolicy from './Screens/PrivacyPolicy';
 import TermsAndConditions from './Screens/TermsAndConditions';
@@ -258,10 +258,9 @@ export const MyDrawer = () => {
   const token = useSelector(state => state.authReducer.token);
   const [modalvisible, setModalVisible] = useState(false);
   const [latestRide, setlatestRide] = useState(null);
-  console.log('🚀 ~ MyDrawer ~ latestRide:', latestRide);
   const [hasShownModal, setHasShownModal] = useState(false);
   const [currentPossition, setcurrentPossition] = useState({});
-  console.log('🚀 ~ MyDrawer ~ currentPossition:', currentPossition);
+  const [status, setstatus] = useState('');
 
   useEffect(() => {
     if (user_type === 'Rider') {
@@ -315,6 +314,37 @@ export const MyDrawer = () => {
     } catch (error) {
       console.error('Error getting location:', error);
       throw error;
+    }
+  };
+
+  const onpressAccept = async currentStatus => {
+    console.log(currentStatus, 'onpressAccept');
+    const body = {
+      lat: currentPossition?.latitude,
+      lng: currentPossition?.longitude,
+      status: currentStatus,
+    };
+    console.log(body, 'shdad');
+    const url = `auth/rider/ride_update/${latestRide?.id}`;
+    const response = await Post(url, body, apiHeader(token));
+    console.log('🚀 ~ onpressAccept ~ response:', response?.data);
+    if (response?.data?.ride_info?.status === 'accept') {
+      Alert.alert(
+        'Sorry',
+        'Ride is Accepted , but We are Currently working on it',
+      );
+      // console.log('AcceptRide');
+      // setHasShownModal(true);
+      // setModalVisible(false);
+      // navigationService.navigate('WaitingScreen', {
+      //   data: response?.data?.ride_info,
+      //   type: 'fromRequest',
+      // });
+    }
+    {
+      console.log('RejectRide');
+      setModalVisible(false);
+      setHasShownModal(true);
     }
   };
 
@@ -377,11 +407,29 @@ export const MyDrawer = () => {
           }}
           location={currentPossition}
           rider_id={latestRide?.id}
-          // AcceptRide={()=> }
-          RejectRide={() => {
-            setModalVisible(false);
-            setHasShownModal(true);
+          onpressAccept={() => onpressAccept()}
+          status={status}
+          setstatus={setstatus}
+          AcceptRide={() => {
+            onpressAccept('accept');
           }}
+          RejectRide={() => {
+            onpressAccept('reject');
+          }}
+          // AcceptRide={() => {
+          //   console.log('AcceptRide');
+          //   setHasShownModal(true);
+          //   navigationService.navigate('WaitingScreen', {
+          //     data: null,
+          //     type: 'fromRequest',
+          //   });
+          // }}
+          // RejectRide={() => {
+          //   console.log('RejectRide');
+
+          //   setModalVisible(false);
+          //   setHasShownModal(true);
+          // }}
         />
       )}
     </>

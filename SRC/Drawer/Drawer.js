@@ -25,7 +25,6 @@ const Drawer = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const userData = useSelector(state => state.commonReducer.userData);
-  console.log('🚀 ~ Drawer ~ userData:', userData);
   const token = useSelector(state => state.authReducer.token);
   // console.log('🚀 ~ file: Drawer.js:19 ~ Drawer ~ token:', token);
   const role = useSelector(state => state.authReducer.role);

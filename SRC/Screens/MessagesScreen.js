@@ -24,8 +24,8 @@ const MessagesScreen = () => {
   const dispatch = useDispatch();
 
   const [searchData, setSearchData] = useState('');
-  const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     setMessages([

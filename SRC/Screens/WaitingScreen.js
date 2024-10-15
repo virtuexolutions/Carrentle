@@ -15,14 +15,15 @@ import {useSelector} from 'react-redux';
 import MapView, {Circle, Marker} from 'react-native-maps';
 import LottieView from 'lottie-react-native';
 import RippleEffect from '../Components/RippleEffect';
-import {position} from 'native-base/lib/typescript/theme/styled-system';
 import {moderateScale} from 'react-native-size-matters';
 import CustomText from '../Components/CustomText';
 import {Get} from '../Axios/AxiosInterceptorFunction';
 import AcceptRideModal from '../Components/AcceptRideModal';
+import MapViewDirections from 'react-native-maps-directions';
 
 const WaitingScreen = ({route}) => {
   const {data, type} = route.params;
+  console.log('🚀 ~ WaitingScreen ~ data:', data);
   const navigation = useNavigation();
   const userData = useSelector(state => state.commonReducer?.userData);
   const token = useSelector(state => state.authReducer.token);
@@ -32,6 +33,8 @@ const WaitingScreen = ({route}) => {
   const [loading, setLoading] = useState(false);
   const [rideData, setRideData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  console.log('Rider latitude:', data?.rider?.lat);
+  console.log('Rider longitude:', data?.rider?.lng);
 
   useEffect(() => {
     if (type === 'fromBoardingPoints') {
@@ -49,29 +52,36 @@ const WaitingScreen = ({route}) => {
       return () => clearInterval(interval);
     }
   }, []);
-
   const getRiderInfo = async () => {
-    const url = `auth/ride/${data?.ride_id}`;
-    setLoading(true);
-    const response = await Get(url, token);
-    setLoading(false);
-    if (response?.data?.ride_info?.status === 'confirm') {
-      setRideData(response?.data?.ride_info);
-      setModalVisible(true);
+    try {
+      const url = `auth/ride/${data?.ride_id}`;
+      setLoading(true);
+      const response = await Get(url, token);
+      setLoading(false);
+      console.log('Rider Info Response:', response);
+      if (response?.data?.ride_info?.status === 'accept') {
+        setRideData(response.data.ride_info);
+        setModalVisible(true);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error('Error fetching rider info:', error);
     }
   };
 
   const origin = {
-    latitude:
-      data?.currentLocationLatitude?.latitude ||
-      Number(data?.pickupLocation?.lat),
-    longitude:
-      data?.currentLocationLatitude?.longitude ||
-      Number(data?.pickupLocation?.lng),
+    latitude: data?.currentLocationLatitude?.latitude,
+    longitude: data?.currentLocationLatitude?.longitude,
   };
+
   const destinations = {
-    latitude: data?.dropOffLocation?.lat || null,
-    longitude: data?.dropOffLocation?.lng || null,
+    latitude: parseFloat(data?.dropoff_location_lat) || null,
+    longitude: parseFloat(data?.dropoff_location_lng) || null,
+  };
+
+  const riderLocation = {
+    latitude: parseFloat(data?.rider?.lat),
+    longitude: parseFloat(data?.rider?.lng),
   };
 
   return (
@@ -89,16 +99,62 @@ const WaitingScreen = ({route}) => {
       {type === 'fromRequest' ? (
         <MapView
           initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.432,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitude: riderLocation.latitude || 0,
+            longitude: riderLocation.longitude || 0,
+            latitudeDelta: 0.0522,
+            longitudeDelta: 0.0521,
           }}
           style={styles.map}
-          scrollEnabled={false}
-          zoomEnabled={false}
-          rotateEnabled={false}
-          pitchEnabled={false}></MapView>
+          ref={mapRef}>
+          <Marker
+            coordinate={riderLocation}
+            title="Rider Location"
+            pinColor="blue"
+          />
+          <Marker
+            coordinate={{
+              latitude: parseFloat(data?.pickupLocation?.lat),
+              longitude: parseFloat(data?.pickupLocation?.lng),
+            }}
+            title="Pickup Location">
+            <View
+              style={{
+                width: moderateScale(60, 0.6),
+                height: moderateScale(60, 0.6),
+              }}>
+              <LottieView
+                autoPlay
+                loop
+                style={{
+                  height: '100%',
+                  width: '100%',
+                  alignItems: 'center',
+                  alignSelf: 'center',
+                }}
+                source={require('../Assets/animations/location_pin.json')}
+              />
+            </View>
+          </Marker>
+          <MapViewDirections
+            origin={riderLocation}
+            destination={destinations}
+            apikey={GOOGLE_MAPS_API_KEY}
+            strokeWidth={5}
+            strokeColor={Color.blue}
+            mode="DRIVING"
+            onStart={params => {
+              console.log(
+                `Started routing between "${params.origin}" and "${params.destination}"`,
+              );
+            }}
+            tappable={true}
+          />
+          <Marker
+            coordinate={destinations}
+            title="Drop-off Location"
+            pinColor="green"
+          />
+        </MapView>
       ) : (
         <>
           <MapView
@@ -164,6 +220,9 @@ const WaitingScreen = ({route}) => {
               onpressSeeLocation={() =>
                 navigation.navigate('TrackingScreen', {data: rideData})
               }
+              OnPressSeeRider={() => {
+                navigation.navigate('TrackingScreen', {data: rideData});
+              }}
             />
           ) : (
             <View style={styles.waiting_main_view}>

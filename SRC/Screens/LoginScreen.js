@@ -52,7 +52,9 @@ const LoginScreen = props => {
           : Alert.alert(`${key} is required`);
       }
     }
+    
     const response = await Post(url, body, apiHeader(token));
+
     console.log('==============> l0gin ', response?.data);
     setLoading(false);
     if (response != undefined) {

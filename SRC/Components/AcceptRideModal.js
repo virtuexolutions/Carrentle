@@ -14,6 +14,7 @@ import CustomImage from '../Components/CustomImage';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import CustomButton from './CustomButton';
 import CustomText from './CustomText';
+import {tr} from 'date-fns/locale';
 
 const AcceptRideModal = ({
   username,
@@ -37,32 +38,32 @@ const AcceptRideModal = ({
   rider_id,
   AcceptRide,
   RejectRide,
+  onpressAccept,
+  setstatus,
+  status,
+  OnPressSeeRider,
 }) => {
   const {user_type} = useSelector(state => state.authReducer);
   const userData = useSelector(state => state.commonReducer.userData);
-  console.log('🚀 ~ userData:', userData);
   const token = useSelector(state => state.authReducer.token);
-  console.log('🚀 ~ token:', token);
-  const [accept, setAccept] = useState(false);
 
-  const onpressAccept = async () => {
-    const body = {
-      lat: location?.latitude,
-      lng: location?.longitude,
-      status: accept === true ? 'accept' : 'reject',
-    };
-    console.log(body, 'shdad');
-    setLoading(true);
-    const url = `auth/rider/ride_update/${rider_id}`;
-    const response = await Post(url, body, apiHeader(token));
-    setLoading(false);
-    if (response?.data?.ride_info?.status === 'accept') {
-      AcceptRide();
-    }
-    {
-      RejectRide();
-    }
-  };
+  // const onpressAccept = async () => {
+  //   const body = {
+  //     lat: location?.latitude,
+  //     lng: location?.longitude,
+  //     status: status,
+  //   };
+  //   console.log(body, 'shdad');
+  //   const url = `auth/rider/ride_update/${rider_id}`;
+  //   const response = await Post(url, body, apiHeader(token));
+  //   console.log('🚀 ~ onpressAccept ~ response:', response?.data);
+  //   if (response?.data?.ride_info?.status === 'accept') {
+  //     AcceptRide();
+  //   }
+  //   {
+  //     RejectRide();
+  //   }
+  // };
 
   return (
     <Modal
@@ -132,6 +133,7 @@ const AcceptRideModal = ({
             paddingVertical: moderateScale(5, 0.6),
             flexDirection: 'row',
             paddingHorizontal: moderateScale(10, 0.6),
+            marginTop: moderateScale(10, 0.6),
           }}>
           <Icon
             name="map-marker"
@@ -162,6 +164,7 @@ const AcceptRideModal = ({
             color={Color.darkBlue}
           />
           <CustomText
+            numberOfLines={2}
             style={[
               styles.text,
               {
@@ -198,54 +201,70 @@ const AcceptRideModal = ({
             <CustomText style={styles.text1}>{seats}</CustomText>
           </View>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
+        {user_type === 'Customer' ? (
           <CustomButton
-            text={'Accept'}
+            text={'See Rider'}
             textColor={Color.white}
-            width={windowWidth * 0.4}
+            width={windowWidth * 0.8}
             height={windowHeight * 0.06}
             marginTop={moderateScale(30, 0.3)}
-            onPress={() => {
-              if (user_type === 'Rider') {
-                setAccept(true);
-                onpressAccept();
-              }
-              onPressMessageBtn;
-            }}
+            onPress={() => OnPressSeeRider()}
             bgColor={Color.cartheme}
             borderColor={Color.white}
             borderWidth={1}
             borderRadius={moderateScale(30, 0.3)}
             isGradient
-            loader={loading}
+            disabled={true}
           />
-          <CustomButton
-            text={isRider ? 'Reject' : 'Track Rider'}
-            textColor={Color.white}
-            width={windowWidth * 0.4}
-            height={windowHeight * 0.06}
-            marginTop={moderateScale(30, 0.3)}
-            bgColor={Color.cartheme}
-            borderColor={Color.white}
-            borderWidth={1}
-            borderRadius={moderateScale(30, 0.3)}
-            isGradient
-            onPress={() => {
-              if (user_type === 'Rider') {
-                setAccept(false);
-                onpressAccept();
-              }
-              onPressMessageBtn;
-            }}
-            loader={loading}
-            // disabled={true}
-          />
-        </View>
+        ) : (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginTop: moderateScale(15, 0.6),
+            }}>
+            <CustomButton
+              text={'Accept'}
+              textColor={Color.white}
+              width={windowWidth * 0.4}
+              height={windowHeight * 0.06}
+              onPress={() => AcceptRide()}
+              // if (user_type === 'Rider') {
+              //   setstatus('accept');
+              //   setTimeout(() => {
+              //     onpressAccept();
+              //   }, 100);
+              // }
+              bgColor={Color.cartheme}
+              borderColor={Color.white}
+              borderWidth={1}
+              borderRadius={moderateScale(30, 0.3)}
+              isGradient
+            />
+            <CustomButton
+              text={isRider ? 'Reject' : 'Track Rider'}
+              textColor={Color.white}
+              width={windowWidth * 0.4}
+              height={windowHeight * 0.06}
+              bgColor={Color.cartheme}
+              borderColor={Color.white}
+              borderWidth={1}
+              borderRadius={moderateScale(30, 0.3)}
+              isGradient
+              onPress={() => RejectRide()}
+              // onPress={() => {
+              //   if (user_type === 'Rider') {
+              //     setstatus('reject');
+              //     setTimeout(() => {
+              //       onpressAccept();
+              //     }, 100);
+              //   }
+              //   // onPressMessageBtn;
+              // }}
+            />
+          </View>
+        )}
       </View>
     </Modal>
   );
@@ -255,7 +274,7 @@ export default AcceptRideModal;
 
 const styles = StyleSheet.create({
   card: {
-    height: windowHeight * 0.45,
+    height: windowHeight * 0.42,
     width: windowWidth * 0.9,
     borderRadius: moderateScale(10, 6),
     borderWidth: 2,

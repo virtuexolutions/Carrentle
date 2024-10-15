@@ -81,46 +81,6 @@ const BoardingPointScreen = ({navigation, route}) => {
       .then(() => console.log('Location updated in Firebase!'));
   };
 
-  const fareStructure = {
-    1: {baseFare: 10, additionalFarePerMile: 1},
-    2: {
-      baseFare: 10,
-      additionalFarePerMile: 2,
-      minDistance: 10,
-      maxDistance: 75,
-    },
-    3: {
-      baseFare: 10,
-      additionalFarePerMile: 1.75,
-      minDistance: 76,
-      maxDistance: 150,
-    },
-    4: {baseFare: 10, additionalFarePerMile: 1.5, minDistance: 151},
-  };
-
-  const calculateFare = distance => {
-    let fare = 0;
-    let fareType;
-    let calfare;
-
-    Object.keys(fareStructure).forEach(key => {
-      const fareTypeObj = fareStructure[key];
-      if (
-        (!fareTypeObj.minDistance || distance >= fareTypeObj.minDistance) &&
-        (!fareTypeObj.maxDistance || distance <= fareTypeObj.maxDistance)
-      ) {
-        fareType = fareTypeObj;
-      }
-    });
-
-    if (fareType) {
-      fare =
-        fareType.baseFare + (distance - 1) * fareType.additionalFarePerMile;
-      calfare = fare.toFixed(0);
-    }
-    return calfare;
-  };
-
   const origin = {
     latitude: isYourLocation
       ? currentPossition?.latitude
@@ -183,7 +143,7 @@ const BoardingPointScreen = ({navigation, route}) => {
 
   useEffect(() => {
     if (!origin || !destinations) return;
-    checkThePoints();
+    // checkThePoints();
   }, [origin, destinations, GOOGLE_MAPS_API_KEY]);
 
   const getCurrentLocation = async () => {
@@ -331,6 +291,62 @@ const BoardingPointScreen = ({navigation, route}) => {
   }, [pickupCityName, DropoffCityName]);
 
   console.log(pickupCityName, DropoffCityName, 'asdagjasdgj');
+
+  // const getPriceFromRegion = async () => {
+  //   const url = 'auth/city_price';
+  //   const formData = new FormData();
+  //   const data = {
+  //     cityFrom: pickupCityName,
+  //     cityTo: DropoffCityName,
+  //   };
+  //   for (let key in data) {
+  //     if (data[key] == '') {
+  //       return Platform.OS == 'android'
+  //         ? ToastAndroid.show(` ${key} field is empty`, ToastAndroid.SHORT)
+  //         : Alert.alert(` ${key} field is empty`);
+  //     }
+  //     formData.append(key, data[key]);
+  //   }
+  //   console.log(data, '================>');
+  //   const response = await Post(url, data, apiHeader(token));
+  //   console.log('🚀 ~ getPriceFromRegion ~ response:', response?.data);
+  //   if (response?.data?.data?.price != null) {
+  //     setFare(response?.data?.data?.price);
+  //     console.log(response?.data?.data?.price, 'response?.data?.data?.price');
+  //   }
+  // };
+
+  // const RegionOne = ['Bryan', 'Defiance', 'Napoleon'];
+
+  // const RegionTwo = ['Bowling Green', 'Findlay'];
+
+  // const checkThePoints = () => {
+  //   if (pickupCityName && DropoffCityName) {
+  //     if (
+  //       RegionOne.includes(pickupCityName) &&
+  //       RegionOne.includes(DropoffCityName)
+  //     ) {
+  //       setRegionType('RegionOne');
+  //     } else if (
+  //       RegionTwo.includes(pickupCityName) &&
+  //       RegionTwo.includes(DropoffCityName)
+  //     ) {
+  //       setRegionType('RegionTow');
+  //     } else if (
+  //       (RegionOne.includes(pickupCityName) &&
+  //         RegionTwo.includes(DropoffCityName)) ||
+  //       (RegionTwo.includes(pickupCityName) &&
+  //         RegionOne.includes(DropoffCityName))
+  //     ) {
+  //       setRegionType('OutOfRegion');
+  //     }
+  //   }
+  // };
+
+  const RegionOne = ['Bryan', 'Defiance', 'Napoleon'];
+
+  const RegionTwo = ['Bowling Green', 'Findlay'];
+
   const getPriceFromRegion = async () => {
     const url = 'auth/city_price';
     const formData = new FormData();
@@ -338,9 +354,10 @@ const BoardingPointScreen = ({navigation, route}) => {
       cityFrom: pickupCityName,
       cityTo: DropoffCityName,
     };
+
     for (let key in data) {
-      if (data[key] == '') {
-        return Platform.OS == 'android'
+      if (data[key] === '') {
+        return Platform.OS === 'android'
           ? ToastAndroid.show(` ${key} field is empty`, ToastAndroid.SHORT)
           : Alert.alert(` ${key} field is empty`);
       }
@@ -350,9 +367,84 @@ const BoardingPointScreen = ({navigation, route}) => {
     const response = await Post(url, data, apiHeader(token));
     console.log('🚀 ~ getPriceFromRegion ~ response:', response?.data);
     if (response?.data?.data?.price != null) {
-      setFare(response?.data?.data?.price);
-      console.log(response?.data?.data?.price, 'response?.data?.data?.price');
+      const cityFromResponse = response.data.data.city_from;
+      const cityToResponse = response.data.data.city_to;
+      const price = response.data.data.price;
+      if (
+        RegionOne.includes(cityFromResponse) &&
+        RegionOne.includes(cityToResponse)
+      ) {
+        setRegionType('RegionOne');
+        setFare(price);
+        console.log(`RegionOne Price: ${price}`);
+      } else if (
+        RegionTwo.includes(cityFromResponse) &&
+        RegionTwo.includes(cityToResponse)
+      ) {
+        setRegionType('RegionTwo');
+        setFare(price);
+        console.log(`RegionTwo Price: ${price}`);
+      } else if (
+        (RegionOne.includes(cityFromResponse) &&
+          RegionTwo.includes(cityToResponse)) ||
+        (RegionTwo.includes(cityFromResponse) &&
+          RegionOne.includes(cityToResponse))
+      ) {
+        const checkDistanceBetween = getDistance(
+          pickupLocation,
+          dropOffLocation,
+        );
+        let km = Math.round(checkDistanceBetween / 1000);
+        const distanceInMiles = km / 1.60934;
+        const calculatedFare = calculateFare(distanceInMiles);
+        console.log(
+          '🚀 ~ getPriceFromRegion ~ calculatedFare:',
+          calculatedFare,
+        );
+        setFare(calculatedFare);
+        setDistance(km);
+      }
     }
+  };
+
+  const fareStructure = {
+    1: {baseFare: 10, additionalFarePerMile: 1},
+    2: {
+      baseFare: 10,
+      additionalFarePerMile: 2,
+      minDistance: 10,
+      maxDistance: 75,
+    },
+    3: {
+      baseFare: 10,
+      additionalFarePerMile: 1.75,
+      minDistance: 76,
+      maxDistance: 150,
+    },
+    4: {baseFare: 10, additionalFarePerMile: 1.5, minDistance: 151},
+  };
+
+  const calculateFare = distance => {
+    let fare = 0;
+    let fareType;
+    let calfare;
+
+    Object.keys(fareStructure).forEach(key => {
+      const fareTypeObj = fareStructure[key];
+      if (
+        (!fareTypeObj.minDistance || distance >= fareTypeObj.minDistance) &&
+        (!fareTypeObj.maxDistance || distance <= fareTypeObj.maxDistance)
+      ) {
+        fareType = fareTypeObj;
+      }
+    });
+
+    if (fareType) {
+      fare =
+        fareType.baseFare + (distance - 1) * fareType.additionalFarePerMile;
+      calfare = fare.toFixed(0);
+    }
+    return calfare;
   };
 
   const handleMultipleStopsUpdate = updatedStops => {
@@ -370,33 +462,6 @@ const BoardingPointScreen = ({navigation, route}) => {
       setbookDate(date);
     }
     setBookingDateModal(false);
-  };
-
-  const RegionOne = ['Bryan', 'Defiance', 'Napoleon'];
-
-  const RegionTwo = ['Bowling Green', 'Findlay'];
-
-  const checkThePoints = () => {
-    if (pickupCityName && DropoffCityName) {
-      if (
-        RegionOne.includes(pickupCityName) &&
-        RegionOne.includes(DropoffCityName)
-      ) {
-        setRegionType('RegionOne');
-      } else if (
-        RegionTwo.includes(pickupCityName) &&
-        RegionTwo.includes(DropoffCityName)
-      ) {
-        setRegionType('RegionTow');
-      } else if (
-        (RegionOne.includes(pickupCityName) &&
-          RegionTwo.includes(DropoffCityName)) ||
-        (RegionTwo.includes(pickupCityName) &&
-          RegionOne.includes(DropoffCityName))
-      ) {
-        setRegionType('OutOfRegion');
-      }
-    }
   };
 
   return (
@@ -531,8 +596,8 @@ const BoardingPointScreen = ({navigation, route}) => {
             // latitude: 40.367474,
             // longitude: -82.996216,
             longitude: currentPossition.longitude || 0,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitudeDelta: 0.0522,
+            longitudeDelta: 0.0521,
           }}
           // region=
           ref={mapRef}>
