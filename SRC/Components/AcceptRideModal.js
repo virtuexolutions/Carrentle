@@ -214,7 +214,7 @@ const AcceptRideModal = ({
             borderWidth={1}
             borderRadius={moderateScale(30, 0.3)}
             isGradient
-            disabled={true}
+            // disabled={true}
           />
         ) : (
           <View

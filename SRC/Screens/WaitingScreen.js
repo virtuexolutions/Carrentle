@@ -23,7 +23,6 @@ import MapViewDirections from 'react-native-maps-directions';
 
 const WaitingScreen = ({route}) => {
   const {data, type} = route.params;
-  console.log('🚀 ~ WaitingScreen ~ data:', data);
   const navigation = useNavigation();
   const userData = useSelector(state => state.commonReducer?.userData);
   const token = useSelector(state => state.authReducer.token);
@@ -32,9 +31,8 @@ const WaitingScreen = ({route}) => {
   const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
   const [loading, setLoading] = useState(false);
   const [rideData, setRideData] = useState(null);
+  console.log('🚀 ~ WaitingScreen ~ rideData:', rideData);
   const [modalVisible, setModalVisible] = useState(false);
-  console.log('Rider latitude:', data?.rider?.lat);
-  console.log('Rider longitude:', data?.rider?.lng);
 
   useEffect(() => {
     if (type === 'fromBoardingPoints') {
@@ -52,13 +50,13 @@ const WaitingScreen = ({route}) => {
       return () => clearInterval(interval);
     }
   }, []);
+
   const getRiderInfo = async () => {
     try {
       const url = `auth/ride/${data?.ride_id}`;
       setLoading(true);
       const response = await Get(url, token);
       setLoading(false);
-      console.log('Rider Info Response:', response);
       if (response?.data?.ride_info?.status === 'accept') {
         setRideData(response.data.ride_info);
         setModalVisible(true);
@@ -105,6 +103,7 @@ const WaitingScreen = ({route}) => {
             longitudeDelta: 0.0521,
           }}
           style={styles.map}
+          provider={PROVIDER_GOOGLE}
           ref={mapRef}>
           <Marker
             coordinate={riderLocation}

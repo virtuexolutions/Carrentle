@@ -23,7 +23,9 @@ const HomeScreen = ({navigation}) => {
   const [cablist, setCabList] = useState(false);
 
   useEffect(() => {
-    getCabList();
+    if (token) {
+      getCabList();
+    }
   }, []);
 
   const getCabList = async () => {
@@ -131,10 +133,6 @@ const HomeScreen = ({navigation}) => {
           minHeight: windowHeight,
           backgroundColor: 'white',
         }}>
-        {/* open bottom sheet */}
-        {/* <Button onPress={() =>{
-          rbRef.current.open()
-        }}></Button> */}
         <View style={{paddingHorizontal: moderateScale(18, 0.6)}}>
           {isLoading ? (
             <Loader style={{width: 70, height: 70}} />

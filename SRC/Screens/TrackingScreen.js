@@ -5,14 +5,18 @@ import Header from '../Components/Header';
 import Color from '../Assets/Utilities/Color';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
-import MapView, {Circle, Marker} from 'react-native-maps';
+import MapView, {Circle, Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import LottieView from 'lottie-react-native';
 import {moderateScale} from 'react-native-size-matters';
 import Geolocation from '@react-native-community/geolocation';
 import Loader from '../Components/Loader';
 import MapViewDirections from 'react-native-maps-directions';
-import {isValidCoordinate} from 'geolib';
 import {customMapStyle} from '../Utillity/mapstyle';
+import haversineDistance from 'haversine-distance';
+import CustomText from '../Components/CustomText';
+import CustomImage from '../Components/CustomImage';
+import {baseUrl} from '../Config';
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
 
 const TrackingScreen = ({route}) => {
   const {data} = route.params;
@@ -23,9 +27,12 @@ const TrackingScreen = ({route}) => {
   const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
   const [currentPossition, setcurrentPossition] = useState({});
   console.log('🚀 ~ TrackingScreen ~ currentPossition:', currentPossition);
+  const [time, setTime] = useState(0);
+  console.log('🚀 ~ TrackingScreen ~ time:', time);
 
   useEffect(() => {
     getCurrentLocation();
+    calculateTravelTime();
   }, []);
 
   useEffect(() => {
@@ -74,17 +81,48 @@ const TrackingScreen = ({route}) => {
     }
   };
 
+  const rider = {
+    pickup_location_lat: 41.3909433,
+    pickup_location_lng: -83.6683767,
+    assign: 0,
+    created_at: '2024-09-16T14:53:49.000000Z',
+    dob: null,
+    email: 'rider@gmail.com',
+    email_verified_at: '2024-09-16T14:53:49.000000Z',
+    gender: null,
+    id: 13,
+    lat: 41.0391283,
+    lng: -83.6502309,
+    name: 'rider',
+    phone: 13458793566,
+    photo: '/uploads/user/profiles/',
+    pm_last_four: null,
+    pm_type: null,
+    role: 'rider',
+    status: 'active',
+    stripe_id: null,
+    trial_ends_at: null,
+    updated_at: '2024-10-16T11:16:47.000000Z',
+  };
+
   const origin = {
     latitude: parseFloat(currentPossition?.latitude),
     longitude: parseFloat(currentPossition?.longitude),
   };
 
   const destinations = {
-    latitude: parseFloat(data?.dropoff_location_lat),
-    longitude: parseFloat(data?.dropoff_location_lng),
+    latitude: parseFloat(rider?.lat),
+    longitude: parseFloat(rider?.lng),
   };
 
-  console.log('🚀 ~ TrackingScreen ~ destinations:', destinations);
+  const calculateTravelTime = () => {
+    const averageSpeed = 60;
+    const distance = haversineDistance(origin, destinations);
+    const timeInSeconds = distance / (averageSpeed / 3.6);
+    const timeInMinutes = Math.round(timeInSeconds / 60);
+    setTime(timeInMinutes);
+    return timeInMinutes;
+  };
 
   return (
     <View style={styles.container}>
@@ -98,17 +136,19 @@ const TrackingScreen = ({route}) => {
         showBack
         username={userData?.name}
       />
-      {Object.keys(currentPossition).length > 0 &&
-      data?.pickup_location_lat &&
-      data?.pickup_location_lng ? (
+      {Object.keys(currentPossition).length > 0 ? (
+        // &&
+        // data?.pickup_location_lat &&
+        // data?.pickup_location_lng
         <MapView
           customMapStyle={customMapStyle}
           initialRegion={{
             latitude: currentPossition?.latitude,
             longitude: currentPossition?.longitude,
             latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            longitudeDelta: 0.0221,
           }}
+          provider={PROVIDER_GOOGLE}
           ref={mapRef}
           style={styles.map}>
           <Marker coordinate={currentPossition} title="Your Are Here Now">
@@ -155,6 +195,32 @@ const TrackingScreen = ({route}) => {
         </MapView>
       ) : (
         <Loader />
+      )}
+      {time != 0 && (
+        <View style={styles.card_main_view}>
+          <CustomText
+            isBold
+            style={{
+              fontSize: moderateScale(20, 0.6),
+              textAlign: 'center',
+              width: windowWidth * 0.9,
+              color: Color.darkBlue,
+            }}>
+            Your Cab is Here In Just
+          </CustomText>
+          {/* <View style={styles.header_view}>
+            <View style={styles.image_view}>
+              <CustomImage
+                source={{uri: baseUrl + rider?.photo}}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: windowWidth,
+                }}
+              />
+            </View>
+          </View> */}
+        </View>
       )}
     </View>
   );
@@ -245,4 +311,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
   },
+  card_main_view: {
+    width: windowWidth,
+    height: windowHeight * 0.3,
+    backgroundColor: 'red',
+    position: 'absolute',
+    bottom: 0,
+    zIndex: 1,
+    borderRadius: moderateScale(40, 0.6),
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    backgroundColor: Color.white,
+    paddingHorizontal: moderateScale(20, 0.6),
+    paddingVertical: moderateScale(20, 0.6),
+  },
+  image_view: {
+    width: moderateScale(80, 0.6),
+    height: moderateScale(90, 0, 6),
+    borderRadius: windowWidth,
+    shadowColor: Color.blue,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.32,
+    shadowRadius: 5.46,
+    elevation: 9,
+    backgroundColor: Color.white,
+  },
+  header_view: {},
 });

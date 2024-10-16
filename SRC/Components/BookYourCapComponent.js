@@ -176,7 +176,7 @@ const BookYourCapComponent = ({item}) => {
 
       <CustomButton
         onPress={() => {
-          navigation.navigate('BoardingPointScreen', {
+          navigation.navigate('TrackingScreen', {
             carData: item,
             date: 'BFN',
           });
