@@ -1,22 +1,25 @@
-import {StyleSheet, View} from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import Header from '../Components/Header';
-import Color from '../Assets/Utilities/Color';
-import {useNavigation} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
-import MapView, {Circle, Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import LottieView from 'lottie-react-native';
-import {moderateScale} from 'react-native-size-matters';
 import Geolocation from '@react-native-community/geolocation';
-import Loader from '../Components/Loader';
-import MapViewDirections from 'react-native-maps-directions';
-import {customMapStyle} from '../Utillity/mapstyle';
+import {useNavigation} from '@react-navigation/native';
 import haversineDistance from 'haversine-distance';
+import LottieView from 'lottie-react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
+import {moderateScale} from 'react-native-size-matters';
+import {useSelector} from 'react-redux';
+import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
+import Header from '../Components/Header';
+import Loader from '../Components/Loader';
+import {customMapStyle} from '../Utillity/mapstyle';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 import CustomImage from '../Components/CustomImage';
-import {baseUrl} from '../Config';
-import {AnimatedCircularProgress} from 'react-native-circular-progress';
+import {Rating} from 'react-native-ratings';
+import {Icon} from 'native-base';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const TrackingScreen = ({route}) => {
   const {data} = route.params;
@@ -26,13 +29,21 @@ const TrackingScreen = ({route}) => {
   const mapRef = useRef(null);
   const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
   const [currentPossition, setcurrentPossition] = useState({});
-  console.log('🚀 ~ TrackingScreen ~ currentPossition:', currentPossition);
+  console.log('🚀 ~ TrackingScreenss ~ currentPossition:', currentPossition);
   const [time, setTime] = useState(0);
-  console.log('🚀 ~ TrackingScreen ~ time:', time);
+  console.log('🚀 ~ TrackingScreensss ~ time:', time);
 
   useEffect(() => {
     getCurrentLocation();
-    calculateTravelTime();
+
+    const initialTime = calculateTravelTime();
+    const interval = setInterval(() => {
+      setTime(prevTime => {
+        return prevTime > 5 ? prevTime - 5 : 0;
+      });
+    }, 300000);
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -116,10 +127,13 @@ const TrackingScreen = ({route}) => {
   };
 
   const calculateTravelTime = () => {
-    const averageSpeed = 60;
+    const averageSpeed = 70;
     const distance = haversineDistance(origin, destinations);
     const timeInSeconds = distance / (averageSpeed / 3.6);
-    const timeInMinutes = Math.round(timeInSeconds / 60);
+    let timeInMinutes = Math.round(timeInSeconds / 60);
+    if (timeInMinutes % 5 !== 0) {
+      timeInMinutes = Math.ceil(timeInMinutes / 5) * 5;
+    }
     setTime(timeInMinutes);
     return timeInMinutes;
   };
@@ -145,8 +159,8 @@ const TrackingScreen = ({route}) => {
           initialRegion={{
             latitude: currentPossition?.latitude,
             longitude: currentPossition?.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0221,
+            latitudeDelta: 0.0522,
+            longitudeDelta: 0.0121,
           }}
           provider={PROVIDER_GOOGLE}
           ref={mapRef}
@@ -198,7 +212,7 @@ const TrackingScreen = ({route}) => {
       )}
       {time != 0 && (
         <View style={styles.card_main_view}>
-          <CustomText
+          {/* <CustomText
             isBold
             style={{
               fontSize: moderateScale(20, 0.6),
@@ -208,10 +222,21 @@ const TrackingScreen = ({route}) => {
             }}>
             Your Cab is Here In Just
           </CustomText>
-          {/* <View style={styles.header_view}>
+          <CustomText
+            style={{
+              fontSize: moderateScale(21, 0.6),
+              color: Color.black,
+              textAlign: 'center',
+              width: windowWidth * 0.9,
+              marginTop: moderateScale(20, 0.6),
+            }}
+            isBold>
+            {time + ' Mins'}
+          </CustomText> */}
+          <View style={styles.image_main_view}>
             <View style={styles.image_view}>
               <CustomImage
-                source={{uri: baseUrl + rider?.photo}}
+                source={require('../Assets/Images/dummyUser.png')}
                 style={{
                   width: '100%',
                   height: '100%',
@@ -219,7 +244,92 @@ const TrackingScreen = ({route}) => {
                 }}
               />
             </View>
-          </View> */}
+          </View>
+          <View style={{top: moderateScale(50, 0.6)}}>
+            <CustomText
+              isBold
+              style={{
+                fontSize: moderateScale(20, 0.6),
+                textAlign: 'center',
+              }}>
+              Robert Crammer
+            </CustomText>
+            <Rating
+              imageSize={20}
+              style={{marginTop: moderateScale(10, 0.6)}}
+              selectedColor="red"
+              unSelectedColor="blue"
+              ratingContainerStyle={{backgroundColor: 'red'}}
+            />
+            <View style={styles.btn_view}>
+              <TouchableOpacity style={styles.btn_sub_view}>
+                <Icon
+                  name="call"
+                  color={Color.darkBlue}
+                  as={Ionicons}
+                  size={moderateScale(20, 0.6)}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.btn_sub_view}>
+                <Icon
+                  name="message"
+                  color={Color.darkBlue}
+                  as={MaterialIcons}
+                  size={moderateScale(20, 0.6)}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.rating_box_view}>
+              <View style={styles.rating_box_inner_view}>
+                <Icon name="star" as={Ionicons} size={moderateScale(15, 0.6)} />
+                <View style={styles.text_view}>
+                  <CustomText isBold style={{fontSize: moderateScale(18, 0.6)}}>
+                    4.7
+                  </CustomText>
+                  <CustomText
+                    style={{
+                      color: Color.darkGray,
+                      fontSize: moderateScale(13, 0.6),
+                      marginLeft: moderateScale(3, 0.6),
+                    }}>
+                    Stars
+                  </CustomText>
+                </View>
+              </View>
+              <View style={styles.rating_box_inner_view}>
+                <Icon name="clock" as={Entypo} size={moderateScale(15, 0.6)} />
+                <View style={styles.text_view}>
+                  <CustomText isBold style={{fontSize: moderateScale(18, 0.6)}}>
+                    {time}
+                  </CustomText>
+                  <CustomText
+                    style={{
+                      color: Color.darkGray,
+                      fontSize: moderateScale(13, 0.6),
+                      marginLeft: moderateScale(3, 0.6),
+                    }}>
+                    Mins
+                  </CustomText>
+                </View>
+              </View>
+              <View style={styles.rating_box_inner_view}>
+                <Icon name="star" as={Ionicons} size={moderateScale(15, 0.6)} />
+                <View style={styles.text_view}>
+                  <CustomText isBold style={{fontSize: moderateScale(18, 0.6)}}>
+                    4.7
+                  </CustomText>
+                  <CustomText
+                    style={{
+                      color: Color.darkGray,
+                      fontSize: moderateScale(13, 0.6),
+                      marginLeft: moderateScale(3, 0.6),
+                    }}>
+                    Stars
+                  </CustomText>
+                </View>
+              </View>
+            </View>
+          </View>
         </View>
       )}
     </View>
@@ -313,14 +423,14 @@ const styles = StyleSheet.create({
   },
   card_main_view: {
     width: windowWidth,
-    height: windowHeight * 0.3,
+    height: windowHeight * 0.5,
     backgroundColor: 'red',
     position: 'absolute',
     bottom: 0,
     zIndex: 1,
     borderRadius: moderateScale(40, 0.6),
     justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     backgroundColor: Color.white,
     paddingHorizontal: moderateScale(20, 0.6),
     paddingVertical: moderateScale(20, 0.6),
@@ -331,13 +441,67 @@ const styles = StyleSheet.create({
     borderRadius: windowWidth,
     shadowColor: Color.blue,
     shadowOffset: {
-      width: 0,
-      height: 4,
+      width: 5,
+      height: 6,
     },
     shadowOpacity: 0.32,
     shadowRadius: 5.46,
     elevation: 9,
     backgroundColor: Color.white,
   },
-  header_view: {},
+  image_main_view: {
+    width: moderateScale(95, 0.6),
+    height: moderateScale(100, 0, 6),
+    backgroundColor: Color.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: windowWidth,
+    position: 'absolute',
+    top: -50,
+  },
+  btn_view: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: windowWidth * 0.25,
+    alignSelf: 'center',
+    marginTop: moderateScale(10, 0.6),
+  },
+  btn_sub_view: {
+    width: moderateScale(40, 0.6),
+    height: moderateScale(40, 0.6),
+    backgroundColor: Color.lightBlue,
+    borderRadius: windowWidth,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  rating_box_view: {
+    width: windowWidth * 0.8,
+    height: windowHeight * 0.12,
+    backgroundColor: Color.lightGrey,
+    marginTop: moderateScale(20, 0.6),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: moderateScale(12, 0.6),
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    paddingHorizontal: moderateScale(20, 0.6),
+  },
+  rating_box_inner_view: {
+    width: windowWidth * 0.2,
+    height: moderateScale(70, 0),
+    justifyContent: 'flex-start',
+    paddingVertical: moderateScale(10, 0.6),
+    paddingHorizontal: moderateScale(12, 0.6),
+  },
+  text_view: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 });

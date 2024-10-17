@@ -194,7 +194,6 @@ const BookYourCapComponent = ({item}) => {
         isGradient
         textTransform={'capitalize'}
       />
-
       {/* <View
         style={{
           flexDirection: 'row',
