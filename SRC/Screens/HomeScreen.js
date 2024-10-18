@@ -8,11 +8,6 @@ import {windowHeight, windowWidth} from '../Utillity/utils';
 import {useSelector} from 'react-redux';
 import {Get} from '../Axios/AxiosInterceptorFunction';
 import Loader from '../Components/Loader';
-import RideRequestModal from '../Components/RideRequestModal';
-import ResultModal from '../Components/ResultModal';
-import ReviewModal from '../Components/ReviewModal';
-import {Button} from 'native-base';
-import AcceptRideModal from '../Components/AcceptRideModal';
 
 const HomeScreen = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);

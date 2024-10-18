@@ -3,12 +3,10 @@ import React from 'react';
 import CustomImage from '../Components/CustomImage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import {moderateScale} from 'react-native-size-matters';
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import CustomText from '../Components/CustomText';
 import {Icon} from 'native-base';
 import navigationService from '../navigationService';
-import {setUserLogOut} from '../Store/slices/common';
 import {useDispatch, useSelector} from 'react-redux';
 // import {SetUserRole, setUserLogoutAuth} from '../Store/slices/auth';
 // import {setUserLogOut} from '../Store/slices/common';

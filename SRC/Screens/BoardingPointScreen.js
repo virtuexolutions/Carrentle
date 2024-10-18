@@ -105,6 +105,7 @@ const BoardingPointScreen = ({navigation, route}) => {
     //   }
     // };
     // checkIfMarkerInsideCircle();
+
     if (dropOffLocation && pickupLocation) {
       const checkDistanceBetween = getDistance(pickupLocation, dropOffLocation);
       let km = Math.round(checkDistanceBetween / 1000);

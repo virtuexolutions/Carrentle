@@ -1,6 +1,5 @@
 import {
   StyleSheet,
-  Animated,
   View,
   Platform,
   ToastAndroid,
@@ -12,7 +11,7 @@ import Header from '../Components/Header';
 import Color from '../Assets/Utilities/Color';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
-import MapView, {Circle, Marker} from 'react-native-maps';
+import MapView, {Circle, Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import LottieView from 'lottie-react-native';
 import RippleEffect from '../Components/RippleEffect';
 import {moderateScale} from 'react-native-size-matters';
@@ -33,6 +32,16 @@ const WaitingScreen = ({route}) => {
   const [rideData, setRideData] = useState(null);
   console.log('🚀 ~ WaitingScreen ~ rideData:', rideData);
   const [modalVisible, setModalVisible] = useState(false);
+
+  console.log('Data:', data);
+  console.log('Current Locations Latitude:', data?.currentLocationLatitude);
+  console.log(
+    'Dropoff Locatiion:',
+    data?.dropoff_location_lat,
+    data?.dropoff_location_lng,
+  );
+
+  console.log('Riderrrr Locationsss:', data?.rider?.lat, data?.rider?.lng);
 
   useEffect(() => {
     if (type === 'fromBoardingPoints') {
@@ -68,18 +77,34 @@ const WaitingScreen = ({route}) => {
   };
 
   const origin = {
-    latitude: data?.currentLocationLatitude?.latitude,
-    longitude: data?.currentLocationLatitude?.longitude,
+    latitude: isValidCoordinate(data?.currentLocationLatitude?.latitude)
+      ? parseFloat(data.currentLocationLatitude.latitude)
+      : 0,
+    longitude: isValidCoordinate(data?.currentLocationLatitude?.longitude)
+      ? parseFloat(data.currentLocationLatitude.longitude)
+      : 0,
   };
 
   const destinations = {
-    latitude: parseFloat(data?.dropoff_location_lat) || null,
-    longitude: parseFloat(data?.dropoff_location_lng) || null,
+    latitude: isValidCoordinate(data?.dropoff_location_lat)
+      ? parseFloat(data.dropoff_location_lat)
+      : 0,
+    longitude: isValidCoordinate(data?.dropoff_location_lng)
+      ? parseFloat(data.dropoff_location_lng)
+      : 0,
   };
 
   const riderLocation = {
-    latitude: parseFloat(data?.rider?.lat),
-    longitude: parseFloat(data?.rider?.lng),
+    latitude: isValidCoordinate(data?.rider?.lat)
+      ? parseFloat(data.rider.lat)
+      : 0,
+    longitude: isValidCoordinate(data?.rider?.lng)
+      ? parseFloat(data.rider.lng)
+      : 0,
+  };
+
+  const isValidCoordinate = value => {
+    return value !== null && value !== undefined && !isNaN(parseFloat(value));
   };
 
   return (

@@ -7,12 +7,8 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import {windowHeight, windowWidth} from '../Utillity/utils';
 import CustomText from '../Components/CustomText';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
-import {useNavigation} from '@react-navigation/native';
-import {Icon} from 'native-base';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import Color from '../Assets/Utilities/Color';
 import Header from '../Components/Header';
 

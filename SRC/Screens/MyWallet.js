@@ -14,7 +14,6 @@ import {moderateScale} from 'react-native-size-matters';
 import CustomText from '../Components/CustomText';
 import LinearGradient from 'react-native-linear-gradient';
 import {Icon} from 'native-base';
-import Feather from 'react-native-vector-icons/Feather';
 import CustomImage from '../Components/CustomImage';
 import PaymentCard from '../Components/PaymentCard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -22,9 +21,6 @@ import {Get} from '../Axios/AxiosInterceptorFunction';
 import {useSelector} from 'react-redux';
 import {useIsFocused} from '@react-navigation/native';
 import Loader from '../Components/Loader';
-import {mode} from 'native-base/lib/typescript/theme/tools';
-import ListEmptyComponent from '../Components/ListEmphtyComponent';
-import LottieView from 'lottie-react-native';
 
 const MyWallet = ({navigation}) => {
   const isFoucsed = useIsFocused();

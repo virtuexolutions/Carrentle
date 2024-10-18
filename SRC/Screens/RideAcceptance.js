@@ -1,8 +1,12 @@
-import {ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import {windowHeight, windowWidth} from '../Utillity/utils';
-import MapViewDirections from 'react-native-maps-directions';
 import {moderateScale} from 'react-native-size-matters';
 import {Divider, Icon} from 'native-base';
 import {useNavigation} from '@react-navigation/native';
@@ -12,7 +16,7 @@ import CustomButton from '../Components/CustomButton';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 
 const RideAcceptance = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const origin = {latitude: 37.3285792, longitude: -122.0356209};
   const destination = {latitude: 37.3320305, longitude: -122.0355326};
   return (
@@ -33,12 +37,11 @@ const RideAcceptance = () => {
           />
         </View>
       </View>
-      
-      <ImageBackground 
-      source={require('../Assets/Images/map.png')}
-      style={{width:windowWidth,  height: windowHeight * 0.89}}>
 
-      {/* 
+      <ImageBackground
+        source={require('../Assets/Images/map.png')}
+        style={{width: windowWidth, height: windowHeight * 0.89}}>
+        {/* 
       <MapView
         provider={PROVIDER_GOOGLE} // remove if not using Google Maps
         style={styles.map}
@@ -60,72 +63,71 @@ const RideAcceptance = () => {
       </MapView> 
       */}
 
-      <View style={styles.bottomContainer}>
-        <TextInputWithTitle
-          iconName={'marker'}
-          foundation={true}
-          iconColor={'#FF8A00'}
-          titleText={'Password'}
-          placeholder={'Fannie Street San Angelo, Texas'}
-          setText={() => {}}
-          value={'Fannie Street San Angelo, Texas'}
-          viewHeight={0.065}
-          viewWidth={0.77}
-          inputWidth={0.55}
-          border={2}
-          borderRadius={moderateScale(25, 0.3)}
-          borderColor={'#000'}
-          backgroundColor={'#ffffff'}
-          marginTop={moderateScale(10, 0.3)}
-          color={'878786'}
-          placeholderColor={'#878786'}
-          // elevation
-        />
+        <View style={styles.bottomContainer}>
+          <TextInputWithTitle
+            iconName={'marker'}
+            foundation={true}
+            iconColor={'#FF8A00'}
+            titleText={'Password'}
+            placeholder={'Fannie Street San Angelo, Texas'}
+            setText={() => {}}
+            value={'Fannie Street San Angelo, Texas'}
+            viewHeight={0.065}
+            viewWidth={0.77}
+            inputWidth={0.55}
+            border={2}
+            borderRadius={moderateScale(25, 0.3)}
+            borderColor={'#000'}
+            backgroundColor={'#ffffff'}
+            marginTop={moderateScale(10, 0.3)}
+            color={'878786'}
+            placeholderColor={'#878786'}
+            // elevation
+          />
 
-        <TextInputWithTitle
-          iconName={'marker'}
-          foundation={true}
-          iconColor={'#72AFED'}
-          elevation
-          titleText={'Password'}
-          placeholder={'Drop on'}
-          setText={() => {}}
-          value={''}
-          viewHeight={0.06}
-          viewWidth={0.77}
-          inputWidth={0.55}
-          border={2}
-          borderRadius={moderateScale(25, 0.3)}
-          borderColor={'#000'}
-          backgroundColor={'#ffffff'}
-          marginTop={moderateScale(10, 0.3)}
-          color={Color.black}
-          placeholderColor={'#878786'}
-        />
-      </View>
-      <View style={styles.actions}>
-        <CustomButton
-          onPress={() => {
-            navigation.navigate('RideBookingScreen')
-          }}
-          isGradient
-          text={'Yes'}
-          fontSize={moderateScale(14, 0.3)}
-          textColor={Color.white}
-          borderWidth={2}
-          borderColor={Color.white}
-          borderRadius={moderateScale(30, 0.3)}
-          width={windowWidth * 0.9}
-          height={windowHeight * 0.07}
-          marginTop={moderateScale(30, 0.3)}
-          bgColor={['#79B9F6', '#00309E']}
-          isBold
-        />
-      </View>
+          <TextInputWithTitle
+            iconName={'marker'}
+            foundation={true}
+            iconColor={'#72AFED'}
+            elevation
+            titleText={'Password'}
+            placeholder={'Drop on'}
+            setText={() => {}}
+            value={''}
+            viewHeight={0.06}
+            viewWidth={0.77}
+            inputWidth={0.55}
+            border={2}
+            borderRadius={moderateScale(25, 0.3)}
+            borderColor={'#000'}
+            backgroundColor={'#ffffff'}
+            marginTop={moderateScale(10, 0.3)}
+            color={Color.black}
+            placeholderColor={'#878786'}
+          />
+        </View>
+        <View style={styles.actions}>
+          <CustomButton
+            onPress={() => {
+              navigation.navigate('RideBookingScreen');
+            }}
+            isGradient
+            text={'Yes'}
+            fontSize={moderateScale(14, 0.3)}
+            textColor={Color.white}
+            borderWidth={2}
+            borderColor={Color.white}
+            borderRadius={moderateScale(30, 0.3)}
+            width={windowWidth * 0.9}
+            height={windowHeight * 0.07}
+            marginTop={moderateScale(30, 0.3)}
+            bgColor={['#79B9F6', '#00309E']}
+            isBold
+          />
+        </View>
       </ImageBackground>
-
     </View>
-     );
+  );
 };
 
 export default RideAcceptance;

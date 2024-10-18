@@ -1,21 +1,17 @@
-import {ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ImageBackground, StyleSheet, View} from 'react-native';
 import React from 'react';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import {windowHeight, windowWidth} from '../Utillity/utils';
-import MapViewDirections from 'react-native-maps-directions';
 import {moderateScale} from 'react-native-size-matters';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
 import CustomButton from '../Components/CustomButton';
 import Color from '../Assets/Utilities/Color';
-import { useNavigation } from '@react-navigation/native';
-import { FONTS } from '../Constant/theme';
+import {useNavigation} from '@react-navigation/native';
 
 const BoardingPointDetails = () => {
-  const navigation =useNavigation()
+  const navigation = useNavigation();
   const origin = {latitude: 37.3285792, longitude: -122.0356209};
   const destination = {latitude: 37.3320305, longitude: -122.0355326};
-
 
   return (
     <View style={styles.container}>
@@ -38,84 +34,83 @@ const BoardingPointDetails = () => {
         />
         <Marker coordinate={destination} />
       </MapView> */}
-      <ImageBackground 
-      style={{width: windowWidth, height: windowHeight}}
-      source={require('../Assets/Images/map.png')}>
-      <View style={styles.bottomContainer}>
-        <View style={styles.cont}>
-          <CustomText
-            isBold
-            style={{fontSize: moderateScale(23, 0.2), color: '#636363'}}>
-            You will arrive at 11 : 05
-          </CustomText>
-          <CustomText isBold style={styles.text}>
-            12 min - 6 miles
-          </CustomText>
-        </View>
-        <View style={styles.profile}>
-          <View style={styles.image}>
-            <CustomImage
-              source={require('../Assets/Images/men.png')}
-              style={{width: '100%', height: '100%'}}
+      <ImageBackground
+        style={{width: windowWidth, height: windowHeight}}
+        source={require('../Assets/Images/map.png')}>
+        <View style={styles.bottomContainer}>
+          <View style={styles.cont}>
+            <CustomText
+              isBold
+              style={{fontSize: moderateScale(23, 0.2), color: '#636363'}}>
+              You will arrive at 11 : 05
+            </CustomText>
+            <CustomText isBold style={styles.text}>
+              12 min - 6 miles
+            </CustomText>
+          </View>
+          <View style={styles.profile}>
+            <View style={styles.image}>
+              <CustomImage
+                source={require('../Assets/Images/men.png')}
+                style={{width: '100%', height: '100%'}}
+              />
+            </View>
+            <CustomText
+              isBold
+              style={{
+                fontSize: moderateScale(16, 0.6),
+                paddingTop: moderateScale(10, 0.6),
+              }}>
+              Theodora j. GArdner{' '}
+            </CustomText>
+            <CustomText
+              style={{
+                color: Color.mediumGray,
+              }}>
+              2013 Dodge Caravan
+            </CustomText>
+            <CustomText isBold style={styles.$}>
+              $ 10.00
+            </CustomText>
+            <View></View>
+          </View>
+
+          <View style={styles.actions}>
+            <CustomButton
+              onPress={() => {
+                navigation.navigate('PaymentScreen');
+              }}
+              isGradient
+              text={'Add Card'}
+              fontSize={moderateScale(14, 0.3)}
+              textColor={Color.white}
+              borderWidth={2}
+              borderColor={Color.white}
+              borderRadius={moderateScale(30, 0.3)}
+              width={windowWidth * 0.9}
+              height={windowHeight * 0.06}
+              marginTop={moderateScale(20, 0.3)}
+              bgColor={['#79B9F6', '#00309E']}
+              isBold
+            />
+            <CustomButton
+              onPress={() => {}}
+              text={'QR Scan'}
+              fontSize={moderateScale(14, 0.3)}
+              textColor={'#F8A700'}
+              borderWidth={1}
+              borderColor={'#ffffffba'}
+              borderRadius={moderateScale(30, 0.3)}
+              width={windowWidth * 0.9}
+              height={windowHeight * 0.06}
+              marginTop={moderateScale(20, 0.3)}
+              bgColor={'white'}
+              isBold
+              elevation
             />
           </View>
-          <CustomText
-            isBold
-            style={{
-              fontSize: moderateScale(16, 0.6),
-              paddingTop: moderateScale(10, 0.6),
-            }}>
-            Theodora j. GArdner{' '}
-          </CustomText>
-          <CustomText
-            style={{
-              color: Color.mediumGray,
-            }}>
-            2013 Dodge Caravan
-          </CustomText>
-          <CustomText isBold style={styles.$}>
-            $ 10.00
-          </CustomText>
-          <View></View>
         </View>
-
-        <View style={styles.actions}>
-          <CustomButton
-            onPress={() => {
-              navigation.navigate('PaymentScreen')
-            }}
-            isGradient
-            text={'Add Card'}
-            fontSize={moderateScale(14, 0.3)}
-            textColor={Color.white}
-            borderWidth={2}
-            borderColor={Color.white}
-            borderRadius={moderateScale(30, 0.3)}
-            width={windowWidth * 0.9}
-            height={windowHeight * 0.06}
-            marginTop={moderateScale(20, 0.3)}
-            bgColor={['#79B9F6', '#00309E']}
-            isBold
-          />
-          <CustomButton
-            onPress={() => {}}
-            text={'QR Scan'}
-            fontSize={moderateScale(14, 0.3)}
-            textColor={'#F8A700'}
-            borderWidth={1}
-            borderColor={'#ffffffba'}
-            borderRadius={moderateScale(30, 0.3)}
-            width={windowWidth * 0.9}
-            height={windowHeight * 0.06}
-            marginTop={moderateScale(20, 0.3)}
-            bgColor={'white'}
-            isBold
-            elevation
-          />
-        </View>
-      </View>
       </ImageBackground>
-
     </View>
   );
 };

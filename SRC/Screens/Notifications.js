@@ -1,5 +1,4 @@
 import {useNavigation} from '@react-navigation/native';
-import {format, isToday, parse} from 'date-fns';
 import React, {useEffect, useState} from 'react';
 import {
   FlatList,
@@ -15,7 +14,6 @@ import Header from '../Components/Header';
 import {windowWidth} from '../Utillity/utils';
 import CustomText from '../Components/CustomText';
 import {Get} from '../Axios/AxiosInterceptorFunction';
-import ListEmptyComponent from '../Components/ListEmphtyComponent';
 
 const Notifications = () => {
   const navigation = useNavigation();

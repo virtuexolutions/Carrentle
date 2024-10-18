@@ -26,7 +26,6 @@ import TextInputWithTitle from '../Components/TextInputWithTitle';
 import authAction from '../Store/auth-action';
 import {setUserToken} from '../Store/slices/auth-slice';
 import {setUserData} from '../Store/slices/common';
-import {getToken} from '../Utillity/auth.utill';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
 const LoginScreen = props => {

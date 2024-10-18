@@ -1,17 +1,12 @@
 import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import React, {useCallback, useState, useEffect} from 'react';
-import ScreenBoiler from '../Components/ScreenBoiler';
-import {FlatList, Icon} from 'native-base';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
-import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../Components/CustomText';
 import {useDispatch, useSelector} from 'react-redux';
 import {GiftedChat} from 'react-native-gifted-chat';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomImage from '../Components/CustomImage';
-import {Pusher} from '@pusher/pusher-websocket-react-native';
 import {useNavigation} from '@react-navigation/native';
 import Header from '../Components/Header';
 

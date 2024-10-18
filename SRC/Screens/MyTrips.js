@@ -17,7 +17,6 @@ import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
 import { Icon } from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
-import { color } from 'native-base/lib/typescript/theme/styled-system';
 
 const tripsListArray = [
     {

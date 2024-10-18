@@ -4,6 +4,16 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+<string>We need your location to track your ride.</string>
+<key>NSLocationAlwaysUsageDescription</key>
+<string>We need your location to track your ride in the background.</string>
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>We need your location to track your ride in the background.</string>
+<key>UIBackgroundModes</key>
+<array>
+    <string>location</string>
+</array>
+
 	<key>CFBundleDisplayName</key>
 	<string>Carrentle</string>
 	<key>CFBundleExecutable</key>

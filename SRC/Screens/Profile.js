@@ -3,8 +3,6 @@ import * as Animatable from 'react-native-animatable';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import ScreenBoiler from '../Components/ScreenBoiler';
-
 import {
   ActivityIndicator,
   ScrollView,
@@ -20,14 +18,12 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import CountryPicker, {DARK_THEME} from 'react-native-country-picker-modal';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-
 import navigationService from '../navigationService';
-import {useDispatch} from 'react-redux';
-
 import {Icon} from 'native-base';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import { useNavigation } from '@react-navigation/native';
+
 const Profile = () => {
   const navigation = useNavigation()
   const [isLoading, setIsLoading] = useState(false);

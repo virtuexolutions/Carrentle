@@ -1,10 +1,8 @@
 import {
   StyleSheet,
-  Text,
   View,
   ScrollView,
   TouchableOpacity,
-  PermissionsAndroid,
   ToastAndroid,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';

@@ -11,12 +11,10 @@ import Signup from './Screens/Signup';
 import LoginScreen from './Screens/LoginScreen';
 
 import Settings from './Screens/Settings';
-// import HomeScreen from './Screens/HomeScreen';
 import Color from './Assets/Utilities/Color';
 import {moderateScale} from 'react-native-size-matters';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-
 import {Icon} from 'native-base';
 import LinearGradient from 'react-native-linear-gradient';
 import {Alert, View} from 'react-native';
@@ -25,15 +23,12 @@ import Profile from './Screens/Profile';
 import PrivacyPolicy from './Screens/PrivacyPolicy';
 import TermsAndConditions from './Screens/TermsAndConditions';
 import WalkThroughScreen from './Screens/WalkthroughScreen';
-// import Drawer from './Screens/Drawer';
 import Feather from 'react-native-vector-icons/Feather';
-import ChangePassword from './Screens/ChangePassword';
 import HomeScreen from './Screens/HomeScreen';
 import PaymentScreen from './Screens/PaymentScreen';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import Drawer from './Drawer/Drawer';
 import MessagesScreen from './Screens/MessagesScreen';
-import EnterLocationScreen from './Screens/BoardingPointScreen';
 import BoardingPointScreen from './Screens/BoardingPointScreen';
 import RideBookingScreen2 from './Screens/RideBookingScreen2';
 import RideBookingScreen from './Screens/RideBokkingScreen';
@@ -53,7 +48,6 @@ import CencalTexi from './Screens/CancelTaxi';
 import DashBoard from './Screens/Dashboard';
 import ResetPassword from './Screens/ResetPassword';
 import VerifyNumber from './Screens/VerifyNumber';
-import EnterPhone from './Screens/VerifyEmail';
 import VerifyEmail from './Screens/VerifyEmail';
 import Notifications from './Screens/Notifications';
 import WaitingScreen from './Screens/WaitingScreen';
@@ -68,9 +62,7 @@ const AppNavigator = () => {
   const role = useSelector(state => state.authReducer.role);
   const isVerified = useSelector(state => state.authReducer.isVerified);
   const token = useSelector(state => state.authReducer.token);
-
   const {user_type} = useSelector(state => state.authReducer);
-
   const RootNav = createNativeStackNavigator();
   const RootNavLogged = createNativeStackNavigator();
 
@@ -106,7 +98,6 @@ const AppNavigator = () => {
           <RootNav.Screen name="PaymentScreen" component={PaymentScreen} />
           <RootNav.Screen name="MessagesScreen" component={MessagesScreen} />
           <RootNav.Screen name="PaymentHistory" component={PaymentHistory} />
-
           <RootNav.Screen name="VerifyEmail" component={VerifyEmail} />
           <RootNav.Screen
             name="BoardingPointScreen"
@@ -185,7 +176,6 @@ export const TabNavigation = () => {
 
           // if (route.name === 'HomeScreen') {
           //   iconName = focused ? 'home' : 'home-outline';
-
           //   color = focused ? Color.theme2 : Color.white;
           //   size = focused ? moderateScale(30, 0.3) : moderateScale(20, 0.3);
           // } else
@@ -329,17 +319,12 @@ export const MyDrawer = () => {
     const response = await Post(url, body, apiHeader(token));
     console.log('🚀 ~ onpressAccept ~ response:', response?.data);
     if (response?.data?.ride_info?.status === 'accept') {
-      Alert.alert(
-        'Sorry',
-        'Ride is Accepted , but We are Currently working on it',
-      );
-      // console.log('AcceptRide');
-      // setHasShownModal(true);
-      // setModalVisible(false);
-      // navigationService.navigate('WaitingScreen', {
-      //   data: response?.data?.ride_info,
-      //   type: 'fromRequest',
-      // });
+      setHasShownModal(true);
+      setModalVisible(false);
+      navigationService.navigate('WaitingScreen', {
+        data: response?.data?.ride_info,
+        type: 'fromRequest',
+      });
     }
     {
       console.log('RejectRide');

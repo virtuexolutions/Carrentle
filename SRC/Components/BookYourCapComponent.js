@@ -9,7 +9,6 @@ import {windowHeight, windowWidth} from '../Utillity/utils';
 import CustomButton from './CustomButton';
 import CustomImage from './CustomImage';
 import CustomText from './CustomText';
-import {mode} from 'native-base/lib/typescript/theme/tools';
 
 const BookYourCapComponent = ({item}) => {
   const navigation = useNavigation();

@@ -3,23 +3,19 @@ import {
   ImageBackground,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
-import { windowHeight, windowWidth } from '../Utillity/utils';
+import React, {useState} from 'react';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 
-import { moderateScale } from 'react-native-size-matters';
-import { useNavigation } from '@react-navigation/native';
-import { Icon } from 'native-base';
+import {moderateScale} from 'react-native-size-matters';
+import {useNavigation} from '@react-navigation/native';
+import {Icon} from 'native-base';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Fontisto from 'react-native-vector-icons/Fontisto';
-// import CountryPicker, {DARK_THEME} from 'react-native-country-picker-modal';
 import CustomButton from '../Components/CustomButton';
 
 const HelpAndSupport = () => {
@@ -122,10 +118,10 @@ const HelpAndSupport = () => {
             width: windowWidth * 0.5,
             textAlign: 'center',
             fontSize: moderateScale(20, 0.6),
-            paddingVertical: moderateScale(15, .6),
+            paddingVertical: moderateScale(15, 0.6),
             // backgroundColor:'red',
-            lineHeight: moderateScale(28, .6),
-            letterSpacing: moderateScale(2.9, .6)
+            lineHeight: moderateScale(28, 0.6),
+            letterSpacing: moderateScale(2.9, 0.6),
           }}>
           hello, How can we help you ?
         </CustomText>

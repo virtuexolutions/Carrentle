@@ -10,16 +10,10 @@ import ScreenBoiler from '../Components/ScreenBoiler';
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale} from 'react-native-size-matters';
 import {Divider, Icon} from 'native-base';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../Components/CustomText';
-import CustomImage from '../Components/CustomImage';
-import Header from '../Components/Header';
-import TextInputWithTitle from '../Components/TextInputWithTitle';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Octicons from 'react-native-vector-icons/Octicons';
 import Color from '../Assets/Utilities/Color';
-import {useNavigation} from '@react-navigation/native';
-
 import SearchLocationModal from '../Components/SearchLocationModal';
 
 const BoardingPointSearchScreen = ({navigation}) => {

@@ -10,8 +10,6 @@ import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import Loader from '../Components/Loader';
-import ListEmptyComponent from '../Components/ListEmphtyComponent';
-import LottieView from 'lottie-react-native';
 
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;

@@ -11,13 +11,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomImage from '../Components/CustomImage';
 import CustomButton from '../Components/CustomButton';
-import TextInputWithTitle from '../Components/TextInputWithTitle';
 import Foundation from 'react-native-vector-icons/Foundation';
 import {Rating} from 'react-native-ratings';
 import LinearGradient from 'react-native-linear-gradient';
-import {color} from 'native-base/lib/typescript/theme/styled-system';
 import Color from '../Assets/Utilities/Color';
-import {useNavigation} from '@react-navigation/native';
 
 const RideBookingScreen = () => {
   // const navigation =useNavigation()

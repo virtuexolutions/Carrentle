@@ -13,7 +13,6 @@ import CustomButton from '../Components/CustomButton';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import {Rating} from 'react-native-ratings';
 import LinearGradient from 'react-native-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
 
 const RideBookingScreen2 = () => {
   const origin = {latitude: 37.3285792, longitude: -122.0356209};

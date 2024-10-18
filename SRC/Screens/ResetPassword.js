@@ -13,21 +13,16 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import {useDispatch, useSelector} from 'react-redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-
-import navigationService from '../navigationService';
-
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import Color from '../Assets/Utilities/Color';
 import CustomStatusBar from '../Components/CustomStatusBar';
 import CustomText from '../Components/CustomText';
-
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import CustomButton from '../Components/CustomButton';
 import {ActivityIndicator} from 'react-native';
 import {Post} from '../Axios/AxiosInterceptorFunction';
 import {Icon} from 'native-base';
 import {useNavigation} from '@react-navigation/native';
-import {setUserToken} from '../Store/slices/auth-slice';
 import LinearGradient from 'react-native-linear-gradient';
 
 const width = Dimensions.get('window').width;
