@@ -1,5 +1,5 @@
 import Geolocation from '@react-native-community/geolocation';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import haversineDistance from 'haversine-distance';
 import LottieView from 'lottie-react-native';
 import React, {useEffect, useRef, useState} from 'react';
@@ -23,23 +23,24 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import CustomButton from '../Components/CustomButton';
 import BackgroundJob from 'react-native-background-actions';
 import {Post} from '../Axios/AxiosInterceptorFunction';
+import database from '@react-native-firebase/database';
 
 const TrackingScreen = ({route}) => {
+  const focused = useIsFocused();
   const {data} = route.params;
   console.log('🚀 ~ TrackingScreen ~ data:', data);
   const navigation = useNavigation();
   const userData = useSelector(state => state.commonReducer?.userData);
   const token = useSelector(state => state.authReducer.token);
+  const user_type = useSelector(state => state.authReducer.user_type);
+  console.log('🚀 ~ TrackingScreen ~ user_type:', user_type);
   const mapRef = useRef(null);
   const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
   const [currentPossition, setcurrentPossition] = useState({});
-  console.log('🚀 ~ TrackingScreenss ~ currentPossition:', currentPossition);
   const [time, setTime] = useState(0);
-
-  console.log('🚀 ~ TrackingScreensss ~ time:', time);
+  const [startRide, setStartRide] = useState(false);
 
   let playing = BackgroundJob.isRunning();
-  console.log('🚀 ~ file: App.js:49 ~ MainContainerr ~ playing:', playing);
 
   useEffect(() => {
     getCurrentLocation();
@@ -51,13 +52,33 @@ const TrackingScreen = ({route}) => {
           latitude,
           longitude,
         }));
+        database()
+          .ref(`/locations/${data?.rider?.id}`)
+          .update({
+            latitude: longitude,
+            longitude: latitude,
+            type: 'riderTracking',
+          })
+          .then(() => console.log('Location updated in Firebase!'));
       },
-      error => console.log('errrorrrssrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr', error),
+      error => console.log('errrorrrssrrrrrrrrrrrrrddrrrrrrrrrrrrrrrrr', error),
       {enableHighAccuracy: true, distanceFilter: 1, interval: 1000},
     );
-    console.log('🚀 ~ useEffect ~ watchId:', watchId);
+
+    if (mapRef.current && currentPossition) {
+      mapRef.current.animateToRegion(
+        {
+          latitude: currentPossition.latitude,
+          longitude: currentPossition.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        },
+        1000,
+      );
+    }
 
     const initialTime = calculateTravelTime();
+
     const interval = setInterval(() => {
       setTime(prevTime => {
         return prevTime > 5 ? prevTime - 5 : 0;
@@ -67,7 +88,7 @@ const TrackingScreen = ({route}) => {
       Geolocation.clearWatch(watchId);
       clearInterval(interval);
     };
-  }, []);
+  }, [focused]);
 
   useEffect(() => {
     if (
@@ -140,14 +161,29 @@ const TrackingScreen = ({route}) => {
   };
 
   const origin = {
-    latitude: parseFloat(currentPossition?.latitude),
-    longitude: parseFloat(currentPossition?.longitude),
+    latitude:
+      user_type === 'Rider'
+        ? parseFloat(data?.rider?.lat)
+        : parseFloat(data?.pickup_location_lat),
+    longitude:
+      user_type === 'Rider'
+        ? parseFloat(data?.rider?.lng)
+        : parseFloat(data?.pickup_location_lng),
   };
 
+  console.log('🚀 ~ TrackingScreen ~ origin:', origin);
+
   const destinations = {
-    latitude: parseFloat(rider?.lat),
-    longitude: parseFloat(rider?.lng),
+    latitude:
+      user_type === 'Rider'
+        ? parseFloat(data?.pickup_location_lat)
+        : parseFloat(data?.rider?.lat),
+    longitude:
+      user_type === 'Rider'
+        ? parseFloat(data?.pickup_location_lng)
+        : parseFloat(data?.rider?.lng),
   };
+  console.log('🚀 ~ TrackingScreen ~ destinations:', destinations);
 
   const calculateTravelTime = () => {
     const averageSpeed = 70;
@@ -229,6 +265,18 @@ const TrackingScreen = ({route}) => {
   //   return () => stopBackgroundTask();
   // }, []);
 
+  const updateLocationInFirebase = (lat, lng) => {
+    setStartRide(true);
+    database()
+      .ref(`/locations/${data?.rider?.id}`)
+      .set({
+        latitude: currentPossition?.latitude,
+        longitude: currentPossition?.latitude,
+        type: 'riderTracking',
+      })
+      .then(() => console.log('Location updated in Firebase!'));
+  };
+
   return (
     <View style={styles.container}>
       <Header
@@ -242,9 +290,6 @@ const TrackingScreen = ({route}) => {
         username={userData?.name}
       />
       {Object.keys(currentPossition).length > 0 ? (
-        // &&
-        // data?.pickup_location_lat &&
-        // data?.pickup_location_lng
         <MapView
           customMapStyle={customMapStyle}
           initialRegion={{
@@ -256,24 +301,37 @@ const TrackingScreen = ({route}) => {
           provider={PROVIDER_GOOGLE}
           ref={mapRef}
           style={styles.map}>
-          <Marker coordinate={currentPossition} title="Your Are Here Now">
-            <View
-              style={{
-                width: moderateScale(60, 0.6),
-                height: moderateScale(60, 0.6),
-              }}>
-              <LottieView
-                autoPlay
-                loop
+          <Marker coordinate={currentPossition}>
+            {user_type === 'Rider' ? (
+              <View
                 style={{
-                  height: '100%',
-                  width: '100%',
-                  alignItems: 'center',
-                  alignSelf: 'center',
-                }}
-                source={require('../Assets/animations/location_pin.json')}
-              />
-            </View>
+                  width: moderateScale(50, 0.6),
+                  height: moderateScale(50, 0.6),
+                }}>
+                <CustomImage
+                  style={{height: '100%', width: '100%'}}
+                  source={require('../Assets/Images/car_left.png')}
+                />
+              </View>
+            ) : (
+              <View
+                style={{
+                  width: moderateScale(60, 0.6),
+                  height: moderateScale(60, 0.6),
+                }}>
+                <LottieView
+                  autoPlay
+                  loop
+                  style={{
+                    height: '100%',
+                    width: '100%',
+                    alignItems: 'center',
+                    alignSelf: 'center',
+                  }}
+                  source={require('../Assets/animations/location_pin.json')}
+                />
+              </View>
+            )}
           </Marker>
           <MapViewDirections
             origin={origin}
@@ -293,141 +351,204 @@ const TrackingScreen = ({route}) => {
             coordinate={{
               latitude: destinations?.latitude,
               longitude: destinations?.longitude,
-            }}
-            title="Drop-off Location"
-            pinColor="green"
-          />
+            }}>
+            {user_type === 'Rider' ? (
+              <View
+                style={{
+                  width: moderateScale(60, 0.6),
+                  height: moderateScale(60, 0.6),
+                }}>
+                <LottieView
+                  autoPlay
+                  loop
+                  style={{
+                    height: '100%',
+                    width: '100%',
+                    alignItems: 'center',
+                    alignSelf: 'center',
+                  }}
+                  source={require('../Assets/animations/location_pin.json')}
+                />
+              </View>
+            ) : (
+              <View
+                style={{
+                  width: moderateScale(50, 0.6),
+                  height: moderateScale(50, 0.6),
+                }}>
+                <CustomImage
+                  style={{height: '100%', width: '100%'}}
+                  source={require('../Assets/Images/car_left.png')}
+                />
+              </View>
+            )}
+          </Marker>
         </MapView>
       ) : (
         <Loader />
       )}
-      <View style={styles.card_main_view}>
-        <View style={styles.image_main_view}>
-          <View style={styles.image_view}>
-            <CustomImage
-              source={require('../Assets/Images/dummyUser.png')}
+      {user_type === 'Customer' ? (
+        <View style={styles.card_main_view}>
+          <View style={styles.image_main_view}>
+            <View style={styles.image_view}>
+              <CustomImage
+                source={require('../Assets/Images/dummyUser.png')}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: windowWidth,
+                }}
+              />
+            </View>
+          </View>
+          <View style={{top: moderateScale(30, 0.6)}}>
+            <CustomText
+              isBold
               style={{
-                width: '100%',
-                height: '100%',
-                borderRadius: windowWidth,
-              }}
+                fontSize: moderateScale(20, 0.6),
+                textAlign: 'center',
+              }}>
+              Test User
+            </CustomText>
+            <Rating
+              imageSize={20}
+              style={{marginTop: moderateScale(10, 0.6)}}
+              selectedColor="red"
+              unSelectedColor="blue"
+              ratingContainerStyle={{backgroundColor: 'red'}}
+            />
+            <View style={styles.btn_view}>
+              <TouchableOpacity style={styles.btn_sub_view}>
+                <Icon
+                  name="call"
+                  color={Color.darkBlue}
+                  as={Ionicons}
+                  size={moderateScale(20, 0.6)}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.btn_sub_view}>
+                <Icon
+                  name="message"
+                  color={Color.darkBlue}
+                  as={MaterialIcons}
+                  size={moderateScale(20, 0.6)}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.rating_box_view}>
+              <View style={styles.rating_box_inner_view}>
+                <Icon
+                  name="star"
+                  color={Color.darkBlue}
+                  as={Ionicons}
+                  size={moderateScale(15, 0.6)}
+                />
+                <View style={styles.text_view}>
+                  <CustomText isBold style={{fontSize: moderateScale(18, 0.6)}}>
+                    4.7
+                  </CustomText>
+                  <CustomText
+                    style={{
+                      color: Color.darkGray,
+                      fontSize: moderateScale(13, 0.6),
+                      marginLeft: moderateScale(3, 0.6),
+                    }}>
+                    Stars
+                  </CustomText>
+                </View>
+              </View>
+              <View style={styles.rating_box_inner_view}>
+                <Icon
+                  name="clock"
+                  color={Color.darkBlue}
+                  as={Entypo}
+                  size={moderateScale(15, 0.6)}
+                />
+                {time != 0 ? (
+                  <View style={styles.text_view}>
+                    <CustomText
+                      isBold
+                      style={{fontSize: moderateScale(18, 0.6)}}>
+                      {time}
+                    </CustomText>
+                    <CustomText
+                      style={{
+                        color: Color.darkGray,
+                        fontSize: moderateScale(13, 0.6),
+                        marginLeft: moderateScale(3, 0.6),
+                      }}>
+                      Mins
+                    </CustomText>
+                  </View>
+                ) : (
+                  <CustomText
+                    style={{
+                      color: Color.darkGray,
+                      fontSize: moderateScale(13, 0.6),
+                      marginLeft: moderateScale(3, 0.6),
+                    }}>
+                    any Time
+                  </CustomText>
+                )}
+              </View>
+              <View style={styles.rating_box_inner_view}>
+                <Icon
+                  name="star"
+                  color={Color.darkBlue}
+                  as={Ionicons}
+                  size={moderateScale(15, 0.6)}
+                />
+                <View style={styles.text_view}>
+                  <CustomText isBold style={{fontSize: moderateScale(18, 0.6)}}>
+                    4.7
+                  </CustomText>
+                  <CustomText
+                    style={{
+                      color: Color.darkGray,
+                      fontSize: moderateScale(13, 0.6),
+                      marginLeft: moderateScale(3, 0.6),
+                    }}>
+                    Ratings
+                  </CustomText>
+                </View>
+              </View>
+            </View>
+            <CustomButton
+              text={'cancel ride'}
+              textColor={Color.white}
+              width={windowWidth * 0.8}
+              height={windowHeight * 0.06}
+              marginTop={moderateScale(20, 0.3)}
+              bgColor={Color.cartheme}
+              borderColor={Color.white}
+              borderWidth={1}
+              borderRadius={moderateScale(30, 0.3)}
+              isGradient
+              onPress={() => updateLocationInFirebase()}
             />
           </View>
         </View>
-        <View style={{top: moderateScale(30, 0.6)}}>
-          <CustomText
-            isBold
-            style={{
-              fontSize: moderateScale(20, 0.6),
-              textAlign: 'center',
-            }}>
-            Test User
-          </CustomText>
-          <Rating
-            imageSize={20}
-            style={{marginTop: moderateScale(10, 0.6)}}
-            selectedColor="red"
-            unSelectedColor="blue"
-            ratingContainerStyle={{backgroundColor: 'red'}}
-          />
-          <View style={styles.btn_view}>
-            <TouchableOpacity style={styles.btn_sub_view}>
-              <Icon
-                name="call"
-                color={Color.darkBlue}
-                as={Ionicons}
-                size={moderateScale(20, 0.6)}
+      ) : (
+        <>
+          {startRide != true && (
+            <View style={{position: 'absolute', bottom: 40}}>
+              <CustomButton
+                text={'Start Ride'}
+                textColor={Color.white}
+                width={windowWidth * 0.8}
+                height={windowHeight * 0.06}
+                marginTop={moderateScale(20, 0.3)}
+                bgColor={Color.cartheme}
+                borderColor={Color.white}
+                borderWidth={1}
+                borderRadius={moderateScale(30, 0.3)}
+                isGradient
+                onPress={() => updateLocationInFirebase()}
               />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btn_sub_view}>
-              <Icon
-                name="message"
-                color={Color.darkBlue}
-                as={MaterialIcons}
-                size={moderateScale(20, 0.6)}
-              />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.rating_box_view}>
-            <View style={styles.rating_box_inner_view}>
-              <Icon
-                name="star"
-                color={Color.darkBlue}
-                as={Ionicons}
-                size={moderateScale(15, 0.6)}
-              />
-              <View style={styles.text_view}>
-                <CustomText isBold style={{fontSize: moderateScale(18, 0.6)}}>
-                  4.7
-                </CustomText>
-                <CustomText
-                  style={{
-                    color: Color.darkGray,
-                    fontSize: moderateScale(13, 0.6),
-                    marginLeft: moderateScale(3, 0.6),
-                  }}>
-                  Stars
-                </CustomText>
-              </View>
             </View>
-            <View style={styles.rating_box_inner_view}>
-              <Icon
-                name="clock"
-                color={Color.darkBlue}
-                as={Entypo}
-                size={moderateScale(15, 0.6)}
-              />
-              <View style={styles.text_view}>
-                <CustomText isBold style={{fontSize: moderateScale(18, 0.6)}}>
-                  {time != 0 ? time : 'any time there'}
-                </CustomText>
-                <CustomText
-                  style={{
-                    color: Color.darkGray,
-                    fontSize: moderateScale(13, 0.6),
-                    marginLeft: moderateScale(3, 0.6),
-                  }}>
-                  Mins
-                </CustomText>
-              </View>
-            </View>
-            <View style={styles.rating_box_inner_view}>
-              <Icon
-                name="star"
-                color={Color.darkBlue}
-                as={Ionicons}
-                size={moderateScale(15, 0.6)}
-              />
-              <View style={styles.text_view}>
-                <CustomText isBold style={{fontSize: moderateScale(18, 0.6)}}>
-                  4.7
-                </CustomText>
-                <CustomText
-                  style={{
-                    color: Color.darkGray,
-                    fontSize: moderateScale(13, 0.6),
-                    marginLeft: moderateScale(3, 0.6),
-                  }}>
-                  Ratings
-                </CustomText>
-              </View>
-            </View>
-          </View>
-          <CustomButton
-            text={'cancel ride'}
-            textColor={Color.white}
-            width={windowWidth * 0.8}
-            height={windowHeight * 0.06}
-            marginTop={moderateScale(20, 0.3)}
-            bgColor={Color.cartheme}
-            borderColor={Color.white}
-            borderWidth={1}
-            borderRadius={moderateScale(30, 0.3)}
-            isGradient
-            //onPress={() => onPressCancel()}//
-          />
-        </View>
-      </View>
+          )}
+        </>
+      )}
     </View>
   );
 };
@@ -519,7 +640,6 @@ const styles = StyleSheet.create({
   card_main_view: {
     width: windowWidth,
     height: windowHeight * 0.45,
-    backgroundColor: 'red',
     position: 'absolute',
     bottom: 0,
     zIndex: 1,
@@ -589,11 +709,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: moderateScale(20, 0.6),
   },
   rating_box_inner_view: {
-    width: windowWidth * 0.2,
+    width: windowWidth * 0.25,
     height: moderateScale(70, 0),
     justifyContent: 'flex-start',
     paddingVertical: moderateScale(10, 0.6),
-    paddingHorizontal: moderateScale(12, 0.6),
+    paddingHorizontal: moderateScale(7, 0.6),
   },
   text_view: {
     flexDirection: 'row',

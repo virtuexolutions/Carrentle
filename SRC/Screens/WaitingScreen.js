@@ -1,10 +1,4 @@
-import {
-  StyleSheet,
-  View,
-  Platform,
-  ToastAndroid,
-  Alert,
-} from 'react-native';
+import {StyleSheet, View, Platform, ToastAndroid, Alert} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import Header from '../Components/Header';
@@ -25,20 +19,20 @@ const WaitingScreen = ({route}) => {
   const navigation = useNavigation();
   const userData = useSelector(state => state.commonReducer?.userData);
   const token = useSelector(state => state.authReducer.token);
+  console.log('🚀 ~ WaitingScreen ~ token:', token);
   const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
   const mapRef = useRef(null);
   const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
   const [loading, setLoading] = useState(false);
   const [rideData, setRideData] = useState(null);
-  console.log('🚀 ~ WaitingScreen ~ rideData:', rideData);
   const [modalVisible, setModalVisible] = useState(false);
 
   console.log('Data:', data);
   console.log('Current Locations Latitude:', data?.currentLocationLatitude);
   console.log(
     'Dropoff Locatiion:',
-    data?.dropoff_location_lat,
-    data?.dropoff_location_lng,
+    data?.dropOffLocation?.lat,
+    data?.dropOffLocation?.lng,
   );
 
   console.log('Riderrrr Locationsss:', data?.rider?.lat, data?.rider?.lng);
@@ -65,6 +59,7 @@ const WaitingScreen = ({route}) => {
       const url = `auth/ride/${data?.ride_id}`;
       setLoading(true);
       const response = await Get(url, token);
+      console.log('🚀 ~ getRiderInfo ~ response:', response?.data);
       setLoading(false);
       if (response?.data?.ride_info?.status === 'accept') {
         setRideData(response.data.ride_info);
@@ -77,30 +72,18 @@ const WaitingScreen = ({route}) => {
   };
 
   const origin = {
-    latitude: isValidCoordinate(data?.currentLocationLatitude?.latitude)
-      ? parseFloat(data.currentLocationLatitude.latitude)
-      : 0,
-    longitude: isValidCoordinate(data?.currentLocationLatitude?.longitude)
-      ? parseFloat(data.currentLocationLatitude.longitude)
-      : 0,
+    latitude: parseFloat(data?.currentLocationLatitude?.latitude) || 0,
+    longitude: parseFloat(data?.currentLocationLatitude?.longitude) || 0,
   };
 
   const destinations = {
-    latitude: isValidCoordinate(data?.dropoff_location_lat)
-      ? parseFloat(data.dropoff_location_lat)
-      : 0,
-    longitude: isValidCoordinate(data?.dropoff_location_lng)
-      ? parseFloat(data.dropoff_location_lng)
-      : 0,
+    latitude: parseFloat(data?.dropoff_location_lat) || 0,
+    longitude: parseFloat(data?.dropoff_location_lng) || 0,
   };
 
   const riderLocation = {
-    latitude: isValidCoordinate(data?.rider?.lat)
-      ? parseFloat(data.rider.lat)
-      : 0,
-    longitude: isValidCoordinate(data?.rider?.lng)
-      ? parseFloat(data.rider.lng)
-      : 0,
+    latitude: parseFloat(data?.rider?.lat) || 0,
+    longitude: parseFloat(data?.rider?.lng) || 0,
   };
 
   const isValidCoordinate = value => {

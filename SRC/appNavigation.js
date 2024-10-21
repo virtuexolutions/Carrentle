@@ -321,9 +321,8 @@ export const MyDrawer = () => {
     if (response?.data?.ride_info?.status === 'accept') {
       setHasShownModal(true);
       setModalVisible(false);
-      navigationService.navigate('WaitingScreen', {
+      navigationService.navigate('TrackingScreen', {
         data: response?.data?.ride_info,
-        type: 'fromRequest',
       });
     }
     {

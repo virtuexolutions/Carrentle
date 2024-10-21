@@ -31,6 +31,7 @@ import LottieView from 'lottie-react-native';
 import AskLocationComponent from '../Components/AskLocationComponent';
 import database from '@react-native-firebase/database';
 import DatePicker from 'react-native-date-picker';
+
 import moment from 'moment';
 
 const BoardingPointScreen = ({navigation, route}) => {
