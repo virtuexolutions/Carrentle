@@ -43,6 +43,7 @@ const BoardingPointScreen = ({navigation, route}) => {
   const userData = useSelector(state => state.commonReducer.userData);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pickupLocation, setPickUpLocation] = useState({});
+  console.log('🚀 ~ BoardingPointScreen ~ pickupLocation:', pickupLocation);
   const [dropOffLocation, setDropOffLocation] = useState({});
   const [locationType, setLocationType] = useState('pickup');
   const [isYourLocation, setIsyourLocation] = useState(null);
@@ -466,6 +467,11 @@ const BoardingPointScreen = ({navigation, route}) => {
     setBookingDateModal(false);
   };
 
+  const pickupMarkerCordinate = {
+    latitude: pickupLocation?.lat,
+    longitude: pickupLocation?.lng,
+  };
+
   return (
     <View style={styles.container}>
       <Header
@@ -611,7 +617,11 @@ const BoardingPointScreen = ({navigation, route}) => {
             fillColor={'rgba(51, 170, 51, .2)'}
             zIndex={1}
           /> */}
-          <Marker coordinate={currentPossition} title="Your Are Here Now">
+          <Marker
+            coordinate={
+              pickupLocation ? pickupMarkerCordinate : currentPossition
+            }
+            title="Your Are Here Now">
             <View
               style={{
                 width: moderateScale(60, 0.6),

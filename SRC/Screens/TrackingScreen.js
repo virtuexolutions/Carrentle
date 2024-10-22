@@ -3,7 +3,7 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 import haversineDistance from 'haversine-distance';
 import LottieView from 'lottie-react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import {moderateScale} from 'react-native-size-matters';
@@ -22,23 +22,21 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import CustomButton from '../Components/CustomButton';
 import BackgroundJob from 'react-native-background-actions';
-import {Post} from '../Axios/AxiosInterceptorFunction';
 import database from '@react-native-firebase/database';
 
 const TrackingScreen = ({route}) => {
   const focused = useIsFocused();
   const {data} = route.params;
-  console.log('🚀 ~ TrackingScreen ~ data:', data);
   const navigation = useNavigation();
   const userData = useSelector(state => state.commonReducer?.userData);
   const token = useSelector(state => state.authReducer.token);
   const user_type = useSelector(state => state.authReducer.user_type);
-  console.log('🚀 ~ TrackingScreen ~ user_type:', user_type);
   const mapRef = useRef(null);
   const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
   const [currentPossition, setcurrentPossition] = useState({});
   const [time, setTime] = useState(0);
   const [startRide, setStartRide] = useState(false);
+  const [trackingLocation, setTrackingLocation] = useState(false);
 
   let playing = BackgroundJob.isRunning();
 
@@ -52,33 +50,29 @@ const TrackingScreen = ({route}) => {
           latitude,
           longitude,
         }));
-        database()
-          .ref(`/locations/${data?.rider?.id}`)
-          .update({
-            latitude: longitude,
-            longitude: latitude,
-            type: 'riderTracking',
-          })
-          .then(() => console.log('Location updated in Firebase!'));
+
+        updateLocationInFirebase(latitude, longitude);
+
+        if (mapRef.current) {
+          mapRef.current.animateToRegion(
+            {
+              latitude: latitude,
+              longitude: longitude,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
+            },
+            1000,
+          );
+        }
       },
-      error => console.log('errrorrrssrrrrrrrrrrrrrddrrrrrrrrrrrrrrrrr', error),
-      {enableHighAccuracy: true, distanceFilter: 1, interval: 1000},
+      error => console.log('Error getting location:', error),
+      {
+        enableHighAccuracy: true,
+        distanceFilter: 1,
+        interval: 1000,
+      },
     );
-
-    if (mapRef.current && currentPossition) {
-      mapRef.current.animateToRegion(
-        {
-          latitude: currentPossition.latitude,
-          longitude: currentPossition.longitude,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        },
-        1000,
-      );
-    }
-
     const initialTime = calculateTravelTime();
-
     const interval = setInterval(() => {
       setTime(prevTime => {
         return prevTime > 5 ? prevTime - 5 : 0;
@@ -170,9 +164,7 @@ const TrackingScreen = ({route}) => {
         ? parseFloat(data?.rider?.lng)
         : parseFloat(data?.pickup_location_lng),
   };
-
-  console.log('🚀 ~ TrackingScreen ~ origin:', origin);
-
+  
   const destinations = {
     latitude:
       user_type === 'Rider'
@@ -183,7 +175,6 @@ const TrackingScreen = ({route}) => {
         ? parseFloat(data?.pickup_location_lng)
         : parseFloat(data?.rider?.lng),
   };
-  console.log('🚀 ~ TrackingScreen ~ destinations:', destinations);
 
   const calculateTravelTime = () => {
     const averageSpeed = 70;
@@ -197,9 +188,40 @@ const TrackingScreen = ({route}) => {
     return timeInMinutes;
   };
 
+  const updateLocationInFirebase = (latitude, longitude) => {
+    setStartRide(true);
+    database()
+      .ref(`/locations/${data?.rider?.id}`)
+      .update({
+        latitude: latitude,
+        longitude: longitude,
+        type: 'riderTracking',
+      })
+      .then(() => console.log('Location updated in Firebase!'))
+      .catch(error => console.error('Error updating Firebase:', error));
+  };
+
+  useEffect(() => {
+    database()
+      .ref(`/locations/${data?.rider?.id}`)
+      .once('value')
+      .then(snapshot => {
+        if (snapshot.exists()) {
+          const locationData = snapshot.val();
+          setTrackingLocation(locationData);
+        } else {
+          console.log('No data available at this reference');
+        }
+      })
+      .catch(error =>
+        console.error('Error reading data from Firebase:', error),
+      );
+  }, []);
+
   // const onPressCancel = async () => {
   //   const body = {
   //     lat: currentPossition?.latitude,
+
   //     lng: currentPossition?.longitude,
   //     status: 'reject',
   //   };
@@ -228,7 +250,7 @@ const TrackingScreen = ({route}) => {
   //       calculateTravelTime();
   //       console.log('Current Location:', currentPossition);
   //       console.log('Remaining Time:', time);
-  //       await new Promise(r => setTimeout(r, delay)); // Delay between updates
+  //       await new Promise(r => setTimeout(r, delay));
   //     }
   //     resolve();
   //   });
@@ -265,18 +287,6 @@ const TrackingScreen = ({route}) => {
   //   return () => stopBackgroundTask();
   // }, []);
 
-  const updateLocationInFirebase = (lat, lng) => {
-    setStartRide(true);
-    database()
-      .ref(`/locations/${data?.rider?.id}`)
-      .set({
-        latitude: currentPossition?.latitude,
-        longitude: currentPossition?.latitude,
-        type: 'riderTracking',
-      })
-      .then(() => console.log('Location updated in Firebase!'));
-  };
-
   return (
     <View style={styles.container}>
       <Header
@@ -305,12 +315,19 @@ const TrackingScreen = ({route}) => {
             {user_type === 'Rider' ? (
               <View
                 style={{
-                  width: moderateScale(50, 0.6),
-                  height: moderateScale(50, 0.6),
+                  width: moderateScale(60, 0.6),
+                  height: moderateScale(60, 0.6),
                 }}>
-                <CustomImage
-                  style={{height: '100%', width: '100%'}}
-                  source={require('../Assets/Images/car_left.png')}
+                <LottieView
+                  autoPlay
+                  loop
+                  style={{
+                    height: '100%',
+                    width: '100%',
+                    alignItems: 'center',
+                    alignSelf: 'center',
+                  }}
+                  source={require('../Assets/animations/location_pin_amination.json')}
                 />
               </View>
             ) : (
@@ -373,12 +390,19 @@ const TrackingScreen = ({route}) => {
             ) : (
               <View
                 style={{
-                  width: moderateScale(50, 0.6),
-                  height: moderateScale(50, 0.6),
+                  width: moderateScale(60, 0.6),
+                  height: moderateScale(60, 0.6),
                 }}>
-                <CustomImage
-                  style={{height: '100%', width: '100%'}}
-                  source={require('../Assets/Images/car_left.png')}
+                <LottieView
+                  autoPlay
+                  loop
+                  style={{
+                    height: '100%',
+                    width: '100%',
+                    alignItems: 'center',
+                    alignSelf: 'center',
+                  }}
+                  source={require('../Assets/animations/location_pin_amination.json')}
                 />
               </View>
             )}

@@ -64,14 +64,12 @@ const SearchLocationModal = ({
           }}
           onPress={(data, details = null) => {
             if (details) {
-              const cityName =
-                details.address_components &&
+              const cityName = details.address_components &&
                 Array.isArray(details.address_components)
                   ? details.address_components.find(component =>
                       component.types.includes('locality'),
                     )?.long_name
                   : 'City name not found';
-
               console.log(cityName);
               locationType === 'pickup'
                 ? setPickUpCityName(cityName)
@@ -93,7 +91,6 @@ const SearchLocationModal = ({
                     lat: details?.geometry?.location?.lat,
                     lng: details?.geometry?.location?.lng,
                   });
-
               setIsModalVisible(false);
             } else {
               console.error('Location details not available');
