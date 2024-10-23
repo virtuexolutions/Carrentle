@@ -318,7 +318,8 @@ const styles = StyleSheet.create({
   },
   card_view: {
     width: windowWidth * 0.8,
-    height: windowHeight * 0.2,
+    // height: windowHeight * 0.2,
+    paddingVertical: moderateScale(10, 0.6),
     backgroundColor: Color.white,
     justifyContent: 'center',
     alignItems: 'center',
@@ -358,7 +359,6 @@ const styles = StyleSheet.create({
   text: {fontSize: moderateScale(12, 0.6), marginLeft: moderateScale(5, 0.6)},
   wallet_card: {
     width: windowWidth * 0.9,
-    height: windowHeight * 0.18,
     backgroundColor: Color.white,
     alignItems: 'center',
     borderRadius: moderateScale(15, 0.6),

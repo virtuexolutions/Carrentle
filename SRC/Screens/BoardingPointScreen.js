@@ -617,11 +617,7 @@ const BoardingPointScreen = ({navigation, route}) => {
             fillColor={'rgba(51, 170, 51, .2)'}
             zIndex={1}
           /> */}
-          <Marker
-            coordinate={
-              pickupLocation ? pickupMarkerCordinate : currentPossition
-            }
-            title="Your Are Here Now">
+          <Marker coordinate={currentPossition} title="Your Are Here Now">
             <View
               style={{
                 width: moderateScale(60, 0.6),

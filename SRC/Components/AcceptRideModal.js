@@ -274,7 +274,7 @@ export default AcceptRideModal;
 
 const styles = StyleSheet.create({
   card: {
-    height: windowHeight * 0.42,
+    // height: windowHeight * 0.42,
     width: windowWidth * 0.9,
     borderRadius: moderateScale(10, 6),
     borderWidth: 2,

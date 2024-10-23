@@ -32,25 +32,51 @@ const TrackingScreen = ({route}) => {
   const token = useSelector(state => state.authReducer.token);
   const user_type = useSelector(state => state.authReducer.user_type);
   const mapRef = useRef(null);
-  const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
-  const [currentPossition, setcurrentPossition] = useState({});
+
+  const [currentPossition, setCurrentPossition] = useState({});
   const [time, setTime] = useState(0);
   const [startRide, setStartRide] = useState(false);
   const [trackingLocation, setTrackingLocation] = useState(false);
 
+  const currentPossitionRef = useRef(currentPossition);
+  const timeRef = useRef(time);
+
   let playing = BackgroundJob.isRunning();
+
+  useEffect(() => {
+    currentPossitionRef.current = currentPossition;
+  }, [currentPossition]);
+
+  useEffect(() => {
+    timeRef.current = time;
+  }, [time]);
 
   useEffect(() => {
     getCurrentLocation();
     const watchId = Geolocation.watchPosition(
       position => {
         const {latitude, longitude} = position.coords;
-        setcurrentPossition(prevLocation => ({
+        setCurrentPossition(prevLocation => ({
           ...prevLocation,
           latitude,
           longitude,
         }));
-
+        database()
+          .ref(`/locations/${data?.rider?.id}/${'riderTracking'}  `)
+          .once('value')
+          .then(snapshot => {
+            if (snapshot.exists()) {
+              const data = snapshot.val();
+              const {latitude, longitude} = data;
+              setCurrentPossition(data);
+              console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+            } else {
+              console.log('No data available for this ID.');
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching location from Firebase:', error);
+          });
         updateLocationInFirebase(latitude, longitude);
 
         if (mapRef.current) {
@@ -72,12 +98,13 @@ const TrackingScreen = ({route}) => {
         interval: 1000,
       },
     );
+
     const initialTime = calculateTravelTime();
+
     const interval = setInterval(() => {
-      setTime(prevTime => {
-        return prevTime > 5 ? prevTime - 5 : 0;
-      });
+      setTime(prevTime => (prevTime > 5 ? prevTime - 5 : 0));
     }, 300000);
+
     return () => {
       Geolocation.clearWatch(watchId);
       clearInterval(interval);
@@ -123,35 +150,11 @@ const TrackingScreen = ({route}) => {
           },
         );
       });
-      setcurrentPossition(position);
+      setCurrentPossition(position);
     } catch (error) {
       console.error('Error getting location:', error);
       throw error;
     }
-  };
-
-  const rider = {
-    pickup_location_lat: 41.3909433,
-    pickup_location_lng: -83.6683767,
-    assign: 0,
-    created_at: '2024-09-16T14:53:49.000000Z',
-    dob: null,
-    email: 'rider@gmail.com',
-    email_verified_at: '2024-09-16T14:53:49.000000Z',
-    gender: null,
-    id: 13,
-    lat: 41.37500344681967,
-    lng: -83.6502309,
-    name: 'rider',
-    phone: 13458793566,
-    photo: '/uploads/user/profiles/',
-    pm_last_four: null,
-    pm_type: null,
-    role: 'rider',
-    status: 'active',
-    stripe_id: null,
-    trial_ends_at: null,
-    updated_at: '2024-10-16T11:16:47.000000Z',
   };
 
   const origin = {
@@ -164,7 +167,8 @@ const TrackingScreen = ({route}) => {
         ? parseFloat(data?.rider?.lng)
         : parseFloat(data?.pickup_location_lng),
   };
-  
+  console.log('🚀 ~ TrackingScreen ~ origin:', origin);
+
   const destinations = {
     latitude:
       user_type === 'Rider'
@@ -175,6 +179,7 @@ const TrackingScreen = ({route}) => {
         ? parseFloat(data?.pickup_location_lng)
         : parseFloat(data?.rider?.lng),
   };
+  console.log('🚀 ~ TrackingScreen ~ destinations:', destinations);
 
   const calculateTravelTime = () => {
     const averageSpeed = 70;
@@ -189,71 +194,46 @@ const TrackingScreen = ({route}) => {
   };
 
   const updateLocationInFirebase = (latitude, longitude) => {
-    setStartRide(true);
     database()
-      .ref(`/locations/${data?.rider?.id}`)
+      .ref(`/locations/${data?.rider?.id}/${'riderTracking'}`)
       .update({
         latitude: latitude,
         longitude: longitude,
-        type: 'riderTracking',
       })
       .then(() => console.log('Location updated in Firebase!'))
       .catch(error => console.error('Error updating Firebase:', error));
   };
 
-  useEffect(() => {
-    database()
-      .ref(`/locations/${data?.rider?.id}`)
-      .once('value')
-      .then(snapshot => {
-        if (snapshot.exists()) {
-          const locationData = snapshot.val();
-          setTrackingLocation(locationData);
-        } else {
-          console.log('No data available at this reference');
-        }
-      })
-      .catch(error =>
-        console.error('Error reading data from Firebase:', error),
-      );
-  }, []);
-
-  // const onPressCancel = async () => {
-  //   const body = {
-  //     lat: currentPossition?.latitude,
-
-  //     lng: currentPossition?.longitude,
-  //     status: 'reject',
-  //   };
-  //   console.log(body, 'shdad');
-  //   const url = `auth/rider/ride_update/${latestRide?.id}`;
-  //   const response = await Post(url, body, apiHeader(token));
-  //   console.log('🚀 ~ onpressAccept ~ response:', response?.data);
-  //   if (response?.data?.ride_info?.status === 'accept') {
-  //     Alert.alert(
-  //       'Sorry',
-  //       'Ride is Accepted , but We are Currently working on it',
+  // useEffect(() => {
+  //   database()
+  //     .ref(`/locations/${data?.rider?.id}`)
+  //     .once('value')
+  //     .then(snapshot => {
+  //       if (snapshot.exists()) {
+  //         const locationData = snapshot.val();
+  //         setTrackingLocation(locationData);
+  //       } else {
+  //         console.log('No data available at this reference');
+  //       }
+  //     })
+  //     .catch(error =>
+  //       console.error('Error reading data from Firebase:', error),
   //     );
-  //   }
-  //   {
-  //     console.log('RejectRide');
-  //     setModalVisible(false);
-  //     setHasShownModal(true);
-  //   }
-  // };
+  // }, []);
 
   // const trackLocationAndTime = async taskData => {
   //   const {delay} = taskData;
-  //   await new Promise(async resolve => {
-  //     while (BackgroundJob.isRunning()) {
-  //       getCurrentLocation();
-  //       calculateTravelTime();
-  //       console.log('Current Location:', currentPossition);
-  //       console.log('Remaining Time:', time);
-  //       await new Promise(r => setTimeout(r, delay));
+  //   while (BackgroundJob.isRunning()) {
+  //     try {
+  //       await getCurrentLocation();
+  //       await calculateTravelTime();
+  //       console.log('Current Location:', currentPossitionRef.current);
+  //       console.log('Remaining Time:', timeRef.current);
+  //     } catch (error) {
+  //       console.error('Error in tracking task:', error);
   //     }
-  //     resolve();
-  //   });
+  //     await new Promise(r => setTimeout(r, delay));
+  //   }
   // };
 
   // const startBackgroundTask = async () => {
@@ -274,7 +254,7 @@ const TrackingScreen = ({route}) => {
   //   try {
   //     await BackgroundJob.start(trackLocationAndTime, options);
   //   } catch (error) {
-  //     console.log('Error starting background task:', error);
+  //     console.error('Error starting background task:', error);
   //   }
   // };
 
@@ -308,7 +288,7 @@ const TrackingScreen = ({route}) => {
             latitudeDelta: 0.05,
             longitudeDelta: 0.05,
           }}
-          provider={PROVIDER_GOOGLE}
+          provider={'google'}
           ref={mapRef}
           style={styles.map}>
           <Marker coordinate={currentPossition}>
@@ -354,7 +334,7 @@ const TrackingScreen = ({route}) => {
             origin={origin}
             destination={destinations}
             apikey="AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM"
-            strokeWidth={5}
+            strokeWidth={6}
             strokeColor={Color.blue}
             mode="DRIVING"
             onStart={params => {
@@ -567,7 +547,10 @@ const TrackingScreen = ({route}) => {
                 borderWidth={1}
                 borderRadius={moderateScale(30, 0.3)}
                 isGradient
-                onPress={() => updateLocationInFirebase()}
+                onPress={() => {
+                  setStartRide(true);
+                  updateLocationInFirebase();
+                }}
               />
             </View>
           )}

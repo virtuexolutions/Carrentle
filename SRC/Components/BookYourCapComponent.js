@@ -251,7 +251,8 @@ const BookYourCapComponent = ({item}) => {
 export default BookYourCapComponent;
 const styles = StyleSheet.create({
   container: {
-    height: windowHeight * 0.45,
+    // height: windowHeight * 0.45,
+    paddingVertical: moderateScale(10, 0.6),
     borderRadius: moderateScale(10, 6),
     borderWidth: 1.5,
     borderColor: '#DA30296B',

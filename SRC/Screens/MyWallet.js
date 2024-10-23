@@ -170,7 +170,7 @@ const MyWallet = ({navigation}) => {
             data={journey_list}
             ListEmptyComponent={
               <CustomText
-                style={{color: 'red', marginTop: moderateScale(10, 0.6)}}>
+                style={{color: 'red', marginTop: moderateScale(45, 0.6)}}>
                 no data found yet
               </CustomText>
               // <View
@@ -240,7 +240,9 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   payment_method_button: {
-    height: windowHeight * 0.06,
+    // height: windowHeight * 0.06,
+    paddingVertical: moderateScale(10, 0.6),
+    marginTop: moderateScale(10, 0.6),
     width: windowWidth * 0.5,
     backgroundColor: Color.white,
     alignItems: 'center',
