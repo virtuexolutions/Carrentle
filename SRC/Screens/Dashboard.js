@@ -22,6 +22,7 @@ import HistoryComponent from '../Components/HistoryComponent';
 import Loader from '../Components/Loader';
 import navigationService from '../navigationService';
 import {windowHeight, windowWidth} from '../Utillity/utils';
+import RiderArrivedModal from '../Components/RiderArrivedModal';
 
 const previous_trip_card = [
   {

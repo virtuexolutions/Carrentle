@@ -23,6 +23,8 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import CustomButton from '../Components/CustomButton';
 import BackgroundJob from 'react-native-background-actions';
 import database from '@react-native-firebase/database';
+import RiderArrivedModal from '../Components/RiderArrivedModal';
+import navigationService from '../navigationService';
 
 const TrackingScreen = ({route}) => {
   const focused = useIsFocused();
@@ -36,8 +38,7 @@ const TrackingScreen = ({route}) => {
   const [currentPossition, setCurrentPossition] = useState({});
   const [time, setTime] = useState(0);
   const [startRide, setStartRide] = useState(false);
-  const [trackingLocation, setTrackingLocation] = useState(false);
-
+  const [rideComplete, setRideComplete] = useState(false);
   const currentPossitionRef = useRef(currentPossition);
   const timeRef = useRef(time);
 
@@ -68,6 +69,7 @@ const TrackingScreen = ({route}) => {
             if (snapshot.exists()) {
               const data = snapshot.val();
               const {latitude, longitude} = data;
+              console.log('🚀 ~ useEffect ~ data:', data);
               setCurrentPossition(data);
               console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
             } else {
@@ -78,6 +80,13 @@ const TrackingScreen = ({route}) => {
             console.error('Error fetching location from Firebase:', error);
           });
         updateLocationInFirebase(latitude, longitude);
+
+        if (
+          latitude === data?.pickup_location_lat &&
+          longitude === data?.pickup_location_lng
+        ) {
+          setRideComplete(true);
+        }
 
         if (mapRef.current) {
           mapRef.current.animateToRegion(
@@ -167,7 +176,7 @@ const TrackingScreen = ({route}) => {
         ? parseFloat(data?.rider?.lng)
         : parseFloat(data?.pickup_location_lng),
   };
-  console.log('🚀 ~ TrackingScreen ~ origin:', origin);
+  console.log('🚀 ~ TrackingScresen ~ origin:', origin);
 
   const destinations = {
     latitude:
@@ -288,7 +297,7 @@ const TrackingScreen = ({route}) => {
             latitudeDelta: 0.05,
             longitudeDelta: 0.05,
           }}
-          provider={'google'}
+          provider={PROVIDER_GOOGLE}
           ref={mapRef}
           style={styles.map}>
           <Marker coordinate={currentPossition}>

@@ -33,6 +33,7 @@ import database from '@react-native-firebase/database';
 import DatePicker from 'react-native-date-picker';
 
 import moment from 'moment';
+import RiderArrivedModal from '../Components/RiderArrivedModal';
 
 const BoardingPointScreen = ({navigation, route}) => {
   const {carData, date} = route.params;
