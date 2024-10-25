@@ -78,7 +78,7 @@ const AppNavigator = () => {
     return (
       <NavigationContainer ref={navigationService.navigationRef}>
         <RootNav.Navigator
-          initialRouteName={'CabTracking'}
+          initialRouteName={firstScreen}
           screenOptions={{headerShown: false}}>
           <RootNav.Screen name="MyDrawer" component={MyDrawer} />
           <RootNav.Screen
@@ -252,6 +252,7 @@ export const MyDrawer = () => {
   const [latestRide, setlatestRide] = useState(null);
   const [hasShownModal, setHasShownModal] = useState(false);
   const [currentPossition, setcurrentPossition] = useState({});
+  console.log('🚀 ~ MyDrawer ~ currentPossition:', currentPossition);
   const [status, setstatus] = useState('');
 
   useEffect(() => {

@@ -35,8 +35,6 @@ const WaitingScreen = ({route}) => {
     data?.dropOffLocation?.lng,
   );
 
-  console.log('Riderrrr Locationsss:', data?.rider?.lat, data?.rider?.lng);
-
   useEffect(() => {
     if (type === 'fromBoardingPoints') {
       if (mapRef.current) {

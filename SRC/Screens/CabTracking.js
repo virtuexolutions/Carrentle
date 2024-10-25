@@ -11,6 +11,7 @@ import Geolocation from '@react-native-community/geolocation';
 import LottieView from 'lottie-react-native';
 import Loader from '../Components/Loader';
 import MapViewDirections from 'react-native-maps-directions';
+import RiderArrivedModal from '../Components/RiderArrivedModal';
 
 const CabTracking = ({navigation, route}) => {
   const data = route.params;

@@ -1,48 +1,60 @@
 import Geolocation from '@react-native-community/geolocation';
+import database from '@react-native-firebase/database';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import haversineDistance from 'haversine-distance';
 import LottieView from 'lottie-react-native';
+import {Icon} from 'native-base';
 import React, {useEffect, useRef, useState} from 'react';
-import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import BackgroundJob from 'react-native-background-actions';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
+import {Rating} from 'react-native-ratings';
 import {moderateScale} from 'react-native-size-matters';
+import Entypo from 'react-native-vector-icons/Entypo';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
+import CustomButton from '../Components/CustomButton';
+import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import Loader from '../Components/Loader';
 import {customMapStyle} from '../Utillity/mapstyle';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import CustomImage from '../Components/CustomImage';
-import {Rating} from 'react-native-ratings';
-import {Icon} from 'native-base';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Entypo from 'react-native-vector-icons/Entypo';
-import CustomButton from '../Components/CustomButton';
-import BackgroundJob from 'react-native-background-actions';
-import database from '@react-native-firebase/database';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 import RiderArrivedModal from '../Components/RiderArrivedModal';
-import navigationService from '../navigationService';
 
 const TrackingScreen = ({route}) => {
   const focused = useIsFocused();
   const {data} = route.params;
   const navigation = useNavigation();
+
+  const currentPossitionRef = useRef(currentPossition);
+  const timeRef = useRef(time);
+  const mapRef = useRef(null);
+
   const userData = useSelector(state => state.commonReducer?.userData);
   const token = useSelector(state => state.authReducer.token);
   const user_type = useSelector(state => state.authReducer.user_type);
-  const mapRef = useRef(null);
-
   const [currentPossition, setCurrentPossition] = useState({});
   const [time, setTime] = useState(0);
   const [startRide, setStartRide] = useState(false);
-  const [rideComplete, setRideComplete] = useState(false);
-  const currentPossitionRef = useRef(currentPossition);
-  const timeRef = useRef(time);
-
-  let playing = BackgroundJob.isRunning();
+  const [RiderRideComplete, setRiderRideComplete] = useState(true);
+  const [origin, setOrigin] = useState({
+    latitude: parseFloat(data?.rider?.lat),
+    longitude: parseFloat(data?.rider?.lng),
+  });
+  const [destinations, setDestination] = useState({
+    latitude:
+      RiderRideComplete === true
+        ? parseFloat(data?.dropoff_location_lat)
+        : parseFloat(data?.pickup_location_lat),
+    longitude:
+      RiderRideComplete === true
+        ? parseFloat(data?.dropoff_location_lng)
+        : parseFloat(data?.pickup_location_lng),
+  });
 
   useEffect(() => {
     currentPossitionRef.current = currentPossition;
@@ -51,6 +63,20 @@ const TrackingScreen = ({route}) => {
   useEffect(() => {
     timeRef.current = time;
   }, [time]);
+
+  useEffect(() => {
+    if (startRide) {
+      mapRef.current.animateToRegion(
+        {
+          latitude: origin.latitude,
+          longitude: origin.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        },
+        1000,
+      );
+    }
+  }, [startRide, destinations]);
 
   useEffect(() => {
     getCurrentLocation();
@@ -70,6 +96,7 @@ const TrackingScreen = ({route}) => {
               const data = snapshot.val();
               const {latitude, longitude} = data;
               console.log('🚀 ~ useEffect ~ data:', data);
+              setOrigin(data);
               setCurrentPossition(data);
               console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
             } else {
@@ -80,14 +107,10 @@ const TrackingScreen = ({route}) => {
             console.error('Error fetching location from Firebase:', error);
           });
         updateLocationInFirebase(latitude, longitude);
-
-        if (
-          latitude === data?.pickup_location_lat &&
-          longitude === data?.pickup_location_lng
-        ) {
-          setRideComplete(true);
+        if (latitude === origin?.latitude && longitude === origin?.longitude) {
+          setRiderRideComplete(true);
+          setStartRide(false);
         }
-
         if (mapRef.current) {
           mapRef.current.animateToRegion(
             {
@@ -166,30 +189,6 @@ const TrackingScreen = ({route}) => {
     }
   };
 
-  const origin = {
-    latitude:
-      user_type === 'Rider'
-        ? parseFloat(data?.rider?.lat)
-        : parseFloat(data?.pickup_location_lat),
-    longitude:
-      user_type === 'Rider'
-        ? parseFloat(data?.rider?.lng)
-        : parseFloat(data?.pickup_location_lng),
-  };
-  console.log('🚀 ~ TrackingScresen ~ origin:', origin);
-
-  const destinations = {
-    latitude:
-      user_type === 'Rider'
-        ? parseFloat(data?.pickup_location_lat)
-        : parseFloat(data?.rider?.lat),
-    longitude:
-      user_type === 'Rider'
-        ? parseFloat(data?.pickup_location_lng)
-        : parseFloat(data?.rider?.lng),
-  };
-  console.log('🚀 ~ TrackingScreen ~ destinations:', destinations);
-
   const calculateTravelTime = () => {
     const averageSpeed = 70;
     const distance = haversineDistance(origin, destinations);
@@ -211,6 +210,15 @@ const TrackingScreen = ({route}) => {
       })
       .then(() => console.log('Location updated in Firebase!'))
       .catch(error => console.error('Error updating Firebase:', error));
+  };
+
+  const handleStartRide = () => {
+    setStartRide(false);
+    setRiderRideComplete(false);
+    setDestination({
+      latitude: parseFloat(data?.dropoff_location_lat),
+      longitude: parseFloat(data?.dropoff_location_lng),
+    });
   };
 
   // useEffect(() => {
@@ -288,6 +296,7 @@ const TrackingScreen = ({route}) => {
         showBack
         username={userData?.name}
       />
+      {/* <CustomText>{currentPossition}</CustomText> */}
       {Object.keys(currentPossition).length > 0 ? (
         <MapView
           customMapStyle={customMapStyle}
@@ -300,7 +309,7 @@ const TrackingScreen = ({route}) => {
           provider={PROVIDER_GOOGLE}
           ref={mapRef}
           style={styles.map}>
-          <Marker coordinate={currentPossition}>
+          <Marker coordinate={origin}>
             {user_type === 'Rider' ? (
               <View
                 style={{
@@ -353,11 +362,7 @@ const TrackingScreen = ({route}) => {
             }}
             tappable={true}
           />
-          <Marker
-            coordinate={{
-              latitude: destinations?.latitude,
-              longitude: destinations?.longitude,
-            }}>
+          <Marker coordinate={destinations}>
             {user_type === 'Rider' ? (
               <View
                 style={{
@@ -565,6 +570,13 @@ const TrackingScreen = ({route}) => {
           )}
         </>
       )}
+      {/* <RiderArrivedModal
+        isModalVisible={startRide}
+        onpressClose={() => setStartRide(false)}
+        onPressStart={() => {
+          handleStartRide();
+        }}
+      /> */}
     </View>
   );
 };
@@ -709,7 +721,7 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.8,
     height: windowHeight * 0.1,
     backgroundColor: Color.lightGrey,
-    marginTop: moderateScale(20, 0.6),
+    marginTop: moderateScale(10, 0.6),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
