@@ -25,7 +25,9 @@ const WaitingScreen = ({route}) => {
   const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
   const [loading, setLoading] = useState(false);
   const [rideData, setRideData] = useState(null);
+  console.log('🚀 ~ WaitingScreen ~ rideData:', rideData);
   const [modalVisible, setModalVisible] = useState(false);
+  const [riderData, setRiderDate] = useState(false);
 
   console.log('Data:', data);
   console.log('Current Locations Latitude:', data?.currentLocationLatitude);
@@ -61,6 +63,7 @@ const WaitingScreen = ({route}) => {
       setLoading(false);
       if (response?.data?.ride_info?.status === 'accept') {
         setRideData(response.data.ride_info);
+        setRiderDate(response?.data);
         setModalVisible(true);
       }
     } catch (error) {
@@ -223,10 +226,16 @@ const WaitingScreen = ({route}) => {
                   : Alert.alert(`We are Currently unavailable`)
               }
               onpressSeeLocation={() =>
-                navigation.navigate('TrackingScreen', {data: rideData})
+                navigation.navigate('TrackingScreen', {
+                  data: rideData,
+                  description: riderData,
+                })
               }
               OnPressSeeRider={() => {
-                navigation.navigate('TrackingScreen', {data: rideData});
+                navigation.navigate('TrackingScreen', {
+                  data: rideData,
+                  description: riderData,
+                });
               }}
             />
           ) : (

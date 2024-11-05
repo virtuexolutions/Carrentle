@@ -85,7 +85,7 @@ const Drawer = () => {
       iconName: 'chatbox-outline',
       iconType: Ionicons,
       onPress: () => {
-        navigation.navigate('MyWallet');
+        navigation.navigate('MessagesScreen');
       },
     },
     {

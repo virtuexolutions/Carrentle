@@ -4,7 +4,6 @@ import CustomText from './CustomText';
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale} from 'react-native-size-matters';
 import LottieView from 'lottie-react-native';
-import {color} from 'native-base/lib/typescript/theme/styled-system';
 import Color from '../Assets/Utilities/Color';
 import {Icon} from 'native-base';
 import Entypo from 'react-native-vector-icons/Entypo';

@@ -5,8 +5,7 @@ import haversineDistance from 'haversine-distance';
 import LottieView from 'lottie-react-native';
 import {Icon} from 'native-base';
 import React, {useEffect, useRef, useState} from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import BackgroundJob from 'react-native-background-actions';
+import {AppState, StyleSheet, TouchableOpacity, View} from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import {Rating} from 'react-native-ratings';
@@ -23,22 +22,23 @@ import Header from '../Components/Header';
 import Loader from '../Components/Loader';
 import {customMapStyle} from '../Utillity/mapstyle';
 import {windowHeight, windowWidth} from '../Utillity/utils';
-import RiderArrivedModal from '../Components/RiderArrivedModal';
+import BackgroundService from 'react-native-background-actions';
+import {ka} from 'date-fns/locale';
 
 const TrackingScreen = ({route}) => {
   const focused = useIsFocused();
-  const {data} = route.params;
-  const navigation = useNavigation();
 
+  const {data, description} = route.params;
+  const navigation = useNavigation();
   const currentPossitionRef = useRef(currentPossition);
   const timeRef = useRef(time);
   const mapRef = useRef(null);
-
   const userData = useSelector(state => state.commonReducer?.userData);
   const token = useSelector(state => state.authReducer.token);
   const user_type = useSelector(state => state.authReducer.user_type);
   const [currentPossition, setCurrentPossition] = useState({});
   const [time, setTime] = useState(0);
+  const [toEnable, setToEnable] = useState(false);
   const [startRide, setStartRide] = useState(false);
   const [RiderRideComplete, setRiderRideComplete] = useState(true);
   const [origin, setOrigin] = useState({
@@ -55,7 +55,7 @@ const TrackingScreen = ({route}) => {
         ? parseFloat(data?.dropoff_location_lng)
         : parseFloat(data?.pickup_location_lng),
   });
-
+  const [currentState, setCurrentState] = useState('active');
   useEffect(() => {
     currentPossitionRef.current = currentPossition;
   }, [currentPossition]);
@@ -79,6 +79,7 @@ const TrackingScreen = ({route}) => {
   }, [startRide, destinations]);
 
   useEffect(() => {
+    setToEnable(true);
     getCurrentLocation();
     const watchId = Geolocation.watchPosition(
       position => {
@@ -95,7 +96,6 @@ const TrackingScreen = ({route}) => {
             if (snapshot.exists()) {
               const data = snapshot.val();
               const {latitude, longitude} = data;
-              console.log('🚀 ~ useEffect ~ data:', data);
               setOrigin(data);
               setCurrentPossition(data);
               console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
@@ -201,15 +201,15 @@ const TrackingScreen = ({route}) => {
     return timeInMinutes;
   };
 
-  const updateLocationInFirebase = (latitude, longitude) => {
-    database()
-      .ref(`/locations/${data?.rider?.id}/${'riderTracking'}`)
-      .update({
-        latitude: latitude,
-        longitude: longitude,
-      })
-      .then(() => console.log('Location updated in Firebase!'))
-      .catch(error => console.error('Error updating Firebase:', error));
+  const updateLocationInFirebase = async (latitude, longitude) => {
+    try {
+      await database()
+        .ref(`/locations/${data?.rider?.id}/${'riderTracking'}`)
+        .update({latitude, longitude});
+      console.log('Location updated in Firebase!');
+    } catch (error) {
+      console.error('Error updating Firebase:', error);
+    }
   };
 
   const handleStartRide = () => {
@@ -238,51 +238,87 @@ const TrackingScreen = ({route}) => {
   //     );
   // }, []);
 
-  // const trackLocationAndTime = async taskData => {
-  //   const {delay} = taskData;
-  //   while (BackgroundJob.isRunning()) {
-  //     try {
-  //       await getCurrentLocation();
-  //       await calculateTravelTime();
-  //       console.log('Current Location:', currentPossitionRef.current);
-  //       console.log('Remaining Time:', timeRef.current);
-  //     } catch (error) {
-  //       console.error('Error in tracking task:', error);
-  //     }
-  //     await new Promise(r => setTimeout(r, delay));
-  //   }
-  // };
+  const trackLocationAndTime = async taskData => {
+    console.log('we are hereeeeeeeeeeeeeeeeee');
+    const {delay} = taskData;
+    while (BackgroundService.isRunning()) {
+      try {
+        const currentLocation = await getCurrentLocation();
+        const travelTime = calculateTravelTime();
+        console.log('Current Location:', currentLocation);
+        console.log('Remaining Time:', travelTime);
+        setTime(travelTime);
+        updateLocationInFirebase(
+          currentLocation.latitude,
+          currentLocation.longitude,
+        );
+      } catch (error) {
+        console.error('Error in tracking task:', error);
+      }
+      await new Promise(r => setTimeout(r, delay));
+    }
+  };
+  console.log(currentState, 'currentState');
 
-  // const startBackgroundTask = async () => {
-  //   const options = {
-  //     taskName: 'Tracking Time and Location',
-  //     taskTitle: 'Tracking Your Ride',
-  //     taskDesc: 'Updating location and travel time',
-  //     taskIcon: {
-  //       name: 'ic_launcher',
-  //       type: 'mipmap',
-  //     },
-  //     color: '#ff00ff',
-  //     parameters: {
-  //       delay: 30000,
-  //     },
-  //   };
+  const _handleAppStateChange = nextAppState => {
+    if (
+      currentState.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+    }
+    setCurrentState(nextAppState);
+  };
 
-  //   try {
-  //     await BackgroundJob.start(trackLocationAndTime, options);
-  //   } catch (error) {
-  //     console.error('Error starting background task:', error);
-  //   }
-  // };
+  const options = {
+    taskName: 'Tracking Time and Location',
+    taskTitle: 'Tracking Your Ride',
+    taskDesc: 'Updating location and travel time',
+    taskIcon: {
+      name: 'ic_launcher',
+      type: 'mipmap',
+    },
+    color: '#ff00ff',
+    linkingURI: 'myapp://TrackingScreen',
+    parameters: {
+      delay: 30000,
+    },
+  };
 
-  // const stopBackgroundTask = async () => {
-  //   await BackgroundJob.stop();
-  // };
+  BackgroundService.on('expiration', () => {
+    console.log('IOS : i am being closed ');
+  });
 
-  // useEffect(() => {
-  //   startBackgroundTask();
-  //   return () => stopBackgroundTask();
-  // }, []);
+  let playing = BackgroundService.isRunning();
+
+  const sleep = time =>
+    new Promise(resolve => setTimeout(() => resolve(), time));
+
+  BackgroundService.on('expiration', () => {
+    console.log('IOS : i am being closed ');
+  });
+
+  const toggleBackground = async () => {
+    console.log('kinza hereeeexeeeeeeeeeeeeeeeee');
+    if (!playing) {
+      try {
+        await BackgroundService.start(trackLocationAndTime, options);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      await BackgroundService.stop();
+    }
+  };
+
+  useEffect(() => {
+    if (currentState == 'background') {
+      toggleBackground();
+    }
+  }, [currentState]);
+
+  useEffect(() => {
+    AppState.addEventListener('change', _handleAppStateChange);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -296,7 +332,6 @@ const TrackingScreen = ({route}) => {
         showBack
         username={userData?.name}
       />
-      {/* <CustomText>{currentPossition}</CustomText> */}
       {Object.keys(currentPossition).length > 0 ? (
         <MapView
           customMapStyle={customMapStyle}
@@ -348,6 +383,22 @@ const TrackingScreen = ({route}) => {
               </View>
             )}
           </Marker>
+          {description?.stop && (
+            <>
+              {description?.stop.map((stop, index) => (
+                <Marker
+                  key={index}
+                  coordinate={{latitude: stop.lat, longitude: stop.lng}}
+                  title={`Stop ${index + 1}`}
+                  description={
+                    stop.name ||
+                    `Stop at latitude: ${stop.lat}, longitude: ${stop.lng}`
+                  }
+                  pinColor="blue"
+                />
+              ))}
+            </>
+          )}
           <MapViewDirections
             origin={origin}
             destination={destinations}
