@@ -19,23 +19,14 @@ const WaitingScreen = ({route}) => {
   const navigation = useNavigation();
   const userData = useSelector(state => state.commonReducer?.userData);
   const token = useSelector(state => state.authReducer.token);
-  console.log('🚀 ~ WaitingScreen ~ token:', token);
   const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
   const mapRef = useRef(null);
   const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
   const [loading, setLoading] = useState(false);
   const [rideData, setRideData] = useState(null);
-  console.log('🚀 ~ WaitingScreen ~ rideData:', rideData);
   const [modalVisible, setModalVisible] = useState(false);
   const [riderData, setRiderDate] = useState(false);
-
-  console.log('Data:', data);
-  console.log('Current Locations Latitude:', data?.currentLocationLatitude);
-  console.log(
-    'Dropoff Locatiion:',
-    data?.dropOffLocation?.lat,
-    data?.dropOffLocation?.lng,
-  );
+  const [isModalShown, setIsModalShown] = useState(false);
 
   useEffect(() => {
     if (type === 'fromBoardingPoints') {
@@ -59,12 +50,12 @@ const WaitingScreen = ({route}) => {
       const url = `auth/ride/${data?.ride_id}`;
       setLoading(true);
       const response = await Get(url, token);
-      console.log('🚀 ~ getRiderInfo ~ response:', response?.data);
       setLoading(false);
       if (response?.data?.ride_info?.status === 'accept') {
         setRideData(response.data.ride_info);
         setRiderDate(response?.data);
-        setModalVisible(true);
+        setModalVisible(isModalShown != true ? true : false);
+        setIsModalShown(true);
       }
     } catch (error) {
       setLoading(false);

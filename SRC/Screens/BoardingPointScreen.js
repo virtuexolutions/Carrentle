@@ -256,7 +256,6 @@ const BoardingPointScreen = ({navigation, route}) => {
       cityFrom: pickupCityName,
       cityTo: DropoffCityName,
     };
-    console.log(data, '======================>data');
     for (let key in data) {
       if (data[key] == '') {
         return Platform.OS == 'android'
@@ -266,12 +265,9 @@ const BoardingPointScreen = ({navigation, route}) => {
       formData.append(key, data[key]);
     }
     let newObj = {...data, stops: stops};
-    console.log('🚀 ~ onPressProceed ~ newObj:', newObj);
     setLoading(true);
     const url = 'auth/bookride';
     const response = await Post(url, data, apiHeader(token));
-    console.log('🚀 ~ onPressProceed ~ response:', response?.data);
-    console.log('======......', response?.data?.data?.id);
     if (response?.data?.data != null) {
       const paramsData = {
         currentLocationLatitude: currentPossition,
@@ -293,8 +289,6 @@ const BoardingPointScreen = ({navigation, route}) => {
       getPriceFromRegion();
     }
   }, [pickupCityName, DropoffCityName]);
-
-  console.log(pickupCityName, DropoffCityName, 'asdagjasdgj');
 
   // const getPriceFromRegion = async () => {
   //   const url = 'auth/city_price';
@@ -380,14 +374,12 @@ const BoardingPointScreen = ({navigation, route}) => {
       ) {
         setRegionType('RegionOne');
         setFare(price);
-        console.log(`RegionOne Price: ${price}`);
       } else if (
         RegionTwo.includes(cityFromResponse) &&
         RegionTwo.includes(cityToResponse)
       ) {
         setRegionType('RegionTwo');
         setFare(price);
-        console.log(`RegionTwo Price: ${price}`);
       } else if (
         (RegionOne.includes(cityFromResponse) &&
           RegionTwo.includes(cityToResponse)) ||
@@ -401,10 +393,6 @@ const BoardingPointScreen = ({navigation, route}) => {
         let km = Math.round(checkDistanceBetween / 1000);
         const distanceInMiles = km / 1.60934;
         const calculatedFare = calculateFare(distanceInMiles);
-        console.log(
-          '🚀 ~ getPriceFromRegion ~ calculatedFare:',
-          calculatedFare,
-        );
         setFare(calculatedFare);
         setDistance(km);
       }
@@ -452,7 +440,6 @@ const BoardingPointScreen = ({navigation, route}) => {
   };
 
   const handleMultipleStopsUpdate = updatedStops => {
-    console.log('🚀 ~ handleMultipleStopsUpdate ~ updatedStops:', updatedStops);
     setStops(updatedStops);
   };
 

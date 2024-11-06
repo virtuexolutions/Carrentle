@@ -21,13 +21,12 @@ import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import Loader from '../Components/Loader';
 import {customMapStyle} from '../Utillity/mapstyle';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import BackgroundService from 'react-native-background-actions';
-import {ka} from 'date-fns/locale';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 
 const TrackingScreen = ({route}) => {
   const focused = useIsFocused();
-
   const {data, description} = route.params;
   const navigation = useNavigation();
   const currentPossitionRef = useRef(currentPossition);
@@ -41,10 +40,13 @@ const TrackingScreen = ({route}) => {
   const [toEnable, setToEnable] = useState(false);
   const [startRide, setStartRide] = useState(false);
   const [RiderRideComplete, setRiderRideComplete] = useState(true);
+  const [reviewModalVisible, setReviewModalVisible] = useState(true);
+
   const [origin, setOrigin] = useState({
     latitude: parseFloat(data?.rider?.lat),
     longitude: parseFloat(data?.rider?.lng),
   });
+
   const [destinations, setDestination] = useState({
     latitude:
       RiderRideComplete === true
@@ -56,6 +58,9 @@ const TrackingScreen = ({route}) => {
         : parseFloat(data?.pickup_location_lng),
   });
   const [currentState, setCurrentState] = useState('active');
+  const [riderData, setRiderDate] = useState(false);
+  const [isModalShown, setIsModalShown] = useState(false);
+
   useEffect(() => {
     currentPossitionRef.current = currentPossition;
   }, [currentPossition]);
@@ -78,7 +83,22 @@ const TrackingScreen = ({route}) => {
     }
   }, [startRide, destinations]);
 
+  const updateStatus = async status => {
+    const body = {
+      lat: currentPossition?.latitude,
+      lng: currentPossition?.longitude,
+      status: status ? status : 'OnTheWay',
+    };
+    console.log(body, 'shdad');
+    const url = `auth/rider/ride_update/${latestRide?.id}`;
+    const response = await Post(url, body, apiHeader(token));
+    if (response?.data?.ride_info?.status === 'complete') {
+      setReviewModalVisible(true);
+    }
+  };
+
   useEffect(() => {
+    updateStatus();
     setToEnable(true);
     getCurrentLocation();
     const watchId = Geolocation.watchPosition(
@@ -110,6 +130,7 @@ const TrackingScreen = ({route}) => {
         if (latitude === origin?.latitude && longitude === origin?.longitude) {
           setRiderRideComplete(true);
           setStartRide(false);
+          updateStatus('Completed');
         }
         if (mapRef.current) {
           mapRef.current.animateToRegion(
@@ -183,6 +204,7 @@ const TrackingScreen = ({route}) => {
         );
       });
       setCurrentPossition(position);
+      return position;
     } catch (error) {
       console.error('Error getting location:', error);
       throw error;
@@ -239,7 +261,6 @@ const TrackingScreen = ({route}) => {
   // }, []);
 
   const trackLocationAndTime = async taskData => {
-    console.log('we are hereeeeeeeeeeeeeeeeee');
     const {delay} = taskData;
     while (BackgroundService.isRunning()) {
       try {
@@ -621,13 +642,81 @@ const TrackingScreen = ({route}) => {
           )}
         </>
       )}
-      {/* <RiderArrivedModal
-        isModalVisible={startRide}
-        onpressClose={() => setStartRide(false)}
-        onPressStart={() => {
-          handleStartRide();
-        }}
-      /> */}
+      {startRide && (
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(10, 5, 6, 0)',
+            justifyContent: 'center',
+          }}>
+          <View
+            style={{
+              width: windowWidth * 0.8,
+              backgroundColor: 'white',
+              height:
+                user_type === 'Rider'
+                  ? windowHeight * 0.36
+                  : windowHeight * 0.3,
+              alignItems: 'center',
+              justifyContent: 'center',
+              alignSelf: 'center',
+            }}>
+            <View
+              style={{
+                width: windowWidth * 0.5,
+                height: windowHeight * 0.2,
+              }}>
+              <LottieView
+                autoPlay
+                loop
+                style={{
+                  height: '100%',
+                  width: '100%',
+                  alignItems: 'center',
+                  alignSelf: 'center',
+                }}
+                source={require('../Assets/animations/cab_arrived_animation.json')}
+              />
+            </View>
+            <CustomText
+              isBold
+              style={{
+                fontSize: moderateScale(15, 0.6),
+                color: Color.darkBlue,
+                textAlign: 'center',
+              }}>
+              {user_type === 'Rider'
+                ? 'Waiting For Customer'
+                : 'Your Cab Is Arrived at Your Pickup Location'}
+            </CustomText>
+            {user_type === 'Rider' && (
+              <>
+                <CustomText
+                  style={{
+                    fontSize: moderateScale(12, 0.6),
+                    color: Color.darkBlue,
+                    textAlign: 'center',
+                  }}>
+                  When Customer Arrived start the Ride
+                </CustomText>
+                <CustomButton
+                  text={'Start Ride'}
+                  textColor={Color.white}
+                  width={windowWidth * 0.6}
+                  height={windowHeight * 0.05}
+                  marginTop={moderateScale(20, 0.3)}
+                  bgColor={Color.cartheme}
+                  borderColor={Color.white}
+                  borderWidth={1}
+                  borderRadius={moderateScale(30, 0.3)}
+                  isGradient
+                  onPress={() => handleStartRide()}
+                />
+              </>
+            )}
+          </View>
+        </View>
+      )}
     </View>
   );
 };
