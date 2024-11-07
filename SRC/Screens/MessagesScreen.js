@@ -28,12 +28,14 @@ import {mode} from 'native-base/lib/typescript/theme/tools';
 import {Icon} from 'native-base';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Pusher} from '@pusher/pusher-websocket-react-native';
 
 const MessagesScreen = () => {
   const userRole = useSelector(state => state.commonReducer.selectedRole);
   const user = useSelector(state => state.commonReducer.userData);
   const token = useSelector(state => state.authReducer.token);
-
+  const pusher = Pusher.getInstance();
+  let myChannel = null;
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -159,73 +161,58 @@ const MessagesScreen = () => {
             </Send>
           );
         }}
-        renderMessage={props => {
-          const {currentMessage, user} = props;
+        renderBubble={props => {
           return (
-            <View style={styles.messageContainer}>
-              <Avatar
-                source={{uri: currentMessage.user.avatar}}
-                size={32}
-                containerStyle={styles.avatar}
-              />
-              <View style={styles.bubble}>
-                <Text style={styles.userName}>{currentMessage.user.name}</Text>
-                <Text style={styles.messageText}>{currentMessage.text}</Text>
-              </View>
-            </View>
+            <Bubble
+              {...props}
+              wrapperStyle={{
+                right: {
+                  backgroundColor: Color.blue,
+                  borderRadius: 20,
+                  paddingVertical: 8,
+                  paddingHorizontal: 12,
+                  borderTopLeftRadius: 15,
+                  borderTopRightRadius: 0,
+                  borderBottomLeftRadius: 15,
+                  borderBottomRightRadius: 15,
+                },
+                left: {
+                  backgroundColor: Color.lightBlue,
+                  borderTopLeftRadius: 15,
+                  borderTopRightRadius: 15,
+                  borderBottomLeftRadius: 15,
+                  borderBottomRightRadius: 0,
+                  marginLeft: moderateScale(30, 0.6),
+                },
+              }}
+              containerStyle={{
+                left: {
+                  position: 'absolute',
+                  left: 10,
+                },
+                right: {
+                  marginRight: moderateScale(10, 0.6),
+                },
+              }}
+            />
           );
         }}
-        // renderBubble={props => {
-        //   return (
-        //     <Bubble
-        //       {...props}
-        //       wrapperStyle={{
-        //         right: {
-        //           backgroundColor: Color.blue,
-        //           borderRadius: 20,
-        //           paddingVertical: 8,
-        //           paddingHorizontal: 12,
-        //           borderTopLeftRadius: 15,
-        //           borderTopRightRadius: 0,
-        //           borderBottomLeftRadius: 15,
-        //           borderBottomRightRadius: 15,
-        //         },
-        //         left: {
-        //           backgroundColor: Color.lightBlue,
-        //           borderTopLeftRadius: 15,
-        //           borderTopRightRadius: 15,
-        //           borderBottomLeftRadius: 15,
-        //           borderBottomRightRadius: 0,
-        //         },
-        //       }}
-        //       containerStyle={{
-        //         left: {
-        //           position: 'absolute',
-        //           left: 10,
-        //         },
-        //         right: {
-        //           marginRight: moderateScale(10, 0.6),
-        //         },
-        //       }}
-        //     />
-        //   );
-        // }}
-        // renderActions={props => (
-        //   <Actions
-        //     {...props}
-        //     icon={() => (
-        //       <Icon
-        //         as={MaterialCommunityIcons}
-        //         name="sticker-emoji"
-        //         size={22}
-        //         color={Color.darkBlue}
-        //       />
-        //     )}
-        //     onPressActionButton={() => {
-        //       console.log('Action button pressed');
-        //     }}
-        //   />
-        // )}
+        renderActions={props => (
+          <Actions
+            {...props}
+            icon={() => (
+              <Icon
+                as={MaterialCommunityIcons}
+                name="sticker-emoji"
+                size={22}
+                color={Color.darkBlue}
+              />
+            )}
+            onPressActionButton={() => {
+              console.log('Action button pressed');
+            }}
+          />
+        )}
         onSend={messages => onSend(messages)}
         key={item => item?.id}
         user={{

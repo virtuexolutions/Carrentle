@@ -56,7 +56,6 @@ import AcceptRideModal from './Components/AcceptRideModal';
 import TrackingScreen from './Screens/TrackingScreen';
 import Geolocation from '@react-native-community/geolocation';
 import CabTracking from './Screens/CabTracking';
-import Practice from './Screens/Practice';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -79,7 +78,7 @@ const AppNavigator = () => {
     return (
       <NavigationContainer ref={navigationService.navigationRef}>
         <RootNav.Navigator
-          initialRouteName={'Practice'}
+          initialRouteName={firstScreen}
           screenOptions={{headerShown: false}}>
           <RootNav.Screen name="MyDrawer" component={MyDrawer} />
           <RootNav.Screen
@@ -134,7 +133,6 @@ const AppNavigator = () => {
           <RootNav.Screen name="WaitingScreen" component={WaitingScreen} />
           <RootNav.Screen name="TrackingScreen" component={TrackingScreen} />
           <RootNav.Screen name="CabTracking" component={CabTracking} />
-          <RootNav.Screen name="Practice" component={Practice} />
         </RootNav.Navigator>
       </NavigationContainer>
     );
