@@ -24,10 +24,13 @@ import {customMapStyle} from '../Utillity/mapstyle';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import BackgroundService from 'react-native-background-actions';
 import {Post} from '../Axios/AxiosInterceptorFunction';
+import {setRideStart} from '../Store/slices/common';
 
 const TrackingScreen = ({route}) => {
   const focused = useIsFocused();
   const {data, description} = route.params;
+  console.log('🚀 ~ TrackingScreen ~ description:', description);
+  console.log('🚀 ~ TrackingScreen ~ data:', data);
   const navigation = useNavigation();
   const currentPossitionRef = useRef(currentPossition);
   const timeRef = useRef(time);
@@ -37,7 +40,6 @@ const TrackingScreen = ({route}) => {
   const user_type = useSelector(state => state.authReducer.user_type);
   const [currentPossition, setCurrentPossition] = useState({});
   const [time, setTime] = useState(0);
-  const [toEnable, setToEnable] = useState(false);
   const [startRide, setStartRide] = useState(false);
   const [RiderRideComplete, setRiderRideComplete] = useState(true);
   const [reviewModalVisible, setReviewModalVisible] = useState(true);
@@ -83,6 +85,10 @@ const TrackingScreen = ({route}) => {
     }
   }, [startRide, destinations]);
 
+  useEffect(() => {
+    updateStatus();
+  });
+
   const updateStatus = async status => {
     const body = {
       lat: currentPossition?.latitude,
@@ -98,8 +104,6 @@ const TrackingScreen = ({route}) => {
   };
 
   useEffect(() => {
-    updateStatus();
-    setToEnable(true);
     getCurrentLocation();
     const watchId = Geolocation.watchPosition(
       position => {
@@ -127,11 +131,26 @@ const TrackingScreen = ({route}) => {
             console.error('Error fetching location from Firebase:', error);
           });
         updateLocationInFirebase(latitude, longitude);
-        if (latitude === origin?.latitude && longitude === origin?.longitude) {
+        const isLocationClose = (lat1, lon1, lat2, lon2, threshold = 0.0001) =>
+          Math.abs(lat1 - lat2) < threshold &&
+          Math.abs(lon1 - lon2) < threshold;
+        if (
+          isLocationClose(
+            latitude,
+            origin.latitude,
+            longitude,
+            origin.longitude,
+          )
+        ) {
           setRiderRideComplete(true);
           setStartRide(false);
           updateStatus('Completed');
         }
+        // if (latitude === origin?.latitude && longitude === origin?.longitude) {
+        //   setRiderRideComplete(true);
+        //   setStartRide(false);
+        //   updateStatus('Completed');
+        // }
         if (mapRef.current) {
           mapRef.current.animateToRegion(
             {
@@ -235,6 +254,7 @@ const TrackingScreen = ({route}) => {
   };
 
   const handleStartRide = () => {
+    setRideStart(true);
     setStartRide(false);
     setRiderRideComplete(false);
     setDestination({
@@ -319,15 +339,16 @@ const TrackingScreen = ({route}) => {
   });
 
   const toggleBackground = async () => {
-    console.log('kinza hereeeexeeeeeeeeeeeeeeeee');
     if (!playing) {
       try {
         await BackgroundService.start(trackLocationAndTime, options);
+        playing = true;
       } catch (error) {
         console.log(error);
       }
     } else {
       await BackgroundService.stop();
+      playing = false;
     }
   };
 
@@ -338,7 +359,11 @@ const TrackingScreen = ({route}) => {
   }, [currentState]);
 
   useEffect(() => {
-    AppState.addEventListener('change', _handleAppStateChange);
+    const subscription = AppState.addEventListener(
+      'change',
+      _handleAppStateChange,
+    );
+    return () => subscription.remove();
   }, []);
 
   return (
@@ -357,8 +382,8 @@ const TrackingScreen = ({route}) => {
         <MapView
           customMapStyle={customMapStyle}
           initialRegion={{
-            latitude: currentPossition?.latitude,
-            longitude: currentPossition?.longitude,
+            latitude: parseFloat(currentPossition?.latitude),
+            longitude: parseFloat(currentPossition?.longitude),
             latitudeDelta: 0.05,
             longitudeDelta: 0.05,
           }}
@@ -501,6 +526,7 @@ const TrackingScreen = ({route}) => {
               Test User
             </CustomText>
             <Rating
+              ratingCount={description?.rider?.rating}
               imageSize={20}
               style={{marginTop: moderateScale(10, 0.6)}}
               selectedColor="red"
@@ -516,7 +542,13 @@ const TrackingScreen = ({route}) => {
                   size={moderateScale(20, 0.6)}
                 />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.btn_sub_view}>
+              <TouchableOpacity
+                style={styles.btn_sub_view}
+                onPress={() =>
+                  navigation.navigate('MessagesScreen', {
+                    riderData: riderData,
+                  })
+                }>
                 <Icon
                   name="message"
                   color={Color.darkBlue}

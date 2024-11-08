@@ -8,13 +8,12 @@ import {
 } from 'react-native';
 import React, {useCallback, useState, useEffect} from 'react';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   Actions,
-  Avatar,
   Bubble,
   Composer,
   GiftedChat,
@@ -24,16 +23,20 @@ import {
 import CustomImage from '../Components/CustomImage';
 import {useNavigation} from '@react-navigation/native';
 import Header from '../Components/Header';
-import {mode} from 'native-base/lib/typescript/theme/tools';
 import {Icon} from 'native-base';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Pusher} from '@pusher/pusher-websocket-react-native';
+import {baseUrl} from '../Config';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 
-const MessagesScreen = () => {
+const MessagesScreen = ({route}) => {
+  const riderData = route.params;
   const userRole = useSelector(state => state.commonReducer.selectedRole);
   const user = useSelector(state => state.commonReducer.userData);
+  console.log('🚀 ~ MessagesScreen ~ user:', user);
   const token = useSelector(state => state.authReducer.token);
+  console.log('🚀 ~ MessagesScreen ~ token:', token);
   const pusher = Pusher.getInstance();
   let myChannel = null;
   const navigation = useNavigation();
@@ -42,35 +45,83 @@ const MessagesScreen = () => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello developer',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'john',
-          avatar: require('../Assets/Images/dummyUser1.png'),
-        },
-      },
-      {
-        _id: 2,
-        text: 'Hello',
-        createdAt: new Date(),
-        user: {
-          _id: 3,
-          name: 'chris',
-          avatar: require('../Assets/Images/dummyUser.png'),
-        },
-      },
-    ]);
+    console.log('useEffect runs');
+    async function connectPusher() {
+      try {
+        await pusher.init({
+          apiKey: '2cbabf5fca8e6316ecfe',
+          cluster: 'ap2',
+        });
+
+        myChannel = await pusher.subscribe({
+          channelName: `my-channel-${user?.id}`,
+          onSubscriptionSucceeded: channelName => {
+            // dispatch(setPusherInstance(pusher));
+            console.log(`And here are the channel members: ${myChannel}`);
+            console.log(
+              '🚀 ~ file: SelectedChat.js:77 ~ connectPusher ~ myChannel==================> :',
+              channelName,
+            );
+            console.log(
+              `Subscribed to ${JSON.stringify(channelName, null, 2)}`,
+            );
+          },
+          onEvent: event => {
+            user?.id;
+            console.log(
+              '🚀 ~ file: SelectedChat.js:127 ~ connecstPusher ~ event==========>:',
+              event?.data,
+            );
+            console.log('Got channel event:', event.data);
+            const dataString = JSON.parse(event.data);
+            console.log('🚀 ~ connectPusher ~ dataString:', dataString);
+            if (dataString?.message.target_id == 11) {
+              console.log('🚀 ~rrrrrrrrrrrrrr :', user?.id, user?.first_name);
+              setMessages(previousMessages =>
+                GiftedChat.append(previousMessages, dataString?.message),
+              );
+              // ReadMessages();
+            }
+          },
+        });
+
+        await pusher.connect();
+      } catch (e) {
+        console.log(`ERROR: ${e}`);
+      }
+    }
+    connectPusher();
+    return async () => {
+      await pusher.unsubscribe({channelName: `my-channel-${user?.id}`});
+    };
   }, []);
 
-  const onSend = useCallback((messages = []) => {
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, messages),
-    );
-  }, []);
+  const startChat = async body => {
+    const url = 'auth/send_message';
+    const response = await Post(url, body, apiHeader(token));
+    console.log('🚀 ~ startChat ~ response:', response);
+    if (response != undefined) {
+    }
+  };
+
+  const onSend = useCallback(
+    (messages = []) => {
+      const newMessage = {
+        text: messages[0].text,
+        createAt: new Date(),
+        user: {
+          _id: user?.id,
+          name: `${user?.name}`,
+          avatar: baseUrl + user?.photo,
+        },
+      };
+      setMessages(previousMessages =>
+        GiftedChat.append(previousMessages, newMessage),
+      );
+      startChat({chat_id: user?.id, target_id: 10, ...newMessage});
+    },
+    [messages],
+  );
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
