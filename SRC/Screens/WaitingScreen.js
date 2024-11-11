@@ -220,12 +220,14 @@ const WaitingScreen = ({route}) => {
                 navigation.navigate('TrackingScreen', {
                   data: rideData,
                   description: riderData,
+                  ride_id: data?.ride_id,
                 })
               }
               OnPressSeeRider={() => {
                 navigation.navigate('TrackingScreen', {
                   data: rideData,
                   description: riderData,
+                  ride_id: data?.ride_id,
                 });
               }}
             />

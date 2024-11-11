@@ -21,28 +21,33 @@ import {
   Send,
 } from 'react-native-gifted-chat';
 import CustomImage from '../Components/CustomImage';
-import {useNavigation} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+} from '@react-navigation/native';
 import Header from '../Components/Header';
 import {Icon} from 'native-base';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Pusher} from '@pusher/pusher-websocket-react-native';
 import {baseUrl} from '../Config';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
 
 const MessagesScreen = ({route}) => {
-  const riderData = route.params;
+  const focused = useIsFocused();
+  // const riderData = props?.route.params?.riderData;
+  const {rider_id} = route.params;
   const userRole = useSelector(state => state.commonReducer.selectedRole);
   const user = useSelector(state => state.commonReducer.userData);
-  console.log('🚀 ~ MessagesScreen ~ user:', user);
   const token = useSelector(state => state.authReducer.token);
-  console.log('🚀 ~ MessagesScreen ~ token:', token);
+  console.log("🚀 ~ MessagesScreen ~ token:", token)
   const pusher = Pusher.getInstance();
   let myChannel = null;
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
   const [messages, setMessages] = useState([]);
+  const [loading, setIsLoading] = useState(false);
 
   useEffect(() => {
     console.log('useEffect runs');
@@ -50,33 +55,22 @@ const MessagesScreen = ({route}) => {
       try {
         await pusher.init({
           apiKey: '2cbabf5fca8e6316ecfe',
+          // apiKey: 'd5e997fedecaac8d7961',
           cluster: 'ap2',
         });
-
         myChannel = await pusher.subscribe({
           channelName: `my-channel-${user?.id}`,
           onSubscriptionSucceeded: channelName => {
-            // dispatch(setPusherInstance(pusher));
             console.log(`And here are the channel members: ${myChannel}`);
-            console.log(
-              '🚀 ~ file: SelectedChat.js:77 ~ connectPusher ~ myChannel==================> :',
-              channelName,
-            );
             console.log(
               `Subscribed to ${JSON.stringify(channelName, null, 2)}`,
             );
           },
           onEvent: event => {
             user?.id;
-            console.log(
-              '🚀 ~ file: SelectedChat.js:127 ~ connecstPusher ~ event==========>:',
-              event?.data,
-            );
             console.log('Got channel event:', event.data);
             const dataString = JSON.parse(event.data);
-            console.log('🚀 ~ connectPusher ~ dataString:', dataString);
-            if (dataString?.message.target_id == 11) {
-              console.log('🚀 ~rrrrrrrrrrrrrr :', user?.id, user?.first_name);
+            if (dataString?.message.target_id == user?.id) {
               setMessages(previousMessages =>
                 GiftedChat.append(previousMessages, dataString?.message),
               );
@@ -84,29 +78,43 @@ const MessagesScreen = ({route}) => {
             }
           },
         });
-
         await pusher.connect();
+        console.log('hello from pusher');
       } catch (e) {
         console.log(`ERROR: ${e}`);
       }
     }
     connectPusher();
+    getChatListingData();
     return async () => {
       await pusher.unsubscribe({channelName: `my-channel-${user?.id}`});
     };
   }, []);
 
   const startChat = async body => {
+    console.log("🚀 ~ startChat ~ body:", body)
     const url = 'auth/send_message';
     const response = await Post(url, body, apiHeader(token));
-    console.log('🚀 ~ startChat ~ response:', response);
     if (response != undefined) {
+    }
+  };
+
+  const getChatListingData = async () => {
+    const url = `auth/message_list?user_id=${user?.id}&target_id=${rider_id}`;
+    console.log(url, '===================.>');
+    // setIsLoading(true);
+    const response = await Get(url, token);
+    // setIsLoading(false);
+    if (response != undefined) {
+      const finalData = response?.data?.data.reverse();
+      setMessages(finalData);
     }
   };
 
   const onSend = useCallback(
     (messages = []) => {
       const newMessage = {
+        _id: Math.random().toString(36).substring(7),
         text: messages[0].text,
         createAt: new Date(),
         user: {
@@ -118,7 +126,11 @@ const MessagesScreen = ({route}) => {
       setMessages(previousMessages =>
         GiftedChat.append(previousMessages, newMessage),
       );
-      startChat({chat_id: user?.id, target_id: 10, ...newMessage});
+      startChat({
+        chat_id: user?.id,
+        target_id: rider_id,
+        ...newMessage,
+      });
     },
     [messages],
   );
@@ -205,7 +217,7 @@ const MessagesScreen = ({route}) => {
               }}>
               <Icon
                 name="send"
-                as={FontAwesome}
+                as={Feather}
                 size={moderateScale(22)}
                 color={Color.themeColor}
               />
@@ -234,6 +246,7 @@ const MessagesScreen = ({route}) => {
                   borderBottomLeftRadius: 15,
                   borderBottomRightRadius: 0,
                   marginLeft: moderateScale(30, 0.6),
+                  marginTop: moderateScale(12, 0.6),
                 },
               }}
               containerStyle={{
@@ -267,9 +280,9 @@ const MessagesScreen = ({route}) => {
         onSend={messages => onSend(messages)}
         key={item => item?.id}
         user={{
-          _id: 2,
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
+          _id: user?.id,
+          name: user?.name,
+          avatar: baseUrl + user?.photo,
         }}
       />
     </SafeAreaView>
@@ -320,7 +333,7 @@ const styles = ScaledSheet.create({
     backgroundColor: 'red',
   },
   bubble: {
-    backgroundColor: '#e0f7fa', // Light blue background
+    backgroundColor: '#e0f7fa',
     borderRadius: 10,
     padding: 10,
     maxWidth: '80%',

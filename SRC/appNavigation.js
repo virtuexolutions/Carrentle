@@ -250,9 +250,9 @@ export const MyDrawer = () => {
   const token = useSelector(state => state.authReducer.token);
   const [modalvisible, setModalVisible] = useState(false);
   const [latestRide, setlatestRide] = useState(null);
+  console.log('🚀 ~ MyDrawer ~ latestRide:', latestRide?.id);
   const [hasShownModal, setHasShownModal] = useState(false);
   const [currentPossition, setcurrentPossition] = useState({});
-  console.log('🚀 ~ MyDrawer ~ currentPossition:', currentPossition);
   const [status, setstatus] = useState('');
 
   useEffect(() => {
@@ -269,6 +269,7 @@ export const MyDrawer = () => {
   const getRideHistory = async type => {
     const url = `auth/rider/assign-ride`;
     const response = await Get(url, token);
+    console.log("🚀 ~ getRideHistory ~ response:", response?.data)
     if (response?.data?.ride_info != null) {
       setlatestRide(response?.data?.ride_info);
       if (hasShownModal != true) {
@@ -388,7 +389,7 @@ export const MyDrawer = () => {
           onpressClose={() => setModalVisible(false)}
           onpressSeeLocation={() => {
             navigationService.navigate('WaitingScreen', {
-              data: null,
+              data: latestRide,
               type: 'fromRequest',
             });
           }}

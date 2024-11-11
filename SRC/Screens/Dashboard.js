@@ -67,7 +67,6 @@ const DashBoard = () => {
   const focused = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
   const userData = useSelector(state => state.commonReducer.userData);
-  console.log('🚀 ~ DashBoard ~ userData:', userData);
   const [history, setHistory] = useState();
   const [loading, setLoading] = useState(false);
   const [Transactionhistory, setTransactionHistory] = useState([]);
@@ -146,7 +145,7 @@ const DashBoard = () => {
             <CustomText isBold={true} style={styles.price_text}>
               {(userData?.wallet?.balance != null
                 ? userData?.wallet?.balance
-                : 0 ) + "$"}
+                : 0) + '$'}
             </CustomText>
             <View style={styles.lines} />
             <View style={styles.rides_view}>

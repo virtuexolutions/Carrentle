@@ -28,9 +28,8 @@ import {setRideStart} from '../Store/slices/common';
 
 const TrackingScreen = ({route}) => {
   const focused = useIsFocused();
-  const {data, description} = route.params;
-  console.log('🚀 ~ TrackingScreen ~ description:', description);
-  console.log('🚀 ~ TrackingScreen ~ data:', data);
+  const {data, description, ride_id} = route.params;
+  console.log('🚀 ~ TrackingScreen ~ rideID:', data);
   const navigation = useNavigation();
   const currentPossitionRef = useRef(currentPossition);
   const timeRef = useRef(time);
@@ -60,7 +59,6 @@ const TrackingScreen = ({route}) => {
         : parseFloat(data?.pickup_location_lng),
   });
   const [currentState, setCurrentState] = useState('active');
-  const [riderData, setRiderDate] = useState(false);
   const [isModalShown, setIsModalShown] = useState(false);
 
   useEffect(() => {
@@ -86,17 +84,18 @@ const TrackingScreen = ({route}) => {
   }, [startRide, destinations]);
 
   useEffect(() => {
-    updateStatus();
-  });
+    updateStatus('OnTheWay');
+  }, []);
 
   const updateStatus = async status => {
+    console.log(status, 'statusssssssssssss');
     const body = {
       lat: currentPossition?.latitude,
       lng: currentPossition?.longitude,
-      status: status ? status : 'OnTheWay',
+      status: status,
     };
     console.log(body, 'shdad');
-    const url = `auth/rider/ride_update/${latestRide?.id}`;
+    const url = `auth/rider/ride_update/${ride_id}`;
     const response = await Post(url, body, apiHeader(token));
     if (response?.data?.ride_info?.status === 'complete') {
       setReviewModalVisible(true);
@@ -378,7 +377,7 @@ const TrackingScreen = ({route}) => {
         showBack
         username={userData?.name}
       />
-      {Object.keys(currentPossition).length > 0 ? (
+      {/* {Object.keys(currentPossition).length > 0 ? (
         <MapView
           customMapStyle={customMapStyle}
           initialRegion={{
@@ -501,7 +500,7 @@ const TrackingScreen = ({route}) => {
         </MapView>
       ) : (
         <Loader />
-      )}
+      )} */}
       {user_type === 'Customer' ? (
         <View style={styles.card_main_view}>
           <View style={styles.image_main_view}>
@@ -546,7 +545,8 @@ const TrackingScreen = ({route}) => {
                 style={styles.btn_sub_view}
                 onPress={() =>
                   navigation.navigate('MessagesScreen', {
-                    riderData: riderData,
+                    rider_id: data?.rider_id,
+                    data: data,
                   })
                 }>
                 <Icon
@@ -652,26 +652,81 @@ const TrackingScreen = ({route}) => {
         </View>
       ) : (
         <>
-          {startRide != true && (
-            <View style={{position: 'absolute', bottom: 40}}>
-              <CustomButton
-                text={'Start Ride'}
-                textColor={Color.white}
-                width={windowWidth * 0.8}
-                height={windowHeight * 0.06}
-                marginTop={moderateScale(20, 0.3)}
-                bgColor={Color.cartheme}
-                borderColor={Color.white}
-                borderWidth={1}
-                borderRadius={moderateScale(30, 0.3)}
-                isGradient
-                onPress={() => {
-                  setStartRide(true);
-                  updateLocationInFirebase();
-                }}
-              />
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 40,
+              height: windowHeight * 0.3,
+              backgroundColor: Color.white,
+              width: windowWidth * 0.9,
+              borderRadius: moderateScale(20, 0.3),
+              alignItems: 'center',
+            }}>
+            <View style={{backgroundColor: 'red'}}>
+              <View
+                style={[
+                  styles.image_view,
+                  {
+                    width: moderateScale(50, 0.6),
+                    height: moderateScale(60, 0, 6),
+                  },
+                ]}>
+                <CustomImage
+                  source={require('../Assets/Images/dummyUser.png')}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: windowWidth,
+                  }}
+                />
+                <View style={styles.btn_view}>
+                  <TouchableOpacity style={styles.btn_sub_view}>
+                    <Icon
+                      name="call"
+                      color={Color.darkBlue}
+                      as={Ionicons}
+                      size={moderateScale(20, 0.6)}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.btn_sub_view}
+                    onPress={() =>
+                      navigation.navigate('MessagesScreen', {
+                        rider_id: data?.user?.id,
+                        data: data,
+                      })
+                    }>
+                    <Icon
+                      name="message"
+                      color={Color.darkBlue}
+                      as={MaterialIcons}
+                      size={moderateScale(20, 0.6)}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
-          )}
+            {startRide != true && (
+              <View style={{position: 'absolute', bottom: 10}}>
+                <CustomButton
+                  textColor={Color.white}
+                  text={'Start Ride'}
+                  width={windowWidth * 0.8}
+                  height={windowHeight * 0.06}
+                  marginTop={moderateScale(20, 0.3)}
+                  bgColor={Color.cartheme}
+                  borderColor={Color.white}
+                  borderWidth={1}
+                  borderRadius={moderateScale(30, 0.3)}
+                  isGradient
+                  onPress={() => {
+                    setStartRide(true);
+                    updateLocationInFirebase();
+                  }}
+                />
+              </View>
+            )}
+          </View>
         </>
       )}
       {startRide && (

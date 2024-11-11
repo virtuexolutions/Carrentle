@@ -1,5 +1,5 @@
-export const baseUrl = 'https://bb84-45-199-187-64.ngrok-free.app';
-// export const baseUrl = 'https://car-rental.cstmpanel.com';
+// export const baseUrl = 'https://2f8a-45-199-187-64.ngrok-free.app';
+export const baseUrl = 'https://car-rental.cstmpanel.com';
 export const imageUrl = `${baseUrl}/api/images/`;
 export const profilePicUrl = `${baseUrl}/uploads`;
 
