@@ -16,6 +16,7 @@ import MapViewDirections from 'react-native-maps-directions';
 
 const WaitingScreen = ({route}) => {
   const {data, type} = route.params;
+  console.log('🚀 ~ WaitingScreen ~ data:', data?.ride_id);
   const navigation = useNavigation();
   const userData = useSelector(state => state.commonReducer?.userData);
   const token = useSelector(state => state.authReducer.token);

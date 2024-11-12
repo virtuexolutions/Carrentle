@@ -21,11 +21,7 @@ import {
   Send,
 } from 'react-native-gifted-chat';
 import CustomImage from '../Components/CustomImage';
-import {
-  useFocusEffect,
-  useIsFocused,
-  useNavigation,
-} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import Header from '../Components/Header';
 import {Icon} from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
@@ -36,18 +32,20 @@ import {Get, Post} from '../Axios/AxiosInterceptorFunction';
 
 const MessagesScreen = ({route}) => {
   const focused = useIsFocused();
-  // const riderData = props?.route.params?.riderData;
-  const {rider_id} = route.params;
+  const {rider_id, data} = route.params;
+  console.log('🚀 ~ MessagesScreen ~ rider_id:', rider_id);
   const userRole = useSelector(state => state.commonReducer.selectedRole);
   const user = useSelector(state => state.commonReducer.userData);
+  console.log('🚀 ~ MessagesScreen ~ user:', user?.id);
   const token = useSelector(state => state.authReducer.token);
-  console.log("🚀 ~ MessagesScreen ~ token:", token)
+  console.log('🚀 ~ MessagesScreen ~ token:', token);
   const pusher = Pusher.getInstance();
   let myChannel = null;
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [messages, setMessages] = useState([]);
   const [loading, setIsLoading] = useState(false);
+  const user_type = useSelector(state => state.authReducer.user_type);
 
   useEffect(() => {
     console.log('useEffect runs');
@@ -70,6 +68,10 @@ const MessagesScreen = ({route}) => {
             user?.id;
             console.log('Got channel event:', event.data);
             const dataString = JSON.parse(event.data);
+            console.log(
+              '🚀 ~ connectPusher ~ dataString:',
+              dataString?.message,
+            );
             if (dataString?.message.target_id == user?.id) {
               setMessages(previousMessages =>
                 GiftedChat.append(previousMessages, dataString?.message),
@@ -92,7 +94,7 @@ const MessagesScreen = ({route}) => {
   }, []);
 
   const startChat = async body => {
-    console.log("🚀 ~ startChat ~ body:", body)
+    console.log('🚀 ~ startChat ~ body:', body);
     const url = 'auth/send_message';
     const response = await Post(url, body, apiHeader(token));
     if (response != undefined) {
@@ -101,12 +103,17 @@ const MessagesScreen = ({route}) => {
 
   const getChatListingData = async () => {
     const url = `auth/message_list?user_id=${user?.id}&target_id=${rider_id}`;
-    console.log(url, '===================.>');
-    // setIsLoading(true);
+    setIsLoading(true);
     const response = await Get(url, token);
-    // setIsLoading(false);
+    console.log('🚀 ~ getChatListingData ~ response:', response?.data);
+    setIsLoading(false);
     if (response != undefined) {
-      const finalData = response?.data?.data.reverse();
+      const finalData = response?.data?.data
+        .map(message => ({
+          ...message,
+          _id: message._id || Math.random().toString(36).substring(7),
+        }))
+        .reverse();
       setMessages(finalData);
     }
   };
@@ -123,6 +130,7 @@ const MessagesScreen = ({route}) => {
           avatar: baseUrl + user?.photo,
         },
       };
+      console.log('🚀 ~ MessagesScreen ~ newMessage:', newMessage);
       setMessages(previousMessages =>
         GiftedChat.append(previousMessages, newMessage),
       );
@@ -146,11 +154,7 @@ const MessagesScreen = ({route}) => {
               fontSize: moderateScale(20, 0.6),
               color: Color.darkGray,
             }}>
-            Parsley Montana
-          </CustomText>
-          <CustomText
-            style={{fontSize: moderateScale(18, 0.6), color: Color.grey}}>
-            San Francisco
+            {user_type === 'Rider' ? data?.user?.name : data?.rider?.name}
           </CustomText>
         </View>
         <View
@@ -160,7 +164,12 @@ const MessagesScreen = ({route}) => {
             borderRadius: moderateScale(30, 0.6),
           }}>
           <CustomImage
-            source={require('../Assets/Images/dummyUser1.png')}
+            source={{
+              uri:
+                user_type === 'Rider'
+                  ? baseUrl + data?.user?.photo
+                  : baseUrl + data?.rider?.photo,
+            }}
             style={{
               width: '100%',
               height: '100%',
@@ -278,7 +287,6 @@ const MessagesScreen = ({route}) => {
           />
         )}
         onSend={messages => onSend(messages)}
-        key={item => item?.id}
         user={{
           _id: user?.id,
           name: user?.name,

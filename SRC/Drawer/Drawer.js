@@ -81,14 +81,6 @@ const Drawer = () => {
       },
     },
     {
-      name: 'Chat',
-      iconName: 'chatbox-outline',
-      iconType: Ionicons,
-      onPress: () => {
-        navigation.navigate('MessagesScreen');
-      },
-    },
-    {
       name: 'campaigns ',
       iconName: 'eye-outline',
       iconType: Ionicons,

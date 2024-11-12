@@ -269,7 +269,7 @@ export const MyDrawer = () => {
   const getRideHistory = async type => {
     const url = `auth/rider/assign-ride`;
     const response = await Get(url, token);
-    console.log("🚀 ~ getRideHistory ~ response:", response?.data)
+    console.log('🚀 ~ getRideHistory ~ response:', response?.data);
     if (response?.data?.ride_info != null) {
       setlatestRide(response?.data?.ride_info);
       if (hasShownModal != true) {
@@ -326,8 +326,10 @@ export const MyDrawer = () => {
       setHasShownModal(true);
       setModalVisible(false);
       navigationService.navigate('TrackingScreen', {
-        data: response?.data?.ride_info,
+        data: latestRide,
       });
+    } else {
+      setHasShownModal(false);
     }
     {
       console.log('RejectRide');
