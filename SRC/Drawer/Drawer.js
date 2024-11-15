@@ -77,7 +77,7 @@ const Drawer = () => {
       iconName: 'wallet',
       iconType: AntDesign,
       onPress: () => {
-        navigation.navigate('MyWallet');
+        navigation.navigate('CencalTexi');
       },
     },
     {

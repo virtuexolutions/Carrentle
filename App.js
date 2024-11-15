@@ -19,9 +19,36 @@ import {
 } from './SRC/Utillity/utils';
 import SplashScreen from './SRC/Screens/SplashScreen';
 import AppNavigator from './SRC/appNavigation';
-import {firebase} from '@react-native-firebase/database';
+import messaging from '@react-native-firebase/messaging';
+import PushNotification from 'react-native-push-notification';
+
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  PushNotification.localNotification({
+    title: remoteMessage?.data?.title || 'New Message',
+    message: remoteMessage?.data?.body || 'You have recieved a new message',
+  });
+});
 
 const App = () => {
+  const [notification, setNotification] = useState();
+  const [notificationModal, setNotificationModal] = useState(false);
+  console.reportErrorsAsExceptions = false;
+
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  };
+
+  useEffect(() => {
+    requestUserPermission();
+  });
+
   const [publishableKey, setPublishableKey] = useState('');
   const fetchPublishableKey = async () => {
     const key = await fetchKey(); // fetch key from your server here
@@ -29,6 +56,15 @@ const App = () => {
   };
 
   console.reportErrorsAsExceptions = false;
+
+  useEffect(() => {
+    requestUserPermission();
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log('A new FCM message arrived:', remoteMessage);
+      setNotificationModal(true);
+    });
+  });
+
   return (
     //   <StripeProvider
     //   publishableKey={"pk_test_51NjQZRBqyObuQCkVVZujGGQ9w7PjZegPiZvL9MEH12KsxQmTsLpBxsXdeyN8Tu3mYkN8YZt8WutsTCEexDwIOxaB00a6zjjE12"}

@@ -6,6 +6,7 @@ import LottieView from 'lottie-react-native';
 import {Icon} from 'native-base';
 import React, {useEffect, useRef, useState} from 'react';
 import {
+  Alert,
   AppState,
   Linking,
   StyleSheet,
@@ -34,12 +35,11 @@ import MapViewDirections from 'react-native-maps-directions';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Loader from '../Components/Loader';
 import {customMapStyle} from '../Utillity/mapstyle';
+import navigationService from '../navigationService';
 
 const TrackingScreen = ({route}) => {
   const focused = useIsFocused();
   const {data, description, ride_id} = route.params;
-  console.log('🚀 ~ TrackingScreen ~ ride_id:', ride_id);
-  console.log('🚀 ~ TrackingScreen ~ rideID:', data);
   const navigation = useNavigation();
   const currentPossitionRef = useRef(currentPossition);
   const timeRef = useRef(time);
@@ -51,12 +51,19 @@ const TrackingScreen = ({route}) => {
   const [time, setTime] = useState(0);
   const [startRide, setStartRide] = useState(false);
   const [RiderRideComplete, setRiderRideComplete] = useState(false);
+  const [showCancelRide, setshowCancelRide] = useState(false);
   const [reviewModalVisible, setReviewModalVisible] = useState(false);
 
   const [origin, setOrigin] = useState({
-    latitude: parseFloat(data?.rider?.lat),
-    longitude: parseFloat(data?.rider?.lng),
+    latitude: parseFloat(
+      user_type === 'Rider' ? currentPossition?.latitude : data?.rider?.lat,
+    ),
+    longitude: parseFloat(
+      user_type === 'Rider' ? currentPossition?.latitude : data?.rider?.lng,
+    ),
   });
+
+  console.log('🚀 ~ TrackingScreen ~ origin:', origin);
 
   const [destinations, setDestination] = useState({
     latitude:
@@ -68,6 +75,8 @@ const TrackingScreen = ({route}) => {
         ? parseFloat(data?.dropoff_location_lng)
         : parseFloat(data?.pickup_location_lng),
   });
+
+  console.log('🚀 ~ TrackingScreen ~ destinations:', destinations);
   const [currentState, setCurrentState] = useState('active');
   const [isModalShown, setIsModalShown] = useState(false);
 
@@ -96,6 +105,10 @@ const TrackingScreen = ({route}) => {
   useEffect(() => {
     updateStatus('OnTheWay');
   }, []);
+
+  setTimeout(() => {
+    setshowCancelRide(false);
+  }, 5 * 60 * 1000);
 
   const updateStatus = async status => {
     console.log(status, 'statusssssssssssss');
@@ -155,11 +168,11 @@ const TrackingScreen = ({route}) => {
           setStartRide(false);
           updateStatus('Completed');
         }
-        // if (latitude === origin?.latitude && longitude === origin?.longitude) {
-        //   setRiderRideComplete(true);
-        //   setStartRide(false);
-        //   updateStatus('Completed');
-        // }
+        if (latitude === origin?.latitude && longitude === origin?.longitude) {
+          setRiderRideComplete(true);
+          setStartRide(false);
+          updateStatus('Completed');
+        }
       },
       error => console.log('Error getting location:', error),
       {
@@ -172,7 +185,9 @@ const TrackingScreen = ({route}) => {
     const initialTime = calculateTravelTime();
 
     const interval = setInterval(() => {
-      setTime(prevTime => (prevTime > 5 ? prevTime - 5 : 0));
+      setTime(prevTime => {
+        return prevTime > 5 ? prevTime - 5 : 0;
+      });
     }, 300000);
 
     return () => {
@@ -235,6 +250,7 @@ const TrackingScreen = ({route}) => {
     let timeInMinutes = Math.round(timeInSeconds / 60);
     if (timeInMinutes % 5 !== 0) {
       timeInMinutes = Math.ceil(timeInMinutes / 5) * 5;
+      console.log('🚀 ~ calculateTravelTime ~ timeInMinutes:', timeInMinutes);
     }
     setTime(timeInMinutes);
     return timeInMinutes;
@@ -364,6 +380,10 @@ const TrackingScreen = ({route}) => {
     return () => subscription.remove();
   }, []);
 
+  const CancelRide = async () => {
+    navigationService.navigate('CenCalTaxi', {id: data?.id});
+  };
+
   return (
     <View style={styles.container}>
       <Header
@@ -376,7 +396,6 @@ const TrackingScreen = ({route}) => {
         showBack
         username={userData?.name}
       />
-
       {Object.keys(currentPossition).length > 0 ? (
         <MapView
           customMapStyle={customMapStyle}
@@ -729,7 +748,7 @@ const TrackingScreen = ({route}) => {
             borderWidth={1}
             borderRadius={moderateScale(30, 0.3)}
             isGradient
-            onPress={() => updateLocationInFirebase()}
+            onPress={() => CancelRide()}
           />
           {user_type === 'Rider' && (
             <>
@@ -926,7 +945,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     zIndex: 1,
-    borderRadius: moderateScale(40, 0.6),
+    // borderRadius: moderateScale(40, 0.6),
+    borderTopLeftRadius: moderateScale(40, 0.6),
+    borderTopRightRadius: moderateScale(40, 0.6),
     justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: Color.white,
