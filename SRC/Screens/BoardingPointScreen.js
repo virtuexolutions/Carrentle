@@ -1,6 +1,9 @@
-import {getDistance, isValidCoordinate} from 'geolib';
-import {Divider, Icon, Modal} from 'native-base';
-import React, {useEffect, useRef, useState} from 'react';
+import database from '@react-native-firebase/database';
+import { getDistance, isValidCoordinate } from 'geolib';
+import LottieView from 'lottie-react-native';
+import moment from 'moment';
+import { Divider, Icon } from 'native-base';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Platform,
@@ -9,31 +12,26 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import DatePicker from 'react-native-date-picker';
 import Geolocation from 'react-native-geolocation-service';
-import MapView, {Circle, Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import {moderateScale} from 'react-native-size-matters';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
+import { moderateScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import { Post } from '../Axios/AxiosInterceptorFunction';
+import AskLocationComponent from '../Components/AskLocationComponent';
 import BookingCard from '../Components/BookingCard';
 import CustomButton from '../Components/CustomButton';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import Loader from '../Components/Loader';
 import SearchLocationModal from '../Components/SearchLocationModal';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import {baseUrl} from '../Config';
-import MapViewDirections from 'react-native-maps-directions';
-import LottieView from 'lottie-react-native';
-import AskLocationComponent from '../Components/AskLocationComponent';
-import database from '@react-native-firebase/database';
-import DatePicker from 'react-native-date-picker';
-
-import moment from 'moment';
-import RiderArrivedModal from '../Components/RiderArrivedModal';
+import { baseUrl } from '../Config';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
 const BoardingPointScreen = ({navigation, route}) => {
   const {carData, date} = route.params;
@@ -207,27 +205,6 @@ const BoardingPointScreen = ({navigation, route}) => {
     }
   };
 
-  // const startLiveLocationTracking = () => {
-  //   const watchId = Geolocation.watchPosition(
-  //     position => {
-  //       console.log('🚀 ~ startLiveLocationTracking ~ position:', position);
-  //       const {latitude, longitude} = position.coords;
-  //       setLocation({latitude, longitude});
-  //     },
-  //     error => {
-  //       console.log('Error getting location: ', error);
-  //     },
-  //     {
-  //       enableHighAccuracy: true,
-  //       distanceFilter: 0, // Update on every change
-  //       interval: 5000, // Update every 5 seconds
-  //       fastestInterval: 2000, // Minimum 2 seconds between updates
-  //     },
-  //   );
-  // };
-
-  // startLiveLocationTracking();
-
   useEffect(() => {
     if (currentPossition) {
       getAddressFromCoordinates(
@@ -289,58 +266,6 @@ const BoardingPointScreen = ({navigation, route}) => {
       getPriceFromRegion();
     }
   }, [pickupCityName, DropoffCityName]);
-
-  // const getPriceFromRegion = async () => {
-  //   const url = 'auth/city_price';
-  //   const formData = new FormData();
-  //   const data = {
-  //     cityFrom: pickupCityName,
-  //     cityTo: DropoffCityName,
-  //   };
-  //   for (let key in data) {
-  //     if (data[key] == '') {
-  //       return Platform.OS == 'android'
-  //         ? ToastAndroid.show(` ${key} field is empty`, ToastAndroid.SHORT)
-  //         : Alert.alert(` ${key} field is empty`);
-  //     }
-  //     formData.append(key, data[key]);
-  //   }
-  //   console.log(data, '================>');
-  //   const response = await Post(url, data, apiHeader(token));
-  //   console.log('🚀 ~ getPriceFromRegion ~ response:', response?.data);
-  //   if (response?.data?.data?.price != null) {
-  //     setFare(response?.data?.data?.price);
-  //     console.log(response?.data?.data?.price, 'response?.data?.data?.price');
-  //   }
-  // };
-
-  // const RegionOne = ['Bryan', 'Defiance', 'Napoleon'];
-
-  // const RegionTwo = ['Bowling Green', 'Findlay'];
-
-  // const checkThePoints = () => {
-  //   if (pickupCityName && DropoffCityName) {
-  //     if (
-  //       RegionOne.includes(pickupCityName) &&
-  //       RegionOne.includes(DropoffCityName)
-  //     ) {
-  //       setRegionType('RegionOne');
-  //     } else if (
-  //       RegionTwo.includes(pickupCityName) &&
-  //       RegionTwo.includes(DropoffCityName)
-  //     ) {
-  //       setRegionType('RegionTow');
-  //     } else if (
-  //       (RegionOne.includes(pickupCityName) &&
-  //         RegionTwo.includes(DropoffCityName)) ||
-  //       (RegionTwo.includes(pickupCityName) &&
-  //         RegionOne.includes(DropoffCityName))
-  //     ) {
-  //       setRegionType('OutOfRegion');
-  //     }
-  //   }
-  // };
-
   const RegionOne = ['Bryan', 'Defiance', 'Napoleon'];
 
   const RegionTwo = ['Bowling Green', 'Findlay'];
@@ -589,22 +514,11 @@ const BoardingPointScreen = ({navigation, route}) => {
           style={styles.map}
           initialRegion={{
             latitude: currentPossition.latitude || 0,
-            // latitude: 40.367474,
-            // longitude: -82.996216,
             longitude: currentPossition.longitude || 0,
             latitudeDelta: 0.0522,
             longitudeDelta: 0.0521,
           }}
-          // region=
           ref={mapRef}>
-          {/* <Circle
-            center={circleCenter}
-            radius={15000}
-            strokeWidth={2}
-            strokeColor={'red'}
-            fillColor={'rgba(51, 170, 51, .2)'}
-            zIndex={1}
-          /> */}
           <Marker coordinate={currentPossition} title="Your Are Here Now">
             <View
               style={{
@@ -719,13 +633,11 @@ const BoardingPointScreen = ({navigation, route}) => {
               onpressSetDate={() => {
                 setBookingDateModal(true);
               }}
-              // onPressMessageBtn={() => navigation.navigate('MessagesScreen')}
             />
             <View
               style={{
                 alignSelf: 'center',
                 position: 'absolute',
-                // bottom: 50, old
                 bottom: 30,
                 zIndex: 1,
               }}>

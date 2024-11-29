@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "95315066003",
-    "project_id": "carrentle-aefaa",
-    "storage_bucket": "carrentle-aefaa.appspot.com"
+    "project_number": "308425731760",
+    "project_id": "robert-kramer-41dd3",
+    "storage_bucket": "robert-kramer-41dd3.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:95315066003:android:9db076bf5028ac7eb06166",
+        "mobilesdk_app_id": "1:308425731760:android:9459abf2da32e4f7361575",
         "android_client_info": {
           "package_name": "com.carrentle"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBqIX1RMjXSzQzgzo93PGr210lKrQtY_Pc"
+          "current_key": "AIzaSyB3uTdHtT-4oihiswfYpDKHEdwgKOQVcfo"
         }
       ],
       "services": {

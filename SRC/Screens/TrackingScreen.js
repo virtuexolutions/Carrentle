@@ -52,7 +52,7 @@ const TrackingScreen = ({route}) => {
   const [startRide, setStartRide] = useState(false);
   const [RiderRideComplete, setRiderRideComplete] = useState(false);
   const [showCancelRide, setshowCancelRide] = useState(false);
-  const [reviewModalVisible, setReviewModalVisible] = useState(false);
+  const [reviewModalVisible, setReviewModalVisible] = useState(true);
 
   const [origin, setOrigin] = useState({
     latitude: parseFloat(
@@ -77,8 +77,10 @@ const TrackingScreen = ({route}) => {
   });
 
   console.log('🚀 ~ TrackingScreen ~ destinations:', destinations);
+
   const [currentState, setCurrentState] = useState('active');
   const [isModalShown, setIsModalShown] = useState(false);
+  const [startTime, setStartTime] = useState(null);
 
   useEffect(() => {
     currentPossitionRef.current = currentPossition;
@@ -185,9 +187,12 @@ const TrackingScreen = ({route}) => {
     const initialTime = calculateTravelTime();
 
     const interval = setInterval(() => {
-      setTime(prevTime => {
-        return prevTime > 5 ? prevTime - 5 : 0;
-      });
+      {
+        startRide === true &&
+          setTime(prevTime => {
+            return prevTime > 5 ? prevTime - 5 : 0;
+          });
+      }
     }, 300000);
 
     return () => {
@@ -380,8 +385,36 @@ const TrackingScreen = ({route}) => {
     return () => subscription.remove();
   }, []);
 
+  useEffect(() => {
+    setStartTime(new Date());
+  }, []);
+
   const CancelRide = async () => {
-    navigationService.navigate('CenCalTaxi', {id: data?.id});
+    const currentTime = new Date();
+    const elapsedMinutes = (currentTime - startTime) / 60000;
+
+    if (elapsedMinutes <= 5) {
+      Alert.alert(
+        'Ride Cancelled',
+        'You cancelled the ride within 5 minutes. No charges applied.',
+        () => navigationService.navigate('CenCalTaxi', {id: data?.id}),
+      );
+    } else {
+      const cancellationFee = data?.carinfo?.price * 0.1;
+      Alert.alert(
+        'Ride Cancelled',
+        `You cancelled the ride after 5 minutes. A fee of $${cancellationFee.toFixed(
+          2,
+        )} will be charged.`,
+        () => navigationService.navigate('CenCalTaxi', {id: data?.id}),
+      );
+    }
+  };
+
+  const RiderArrived = async () => {
+    const url = `auth/rider-arrived/${ride_id}`;
+    const reponse = await Post(url, {}, apiHeader(token));
+    console.log('🚀 ~ RiderArrived ~ reponsessss:', reponse?.data);
   };
 
   return (
@@ -768,6 +801,7 @@ const TrackingScreen = ({route}) => {
                     onPress={() => {
                       setStartRide(true);
                       updateLocationInFirebase();
+                      RiderArrived();
                     }}
                   />
                 </View>
@@ -776,7 +810,7 @@ const TrackingScreen = ({route}) => {
           )}
         </View>
       </View>
-      {/* {startRide && (
+      {startRide && (
         <View
           style={{
             flex: 1,
@@ -850,7 +884,7 @@ const TrackingScreen = ({route}) => {
             )}
           </View>
         </View>
-      )} */}
+      )}
     </View>
   );
 };

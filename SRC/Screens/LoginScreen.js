@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   Platform,
@@ -24,9 +24,11 @@ import ImagePickerModal from '../Components/ImagePickerModal';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import authAction from '../Store/auth-action';
-import {setUserToken} from '../Store/slices/auth-slice';
+import {SetFCMToken, setUserToken} from '../Store/slices/auth-slice';
 import {setUserData} from '../Store/slices/common';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import messaging from '@react-native-firebase/messaging';
+import {validateEmail} from '../Config';
 
 const LoginScreen = props => {
   const dispatch = useDispatch();
@@ -39,10 +41,29 @@ const LoginScreen = props => {
   const navigation = useNavigation();
   const {UserLogin} = authAction();
   const token = useSelector(state => state.authReducer.token);
+  const [device_token, setDeviceToken] = useState(null);
+  console.log("🚀 ~ LoginScreen ~ device_token:", device_token)
+  const fcmToken = useSelector(state => state.authReducer.fcmToken);
+
+  useEffect(() => {
+    console.log('i am here');
+    messaging()
+      .getToken()
+      .then(_token => {
+        console.log('sgjdsgdjasdgjagdjagjdgs', _token);
+        setDeviceToken(_token);
+        dispatch(SetFCMToken({fcmToken: _token}));
+      });
+  }, []);
 
   const onpressSubmit = async () => {
     const url = 'login';
-    const body = {email: username, password: password};
+    const body = {
+      email: username,
+      password: password,
+      device_token: device_token,
+    };
+    console.log("🚀 ~ onpressSubmit ~ body:", body)
     setLoading(true);
     for (let key in body) {
       if (body[key] == '') {
@@ -51,12 +72,10 @@ const LoginScreen = props => {
           : Alert.alert(`${key} is required`);
       }
     }
-    
     const response = await Post(url, body, apiHeader(token));
-
     console.log('==============> l0gin ', response?.data);
-    setLoading(false);
     if (response != undefined) {
+      setLoading(false);
       navigation.navigate('MyDrawer');
       console.log(response?.data, 'dataaaaaaaaa');
       dispatch(setUserToken({token: response?.data?.token}));
@@ -64,6 +83,8 @@ const LoginScreen = props => {
       Platform.OS == 'android'
         ? ToastAndroid.show(`Login SuccessFully`, ToastAndroid.SHORT)
         : Alert.alert(`Login SuccessFully`);
+    } else {
+      setLoading(false);
     }
   };
 
