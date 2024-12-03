@@ -106,13 +106,12 @@ const TextInputWithTitle = props => {
               {
                 // backgroundColor :'green',
                 textAlign: 'center',
-                width: windowWidth * 0.07,
-                // paddingTop :moderateScale(10,.6),
+                width: windowWidth * 0.06,
                 color:
                   props.color && !props.disable
                     ? props.color
                     : Color.veryLightGray,
-                fontSize: moderateScale(18, 0.6),
+                fontSize: moderateScale(15, 0.6),
                 // paddingLeft: Dimensions.get("window").width * 0.0175,
               },
               props.numberOfLines > 1 && {
@@ -148,6 +147,7 @@ const TextInputWithTitle = props => {
                           ? props?.fontSize
                           : moderateScale(12, 0.6),
                         fontWeight: '400',
+                        color:Color.white
                       },
                     ]
                   : [

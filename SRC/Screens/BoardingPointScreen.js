@@ -1,9 +1,9 @@
 import database from '@react-native-firebase/database';
-import { getDistance, isValidCoordinate } from 'geolib';
+import {getDistance, isValidCoordinate} from 'geolib';
 import LottieView from 'lottie-react-native';
 import moment from 'moment';
-import { Divider, Icon } from 'native-base';
-import React, { useEffect, useRef, useState } from 'react';
+import {Divider, Icon} from 'native-base';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Alert,
   Platform,
@@ -14,15 +14,15 @@ import {
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import Geolocation from 'react-native-geolocation-service';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Post } from '../Axios/AxiosInterceptorFunction';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 import AskLocationComponent from '../Components/AskLocationComponent';
 import BookingCard from '../Components/BookingCard';
 import CustomButton from '../Components/CustomButton';
@@ -30,8 +30,8 @@ import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import Loader from '../Components/Loader';
 import SearchLocationModal from '../Components/SearchLocationModal';
-import { baseUrl } from '../Config';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import {baseUrl} from '../Config';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
 const BoardingPointScreen = ({navigation, route}) => {
   const {carData, date} = route.params;
@@ -96,17 +96,6 @@ const BoardingPointScreen = ({navigation, route}) => {
   };
 
   useEffect(() => {
-    // const checkIfMarkerInsideCircle = () => {
-    //   const dropoffdistance = getDistance(circleCenter, dropOffLocation);
-    //   const pickupDistance = getDistance(circleCenter, pickupLocation);
-    //   if (dropoffdistance > circleRadius) {
-    //     Alert.alert('Warning', ' Your DropOff Location is outside the region');
-    //   } else if (pickupDistance > circleCenter) {
-    //     Alert.alert('Warning', ' Your PickUp Location is outside the region');
-    //   }
-    // };
-    // checkIfMarkerInsideCircle();
-
     if (dropOffLocation && pickupLocation) {
       const checkDistanceBetween = getDistance(pickupLocation, dropOffLocation);
       let km = Math.round(checkDistanceBetween / 1000);
@@ -145,7 +134,6 @@ const BoardingPointScreen = ({navigation, route}) => {
 
   useEffect(() => {
     if (!origin || !destinations) return;
-    // checkThePoints();
   }, [origin, destinations, GOOGLE_MAPS_API_KEY]);
 
   const getCurrentLocation = async () => {

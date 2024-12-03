@@ -70,16 +70,10 @@ const SearchLocationModal = ({
                       component.types.includes('locality'),
                     )?.long_name
                   : 'City name not found';
-              console.log(cityName);
               locationType === 'pickup'
                 ? setPickUpCityName(cityName)
                 : setDropOffCityName(cityName);
-              console.log('Location ========>>>>', {
-                name: data?.description,
-                lat: details?.geometry?.location?.lat,
-                lng: details?.geometry?.location?.lng,
-              });
-              console.log(data?.description, 'data?.description');
+             
               locationType === 'pickup'
                 ? setPickupLocation({
                     name: data?.description,

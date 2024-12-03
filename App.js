@@ -30,7 +30,6 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 
 const App = () => {
   const [notification, setNotification] = useState();
-  console.log('🚀 ~ App ~ notification:', notification);
   const [notificationModal, setNotificationModal] = useState(false);
   console.reportErrorsAsExceptions = false;
 
@@ -59,7 +58,6 @@ const App = () => {
   useEffect(() => {
     requestUserPermission();
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log('A new FCM message arrived:', remoteMessage);
       setNotificationModal(true);
       setNotification({
         title: remoteMessage.notification.title,

@@ -16,7 +16,6 @@ import MapViewDirections from 'react-native-maps-directions';
 
 const WaitingScreen = ({route}) => {
   const {data, type} = route.params;
-  console.log('🚀 ~ WaitingScreen ~ data:', data?.ride_id);
   const navigation = useNavigation();
   const userData = useSelector(state => state.commonReducer?.userData);
   const token = useSelector(state => state.authReducer.token);
@@ -26,7 +25,7 @@ const WaitingScreen = ({route}) => {
   const [loading, setLoading] = useState(false);
   const [rideData, setRideData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [riderData, setRiderDate] = useState(false);
+  const [riderDate, setRiderDate] = useState(false);
   const [isModalShown, setIsModalShown] = useState(false);
 
   useEffect(() => {
@@ -39,9 +38,7 @@ const WaitingScreen = ({route}) => {
           pitchEnabled: false,
         });
       }
-      const interval = setInterval(() => {
-        getRiderInfo();
-      }, 5000);
+      const interval = setInterval(() => getRiderInfo(), 10000);
       return () => clearInterval(interval);
     }
   }, []);
@@ -51,12 +48,15 @@ const WaitingScreen = ({route}) => {
       const url = `auth/ride/${data?.ride_id}`;
       setLoading(true);
       const response = await Get(url, token);
+      console.log(
+        '🚀 ~ getRiderInfosd ~ response:',
+        response?.data?.ride_info?.status,
+      );
       setLoading(false);
-      if (response?.data?.ride_info?.status === 'accept') {
+      if (response?.data?.ride_info?.status === 'OnTheWay') {
         setRideData(response.data.ride_info);
-        setRiderDate(response?.data);
-        setModalVisible(isModalShown != true ? true : false);
-        setIsModalShown(true);
+        setRiderDate(response.data);
+        setModalVisible(true);
       }
     } catch (error) {
       setLoading(false);
@@ -220,14 +220,14 @@ const WaitingScreen = ({route}) => {
               onpressSeeLocation={() =>
                 navigation.navigate('TrackingScreen', {
                   data: rideData,
-                  description: riderData,
+                  description: riderDate,
                   ride_id: data?.ride_id,
                 })
               }
               OnPressSeeRider={() => {
                 navigation.navigate('TrackingScreen', {
                   data: rideData,
-                  description: riderData,
+                  description: riderDate,
                   ride_id: data?.ride_id,
                 });
               }}

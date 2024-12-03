@@ -82,10 +82,9 @@ const DashBoard = () => {
   // );
 
   useEffect(() => {
-    getPaymentHistory();
-  }, []);
-  useEffect(() => {
-    getPaymentHistory();
+    if (token) {
+      getPaymentHistory();
+    }
   }, [focused]);
 
   useEffect(() => {
@@ -102,7 +101,6 @@ const DashBoard = () => {
     const url = `auth/transaction?page=${pageNum}`;
     type == 'loadMore' ? setLoadMore(true) : setLoading(true);
     const response = await Get(url, token);
-    console.log('🚀 ~ getPaymentHistory ~ response:', response?.data);
     type == 'loadMore' ? setLoadMore(false) : setLoading(false);
     setLoading(false);
     if (response != undefined) {
@@ -141,167 +139,173 @@ const DashBoard = () => {
         title={'DashBoard'}
         showBack={false}
       />
-      <LinearGradient
-        start={{x: 1, y: 0.2}}
-        end={{x: 1, y: 0.9}}
-        colors={['#00309E', '#4680D1']}
-        style={styles.sub_view}>
-        <View style={styles.card_view}>
-          <CustomText style={styles.today_text}>Today</CustomText>
-          <CustomText isBold={true} style={styles.price_text}>
-            {(userData?.wallet?.balance != null
-              ? userData?.wallet?.balance
-              : 0) + '$'}
-          </CustomText>
-          <View style={styles.lines} />
-          <View style={styles.rides_view}>
-            <View style={styles.ride_sub_view}>
-              <Icon name="taxi" as={FontAwesome5} color={Color.blue_color} />
-              <CustomText isBold={true} style={styles.text}>
-                0 Rides
-              </CustomText>
-            </View>
-            <View style={styles.ride_sub_view}>
-              <Icon name="clock" as={FontAwesome5} color={Color.blue_color} />
-              <CustomText isBold={true} style={styles.text}>
-                0 Hours
-              </CustomText>
+      <ScrollView
+        style={{
+          width: windowWidth,
+          height: windowHeight,
+        }}>
+        <LinearGradient
+          start={{x: 1, y: 0.2}}
+          end={{x: 1, y: 0.9}}
+          colors={['#00309E', '#4680D1']}
+          style={styles.sub_view}>
+          <View style={styles.card_view}>
+            <CustomText style={styles.today_text}>Today</CustomText>
+            <CustomText isBold={true} style={styles.price_text}>
+              {(userData?.wallet?.balance != null
+                ? userData?.wallet?.balance
+                : 0) + '$'}
+            </CustomText>
+            <View style={styles.lines} />
+            <View style={styles.rides_view}>
+              <View style={styles.ride_sub_view}>
+                <Icon name="taxi" as={FontAwesome5} color={Color.blue_color} />
+                <CustomText isBold={true} style={styles.text}>
+                  0 Rides
+                </CustomText>
+              </View>
+              <View style={styles.ride_sub_view}>
+                <Icon name="clock" as={FontAwesome5} color={Color.blue_color} />
+                <CustomText isBold={true} style={styles.text}>
+                  0 Hours
+                </CustomText>
+              </View>
             </View>
           </View>
-        </View>
-      </LinearGradient>
-      <View style={styles.wallet_history_card}>
-        <View style={styles.wallet_card}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              width: '100%',
-            }}>
-            <View>
-              <CustomText
-                style={{fontSize: moderateScale(12, 0.6), color: Color.grey}}>
-                Wallet Balance
-              </CustomText>
-              <CustomText
-                isBold={true}
-                style={{fontSize: moderateScale(14, 0.6)}}>
-                $ 1,291
-              </CustomText>
-            </View>
-            <TouchableOpacity
+        </LinearGradient>
+        <View style={styles.wallet_history_card}>
+          <View style={styles.wallet_card}>
+            <View
               style={{
                 flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: moderateScale(100, 0.6),
-                height: moderateScale(35, 0.6),
-                borderRadius: moderateScale(20, 0.6),
-                borderWidth: 1,
-                borderColor: Color.blue_color,
+                justifyContent: 'space-between',
+                width: '100%',
               }}>
-              <CustomText
+              <View>
+                <CustomText
+                  style={{fontSize: moderateScale(12, 0.6), color: Color.grey}}>
+                  Wallet Balance
+                </CustomText>
+                <CustomText
+                  isBold={true}
+                  style={{fontSize: moderateScale(14, 0.6)}}>
+                  $ 1,291
+                </CustomText>
+              </View>
+              <TouchableOpacity
                 style={{
-                  fontSize: moderateScale(13, 0.6),
-                  marginRight: moderateScale(10, 0),
-                }}
-                isBold={true}>
-                WithDraw
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: moderateScale(100, 0.6),
+                  height: moderateScale(35, 0.6),
+                  borderRadius: moderateScale(20, 0.6),
+                  borderWidth: 1,
+                  borderColor: Color.blue_color,
+                }}>
+                <CustomText
+                  style={{
+                    fontSize: moderateScale(13, 0.6),
+                    marginRight: moderateScale(10, 0),
+                  }}
+                  isBold={true}>
+                  WithDraw
+                </CustomText>
+                <Icon
+                  name="arrow-right"
+                  as={FontAwesome5}
+                  color={Color.blue_color}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={[styles.lines, {width: '100%'}]} />
+            <TouchableOpacity
+              onPress={() => navigationService.navigate('MyWallet')}
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                width: '100%',
+                marginTop: moderateScale(15, 0.6),
+              }}>
+              <CustomText style={{fontSize: moderateScale(13, 0.6)}}>
+                Payment History
               </CustomText>
-              <Icon
-                name="arrow-right"
-                as={FontAwesome5}
-                color={Color.blue_color}
-              />
+              <View>
+                <Icon
+                  name="arrow-forward-ios"
+                  as={MaterialIcons}
+                  color={Color.blue_color}
+                />
+              </View>
             </TouchableOpacity>
           </View>
-          <View style={[styles.lines, {width: '100%'}]} />
-          <TouchableOpacity
-            onPress={() => navigationService.navigate('MyWallet')}
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              width: '100%',
-              marginTop: moderateScale(15, 0.6),
-            }}>
-            <CustomText style={{fontSize: moderateScale(13, 0.6)}}>
-              Payment History
-            </CustomText>
-            <View>
-              <Icon
-                name="arrow-forward-ios"
-                as={MaterialIcons}
-                color={Color.blue_color}
-              />
-            </View>
-          </TouchableOpacity>
         </View>
-      </View>
-      <CustomText
-        isBold={true}
-        style={{
-          fontSize: moderateScale(16, 0.6),
-          textAlign: 'left',
-          width: '90%',
-          marginVertical: moderateScale(10, 0.6),
-          color: Color.blue_color,
-          marginLeft: moderateScale(15, 0.6),
-        }}>
-        Latest Assign Rides
-      </CustomText>
-
-      {loading ? (
-        <Loader
+        <CustomText
+          isBold={true}
           style={{
-            width: moderateScale(50, 0.6),
-            height: moderateScale(50, 0.6),
-            alignItems: 'center',
-            alignSelf: 'center ',
-          }}
-        />
-      ) : (
-        <FlatList
-          style={{width: windowWidth, height: windowHeight}}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={() => (
-            <CustomText style={{color: 'red', textAlign: 'center'}}>
-              No data Found yet
-            </CustomText>
-          )}
-          contentContainerStyle={{
-            paddingBottom: moderateScale(10, 0.6),
-          }}
-          data={Transactionhistory}
-          onScrollEndDrag={({nativeEvent}) => {
-            {
-              if (isCloseToBottom(nativeEvent)) {
-                setPageNum(prev => prev + 1);
-                setGetMore(true);
+            fontSize: moderateScale(16, 0.6),
+            textAlign: 'left',
+            width: '90%',
+            marginVertical: moderateScale(10, 0.6),
+            color: Color.blue_color,
+            marginLeft: moderateScale(15, 0.6),
+          }}>
+          Latest Assign Rides
+        </CustomText>
+
+        {loading ? (
+          <Loader
+            style={{
+              width: moderateScale(50, 0.6),
+              height: moderateScale(50, 0.6),
+              alignItems: 'center',
+              alignSelf: 'center ',
+            }}
+          />
+        ) : (
+          <FlatList
+            style={{width: windowWidth, height: windowHeight}}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={() => (
+              <CustomText style={{color: 'red', textAlign: 'center'}}>
+                No data Found yet
+              </CustomText>
+            )}
+            contentContainerStyle={{
+              paddingBottom: moderateScale(10, 0.6),
+            }}
+            data={Transactionhistory}
+            onScrollEndDrag={({nativeEvent}) => {
+              {
+                if (isCloseToBottom(nativeEvent)) {
+                  setPageNum(prev => prev + 1);
+                  setGetMore(true);
+                }
               }
-            }
-          }}
-          ListFooterComponent={() => {
-            return (
-              loadMore && (
-                <View
-                  style={{
-                    width: windowWidth,
-                    marginTop: moderateScale(10, 0.3),
-                  }}>
-                  <ActivityIndicator
-                    size={moderateScale(35, 0.6)}
-                    color={Color.themeColor}
-                  />
-                </View>
-              )
-            );
-          }}
-          renderItem={(item, index) => {
-            return <HistoryComponent data={item?.item} />;
-          }}
-        />
-      )}
+            }}
+            ListFooterComponent={() => {
+              return (
+                loadMore && (
+                  <View
+                    style={{
+                      width: windowWidth,
+                      marginTop: moderateScale(10, 0.3),
+                    }}>
+                    <ActivityIndicator
+                      size={moderateScale(35, 0.6)}
+                      color={Color.themeColor}
+                    />
+                  </View>
+                )
+              );
+            }}
+            renderItem={(item, index) => {
+              return <HistoryComponent data={item?.item} />;
+            }}
+          />
+        )}
+      </ScrollView>
     </View>
   );
 };

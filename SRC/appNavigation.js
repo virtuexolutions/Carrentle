@@ -131,7 +131,11 @@ const AppNavigator = () => {
           <RootNav.Screen name="CencalTexi" component={CencalTexi} />
           <RootNav.Screen name="Notifications" component={Notifications} />
           <RootNav.Screen name="WaitingScreen" component={WaitingScreen} />
-          <RootNav.Screen name="TrackingScreen" component={TrackingScreen} />
+          <RootNav.Screen
+            name="TrackingScreen"
+            component={TrackingScreen}
+            options={{unmountOnBlur: false}}
+          />
           <RootNav.Screen name="CabTracking" component={CabTracking} />
         </RootNav.Navigator>
       </NavigationContainer>
@@ -250,9 +254,10 @@ export const MyDrawer = () => {
   const token = useSelector(state => state.authReducer.token);
   const [modalvisible, setModalVisible] = useState(false);
   const [latestRide, setlatestRide] = useState(null);
-  console.log('🚀 ~ MyDrawer ~ latestRide:', latestRide?.id);
+  const [data, setData] = useState(null);
   const [hasShownModal, setHasShownModal] = useState(false);
   const [currentPossition, setcurrentPossition] = useState({});
+
   const [status, setstatus] = useState('');
 
   useEffect(() => {
@@ -269,7 +274,6 @@ export const MyDrawer = () => {
   const getRideHistory = async type => {
     const url = `auth/rider/assign-ride`;
     const response = await Get(url, token);
-    console.log('🚀 ~ getRideHistory ~ response:', response?.data);
     if (response?.data?.ride_info != null) {
       setlatestRide(response?.data?.ride_info);
       if (hasShownModal != true) {
@@ -312,21 +316,20 @@ export const MyDrawer = () => {
   };
 
   const onpressAccept = async currentStatus => {
-    console.log(currentStatus, 'onpressAccept');
     const body = {
       lat: currentPossition?.latitude,
       lng: currentPossition?.longitude,
       status: currentStatus,
     };
-    console.log(body, 'shdad');
     const url = `auth/rider/ride_update/${latestRide?.id}`;
     const response = await Post(url, body, apiHeader(token));
-    console.log('🚀 ~ onpressAccept ~ response:', response?.data);
     if (response?.data?.ride_info?.status === 'accept') {
       setHasShownModal(true);
       setModalVisible(false);
+      setData(response?.data?.ride_info);
       navigationService.navigate('TrackingScreen', {
         data: latestRide,
+        rider_data: response?.data?.ride_info?.rider,
       });
     } else {
       setHasShownModal(false);
@@ -347,9 +350,8 @@ export const MyDrawer = () => {
           headerShown: false,
           drawerStyle: {width: '80%'},
         }}>
-        <DrawerNavigation.Screen name="HomeScreen" component={HomeScreen} />
         <DrawerNavigation.Screen name="DashBoard" component={DashBoard} />
-
+        <DrawerNavigation.Screen name="HomeScreen" component={HomeScreen} />
         <DrawerNavigation.Screen
           name="PaymentHistory"
           component={PaymentHistory}

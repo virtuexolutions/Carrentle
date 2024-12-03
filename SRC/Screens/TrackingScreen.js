@@ -39,7 +39,7 @@ import navigationService from '../navigationService';
 
 const TrackingScreen = ({route}) => {
   const focused = useIsFocused();
-  const {data, description, ride_id} = route.params;
+  const {data, rider_data, description, ride_id} = route.params;
   const navigation = useNavigation();
   const currentPossitionRef = useRef(currentPossition);
   const timeRef = useRef(time);
@@ -54,16 +54,26 @@ const TrackingScreen = ({route}) => {
   const [showCancelRide, setshowCancelRide] = useState(false);
   const [reviewModalVisible, setReviewModalVisible] = useState(true);
 
-  const [origin, setOrigin] = useState({
-    latitude: parseFloat(
-      user_type === 'Rider' ? currentPossition?.latitude : data?.rider?.lat,
-    ),
-    longitude: parseFloat(
-      user_type === 'Rider' ? currentPossition?.latitude : data?.rider?.lng,
-    ),
-  });
+  const latitude = parseFloat(rider_data?.lat) || 0;
+  const longitude = parseFloat(rider_data?.lng) || 0;
 
+  const [origin, setOrigin] = useState({
+    latitude: 24.859501666667,
+    longitude: 67.062525,
+
+    // latitude: parseFloat(
+    //   user_type === 'Rider' ? currentPossition?.latitude : latitude,
+    // ),
+    // longitude: parseFloat(
+    //   user_type === 'Rider' ? currentPossition?.longitude : longitude,
+    // ),
+  });
   console.log('🚀 ~ TrackingScreen ~ origin:', origin);
+  console.log(
+    isNaN(origin?.latitude),
+    isNaN(origin?.longitude),
+    'isNaN(origin?.latitude)',
+  );
 
   const [destinations, setDestination] = useState({
     latitude:
@@ -75,8 +85,6 @@ const TrackingScreen = ({route}) => {
         ? parseFloat(data?.dropoff_location_lng)
         : parseFloat(data?.pickup_location_lng),
   });
-
-  console.log('🚀 ~ TrackingScreen ~ destinations:', destinations);
 
   const [currentState, setCurrentState] = useState('active');
   const [isModalShown, setIsModalShown] = useState(false);
@@ -113,13 +121,11 @@ const TrackingScreen = ({route}) => {
   }, 5 * 60 * 1000);
 
   const updateStatus = async status => {
-    console.log(status, 'statusssssssssssss');
     const body = {
       lat: currentPossition?.latitude,
       lng: currentPossition?.longitude,
       status: status,
     };
-    console.log(body, 'shdad');
     const url = `auth/rider/ride_update/${data?.id}`;
     const response = await Post(url, body, apiHeader(token));
     if (response?.data?.ride_info?.status === 'complete') {
@@ -138,7 +144,7 @@ const TrackingScreen = ({route}) => {
           longitude,
         }));
         database()
-          .ref(`/locations/${data?.rider?.id}/${'riderTracking'}  `)
+          .ref(`/locations/${rider_data?.rider?.id}/${'riderTracking'}  `)
           .once('value')
           .then(snapshot => {
             if (snapshot.exists()) {
@@ -146,7 +152,6 @@ const TrackingScreen = ({route}) => {
               const {latitude, longitude} = data;
               setOrigin(data);
               setCurrentPossition(data);
-              console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
             } else {
               console.log('No data available for this ID.');
             }
@@ -255,7 +260,6 @@ const TrackingScreen = ({route}) => {
     let timeInMinutes = Math.round(timeInSeconds / 60);
     if (timeInMinutes % 5 !== 0) {
       timeInMinutes = Math.ceil(timeInMinutes / 5) * 5;
-      console.log('🚀 ~ calculateTravelTime ~ timeInMinutes:', timeInMinutes);
     }
     setTime(timeInMinutes);
     return timeInMinutes;
@@ -264,7 +268,7 @@ const TrackingScreen = ({route}) => {
   const updateLocationInFirebase = async (latitude, longitude) => {
     try {
       await database()
-        .ref(`/locations/${data?.rider?.id}/${'riderTracking'}`)
+        .ref(`/locations/${rider_data?.rider?.id}/${'riderTracking'}`)
         .update({latitude, longitude});
       console.log('Location updated in Firebase!');
     } catch (error) {
@@ -305,8 +309,6 @@ const TrackingScreen = ({route}) => {
       try {
         const currentLocation = await getCurrentLocation();
         const travelTime = calculateTravelTime();
-        console.log('Current Location:', currentLocation);
-        console.log('Remaining Time:', travelTime);
         setTime(travelTime);
         updateLocationInFirebase(
           currentLocation.latitude,
@@ -318,7 +320,6 @@ const TrackingScreen = ({route}) => {
       await new Promise(r => setTimeout(r, delay));
     }
   };
-  console.log(currentState, 'currentState');
 
   const _handleAppStateChange = nextAppState => {
     if (
@@ -392,12 +393,18 @@ const TrackingScreen = ({route}) => {
   const CancelRide = async () => {
     const currentTime = new Date();
     const elapsedMinutes = (currentTime - startTime) / 60000;
-
     if (elapsedMinutes <= 5) {
       Alert.alert(
         'Ride Cancelled',
         'You cancelled the ride within 5 minutes. No charges applied.',
-        () => navigationService.navigate('CenCalTaxi', {id: data?.id}),
+        [
+          {
+            text: 'Ok',
+            onPress: navigationService.navigate('CencalTexi', {id: data?.id}),
+            style: 'Ok',
+          },
+        ],
+        // () => navigationService.navigate('CenCalTaxi', {id: data?.id}),
       );
     } else {
       const cancellationFee = data?.carinfo?.price * 0.1;
@@ -406,7 +413,13 @@ const TrackingScreen = ({route}) => {
         `You cancelled the ride after 5 minutes. A fee of $${cancellationFee.toFixed(
           2,
         )} will be charged.`,
-        () => navigationService.navigate('CenCalTaxi', {id: data?.id}),
+        [
+          {
+            text: 'Ok',
+            onPress: navigationService.navigate('CencalTexi', {id: data?.id}),
+            style: 'Ok',
+          },
+        ],
       );
     }
   };
@@ -414,7 +427,6 @@ const TrackingScreen = ({route}) => {
   const RiderArrived = async () => {
     const url = `auth/rider-arrived/${ride_id}`;
     const reponse = await Post(url, {}, apiHeader(token));
-    console.log('🚀 ~ RiderArrived ~ reponsessss:', reponse?.data);
   };
 
   return (
@@ -558,15 +570,22 @@ const TrackingScreen = ({route}) => {
       ) : (
         <Loader />
       )}
-      <View style={[styles.card_main_view]}>
+      <View
+        style={[
+          styles.card_main_view,
+          {
+            height:
+              user_type === 'Rider' ? windowHeight * 0.5 : windowHeight * 0.45,
+          },
+        ]}>
         <View style={styles.image_view}>
           <CustomImage
             source={
               {
                 uri:
                   user_type === 'Rider'
-                    ? baseUrl + data?.user?.photo
-                    : baseUrl + data?.rider?.photo,
+                    ? baseUrl + rider_data?.photo
+                    : baseUrl + rider_data?.photo,
               } || require('../Assets/Images/no_user_image.png')
             }
             style={{
@@ -585,7 +604,7 @@ const TrackingScreen = ({route}) => {
             }}>
             {user_type === 'Rider'
               ? data?.user?.name
-              : data?.rider?.name || 'Test User'}
+              : rider_data?.name || 'Test User'}
           </CustomText>
           {user_type === 'Customer' && (
             <Rating
@@ -600,7 +619,7 @@ const TrackingScreen = ({route}) => {
           <View style={[styles.btn_view]}>
             <TouchableOpacity
               onPress={() => {
-                Linking.openURL(`tel:${data?.rider?.phone}`);
+                Linking.openURL(`tel:${rider_data?.phone}`);
               }}
               style={styles.btn_sub_view}>
               <Icon
@@ -975,11 +994,10 @@ const styles = StyleSheet.create({
   },
   card_main_view: {
     width: windowWidth,
-    height: windowHeight * 0.45,
+    height: windowHeight * 0.5,
     position: 'absolute',
     bottom: 0,
     zIndex: 1,
-    // borderRadius: moderateScale(40, 0.6),
     borderTopLeftRadius: moderateScale(40, 0.6),
     borderTopRightRadius: moderateScale(40, 0.6),
     justifyContent: 'flex-start',

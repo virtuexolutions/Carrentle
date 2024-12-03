@@ -42,7 +42,7 @@ const LoginScreen = props => {
   const {UserLogin} = authAction();
   const token = useSelector(state => state.authReducer.token);
   const [device_token, setDeviceToken] = useState(null);
-  console.log("🚀 ~ LoginScreen ~ device_token:", device_token)
+  console.log('🚀 ~ LoginScreen ~ device_token:', device_token);
   const fcmToken = useSelector(state => state.authReducer.fcmToken);
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const LoginScreen = props => {
       password: password,
       device_token: device_token,
     };
-    console.log("🚀 ~ onpressSubmit ~ body:", body)
+    console.log('🚀 ~ onpressSubmit ~ body:', body);
     setLoading(true);
     for (let key in body) {
       if (body[key] == '') {
@@ -123,7 +123,7 @@ const LoginScreen = props => {
                 marginTop: moderateScale(20, 0.3),
               }}>
               <TextInputWithTitle
-                iconHeigth={windowHeight * 0.00005}
+                iconHeigth={windowHeight * 1}
                 iconName={'user'}
                 iconType={FontAwesome}
                 LeftIcon={true}
@@ -143,6 +143,27 @@ const LoginScreen = props => {
                 placeholderColor={Color.lightGrey}
               />
               <TextInputWithTitle
+                iconHeigth={windowHeight * 1}
+                iconName={'key'}
+                iconType={FontAwesome5}
+                LeftIcon={true}
+                titleText={'Password'}
+                placeholder={'Password'}
+                setText={setPassword}
+                value={password}
+                viewHeight={0.06}
+                viewWidth={0.85}
+                secureText={true}
+                inputWidth={0.55}
+                borderBottomWidth={1}
+                borderRadius={moderateScale(30, 0.3)}
+                backgroundColor={'transparent'}
+                borderColor={Color.black}
+                marginTop={moderateScale(30, 0.3)}
+                color={Color.white}
+                // placeholderColor={Color.white}
+              />
+              {/* <TextInputWithTitle
                 iconHeigth={windowHeight * 0.00005}
                 iconName={'key'}
                 iconType={FontAwesome5}
@@ -160,8 +181,8 @@ const LoginScreen = props => {
                 backgroundColor={'transparent'}
                 marginTop={moderateScale(30, 0.3)}
                 color={Color.white}
-                placeholderColor={Color.lightGrey}
-              />
+                placeholderColor={Color.white}
+              /> */}
               <TouchableOpacity
                 onPress={() => navigation.navigate('VerifyEmail')}
                 activeOpacity={0.6}
