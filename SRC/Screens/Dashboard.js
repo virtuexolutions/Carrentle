@@ -265,7 +265,6 @@ const DashBoard = () => {
           />
         ) : (
           <FlatList
-            style={{width: windowWidth, height: windowHeight}}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={() => (
               <CustomText style={{color: 'red', textAlign: 'center'}}>

@@ -42,7 +42,10 @@ const BoardingPointScreen = ({navigation, route}) => {
   const userData = useSelector(state => state.commonReducer.userData);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pickupLocation, setPickUpLocation] = useState({});
-  console.log('🚀 ~ BoardingPointScreen ~ pickupLocation:', pickupLocation);
+  console.log(
+    '🚀 ~ BoardingPointScreen ~ pickupLocation:',
+    pickupLocation?.name,
+  );
   const [dropOffLocation, setDropOffLocation] = useState({});
   const [locationType, setLocationType] = useState('pickup');
   const [isYourLocation, setIsyourLocation] = useState(null);
@@ -179,7 +182,7 @@ const BoardingPointScreen = ({navigation, route}) => {
         if (results && results.length > 0) {
           for (const component of results[0].address_components) {
             if (component.types.includes('locality')) {
-              setPickupCityName(component.long_name);
+              setPickupCityName(results[0]?.plus_code?.compound_code);
             }
           }
         }
@@ -423,11 +426,15 @@ const BoardingPointScreen = ({navigation, route}) => {
                   width: windowWidth * 0.6,
                   // backgroundColor : 'red'
                 }}>
-                {Object.keys(pickupLocation).length > 0
+                {pickupLocation?.name
+                  ? pickupLocation?.name
+                  : (isYourLocation && ' Your Live Location') ||
+                    'Choose Pickup Location'}
+                {/* {Object.keys(pickupLocation).length > 0
                   ? pickupLocation?.name || isYourLocation
-                    ? 'Your Live Location'
+                    ? 'Pick Location'
                     : 'Choose Pickup Location'
-                  : 'Pick Location'}
+                  : 'Pick Location'} */}
               </CustomText>
               <Icon
                 as={AntDesign}

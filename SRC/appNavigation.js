@@ -1,61 +1,58 @@
-import React, {useEffect, useState} from 'react';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import navigationService from './navigationService';
+import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {
-  BottomTabBar,
-  createBottomTabNavigator,
-} from '@react-navigation/bottom-tabs';
-import Signup from './Screens/Signup';
+import navigationService from './navigationService';
 import LoginScreen from './Screens/LoginScreen';
-
-import Settings from './Screens/Settings';
-import Color from './Assets/Utilities/Color';
-import {moderateScale} from 'react-native-size-matters';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {Icon} from 'native-base';
-import LinearGradient from 'react-native-linear-gradient';
-import {Alert, View} from 'react-native';
-import {apiHeader, windowHeight} from './Utillity/utils';
-import Profile from './Screens/Profile';
-import PrivacyPolicy from './Screens/PrivacyPolicy';
-import TermsAndConditions from './Screens/TermsAndConditions';
-import WalkThroughScreen from './Screens/WalkthroughScreen';
-import Feather from 'react-native-vector-icons/Feather';
-import HomeScreen from './Screens/HomeScreen';
-import PaymentScreen from './Screens/PaymentScreen';
+import Signup from './Screens/Signup';
+import {Pusher} from '@pusher/pusher-websocket-react-native';
+import Geolocation from '@react-native-community/geolocation';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import Drawer from './Drawer/Drawer';
-import MessagesScreen from './Screens/MessagesScreen';
-import BoardingPointScreen from './Screens/BoardingPointScreen';
-import RideBookingScreen2 from './Screens/RideBookingScreen2';
-import RideBookingScreen from './Screens/RideBokkingScreen';
-import RideAcceptance from './Screens/RideAcceptance';
-import BoardingPointDetails from './Screens/BoardingPointDetails';
-import TaxiAvailability from './Screens/TaxiAvailability';
-import BoardingPointSearchScreen from './Screens/BoardingPointSearchScreen';
-import Start from './Screens/Start';
-import MyWallet from './Screens/MyWallet';
-import EditProfile from './Screens/EditProfile';
-import Help from './Screens/Help';
-import MyJourneys from './Screens/MyJourneys';
-import PaymentHistory from './Screens/PaymentHistory';
-import MyTrips from './Screens/MyTrips';
-import BookingRequest from './Screens/BookingRequest';
-import CencalTexi from './Screens/CancelTaxi';
-import DashBoard from './Screens/Dashboard';
-import ResetPassword from './Screens/ResetPassword';
-import VerifyNumber from './Screens/VerifyNumber';
-import VerifyEmail from './Screens/VerifyEmail';
-import Notifications from './Screens/Notifications';
-import WaitingScreen from './Screens/WaitingScreen';
+import {Icon} from 'native-base';
+import {View} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import {moderateScale} from 'react-native-size-matters';
+import Feather from 'react-native-vector-icons/Feather';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Color from './Assets/Utilities/Color';
 import {Get, Post} from './Axios/AxiosInterceptorFunction';
 import AcceptRideModal from './Components/AcceptRideModal';
-import TrackingScreen from './Screens/TrackingScreen';
-import Geolocation from '@react-native-community/geolocation';
+import Drawer from './Drawer/Drawer';
+import BoardingPointDetails from './Screens/BoardingPointDetails';
+import BoardingPointScreen from './Screens/BoardingPointScreen';
+import BoardingPointSearchScreen from './Screens/BoardingPointSearchScreen';
+import BookingRequest from './Screens/BookingRequest';
 import CabTracking from './Screens/CabTracking';
+import CencalTexi from './Screens/CancelTaxi';
+import DashBoard from './Screens/Dashboard';
+import EditProfile from './Screens/EditProfile';
+import Help from './Screens/Help';
+import HomeScreen from './Screens/HomeScreen';
+import MessagesScreen from './Screens/MessagesScreen';
+import MyJourneys from './Screens/MyJourneys';
+import MyTrips from './Screens/MyTrips';
+import MyWallet from './Screens/MyWallet';
+import Notifications from './Screens/Notifications';
+import PaymentHistory from './Screens/PaymentHistory';
+import PaymentScreen from './Screens/PaymentScreen';
+import PrivacyPolicy from './Screens/PrivacyPolicy';
+import Profile from './Screens/Profile';
+import ResetPassword from './Screens/ResetPassword';
+import RideAcceptance from './Screens/RideAcceptance';
+import RideBookingScreen from './Screens/RideBokkingScreen';
+import RideBookingScreen2 from './Screens/RideBookingScreen2';
+import Settings from './Screens/Settings';
+import Start from './Screens/Start';
+import TaxiAvailability from './Screens/TaxiAvailability';
+import TermsAndConditions from './Screens/TermsAndConditions';
+import TrackingScreen from './Screens/TrackingScreen';
+import VerifyEmail from './Screens/VerifyEmail';
+import VerifyNumber from './Screens/VerifyNumber';
+import WaitingScreen from './Screens/WaitingScreen';
+import WalkThroughScreen from './Screens/WalkthroughScreen';
+import {apiHeader, windowHeight} from './Utillity/utils';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -179,7 +176,6 @@ export const TabNavigation = () => {
           let color = Color.theme2;
           let size = moderateScale(20, 0.3);
           let type = Ionicons;
-
           // if (route.name === 'HomeScreen') {
           //   iconName = focused ? 'home' : 'home-outline';
           //   color = focused ? Color.theme2 : Color.white;
@@ -252,36 +248,136 @@ export const MyDrawer = () => {
   const {user_type} = useSelector(state => state.authReducer);
   const firstScreen = user_type === 'Rider' ? 'DashBoard' : 'HomeScreen';
   const token = useSelector(state => state.authReducer.token);
+  console.log('🚀 ~ MyDrawer ~ token:', token);
   const [modalvisible, setModalVisible] = useState(false);
   const [latestRide, setlatestRide] = useState(null);
+  console.log('🚀 ~ MyDrawer ~ latestRide:', latestRide);
   const [data, setData] = useState(null);
   const [hasShownModal, setHasShownModal] = useState(false);
   const [currentPossition, setcurrentPossition] = useState({});
+  const pusher = Pusher.getInstance();
+  let myChannel = null;
+  const userData = useSelector(state => state.commonReducer?.userData);
+  console.log('🚀 ~ MyDrawer ~ userData:', userData?.id);
 
   const [status, setstatus] = useState('');
 
+  // useEffect(() => {
+  //   if (user_type === 'Rider') {
+  //     console.log('pusher chl rha h');
+  //     async function connectPusher() {
+  //       try {
+  //         await pusher.init({
+  //           apiKey: '2cbabf5fca8e6316ecfe',
+  //           cluster: 'ap2',
+  //         });
+  //         myChannel = await pusher.subscribe({
+  //           channelName: `rider-channel-${userData?.id}`,
+  //           onSubscriptionSucceeded: channelName => {
+  //             console.log(
+  //               `Subscribed to ${JSON.stringify(channelName, null, 2)}`,
+  //             );
+  //           },
+  //           onEvent: event => {
+  //             console.log('on event me a rha ha');
+  //             console.log('Got channel event:', event.data);
+  //             const dataString = JSON.parse(event.data);
+  //             if (event.data) {
+  //               setlatestRide(dataString?.ride_info);
+  //               setModalVisible(true);
+  //             }
+  //             console.log('🚀 ~ connectPusher ~ dataString:', dataString);
+  //           },
+  //         });
+  //         await pusher.connect();
+  //         console.log('hello from pusher');
+  //       } catch (e) {
+  //         console.log(`ERROR: ${e}`);
+  //       }
+  //     }
+  //     connectPusher();
+  //     return async () => {
+  //       await pusher.unsubscribe({
+  //         channelName: `rider-channel-${userData?.id}`,
+  //       });
+  //     };
+  //   }
+  // }, []);
+
+  // useEffect(() => {
+  //   if (user_type === 'Rider') {
+  //     const interval = setInterval(() => {
+  //       if (!hasShownModal) {
+  //         getRideHistory();
+  //       }
+  //     }, 5000);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [hasShownModal]);
   useEffect(() => {
     if (user_type === 'Rider') {
-      const interval = setInterval(() => {
-        if (!hasShownModal) {
-          getRideHistory();
-        }
-      }, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [hasShownModal]);
+      console.log('Pusher initializing...');
+      async function connectPusher() {
+        try {
+          console.log('trryyyy me aya ha');
+          await pusher.init({
+            apiKey: '2cbabf5fca8e6316ecfe',
+            cluster: 'ap2',
+          });
+          const channelName = `rider-channel-${userData?.id}`;
+          myChannel = await pusher.subscribe({
+            channelName,
+            onSubscriptionSucceeded: () => {
+              console.log(`Subscribed to ${channelName}`);
+            },
+            onEvent: event => {
+              console.log('on event me aya ha');
+              console.log('Received event:', event.data);
+              try {
+                const dataString = JSON.parse(event.data);
+                if (dataString) {
+                  setlatestRide(dataString?.ride_info);
+                  setModalVisible(true);
+                }
+              } catch (error) {
+                console.error('Error parsing event data:', error);
+              }
+            },
+          });
 
-  const getRideHistory = async type => {
-    const url = `auth/rider/assign-ride`;
-    const response = await Get(url, token);
-    if (response?.data?.ride_info != null) {
-      setlatestRide(response?.data?.ride_info);
-      if (hasShownModal != true) {
-        setModalVisible(true);
-        setHasShownModal(true);
+          await pusher.connect();
+        } catch (error) {
+          console.error('Pusher connection error:', error);
+        }
       }
+      connectPusher();
+
+      return async () => {
+        if (myChannel) {
+          try {
+            await pusher.unsubscribe({
+              channelName: `rider-channel-${userData?.id}`,
+            });
+          } catch (error) {
+            console.error('Error during unsubscription:', error);
+          }
+        }
+      };
     }
-  };
+  }, []);
+
+  // const getRideHistory = async type => {
+  //   const url = `auth/rider/assign-ride`;
+  //   const response = await Get(url, token);
+  //   console.log('🚀 ~ getRideHistory ~ response:', response?.data);
+  //   // if (response?.data?.ride_info != null) {
+  //   //   setlatestRide(response?.data?.ride_info);
+  //   //   if (hasShownModal != true) {
+  //   //     setModalVisible(true);
+  //   //     setHasShownModal(true);
+  //   //   }
+  //   // }
+  // };
 
   useEffect(() => {
     getCurrentLocation();
@@ -323,6 +419,7 @@ export const MyDrawer = () => {
     };
     const url = `auth/rider/ride_update/${latestRide?.id}`;
     const response = await Post(url, body, apiHeader(token));
+    console.log('🚀 ~ onpressAccept ~ response:', response?.data);
     if (response?.data?.ride_info?.status === 'accept') {
       setHasShownModal(true);
       setModalVisible(false);
@@ -330,6 +427,7 @@ export const MyDrawer = () => {
       navigationService.navigate('TrackingScreen', {
         data: latestRide,
         rider_data: response?.data?.ride_info?.rider,
+        ride_id: response?.data?.ride_info?.id,
       });
     } else {
       setHasShownModal(false);

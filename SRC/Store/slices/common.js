@@ -52,7 +52,6 @@ const CommonSlice = createSlice({
     setSelectedRole(state, action) {
       state.selectedRole = action.payload;
     },
-
     AddToCart(state, action) {
       const itemId = action.payload.id;
       console.log('🚀 ~ AddToCart ~ action.payload:', action.payload);
@@ -237,6 +236,7 @@ export const {
   deleteService,
   deleteProducts,
   Order,
+  setRideData
 } = CommonSlice.actions;
 
 export default CommonSlice.reducer;

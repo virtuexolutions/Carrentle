@@ -17,20 +17,21 @@ import CustomButton from '../Components/CustomButton';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import CustomImage from '../Components/CustomImage';
 import navigationService from '../navigationService';
-import {Get} from '../Axios/AxiosInterceptorFunction';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
 import {useSelector} from 'react-redux';
 import Loader from '../Components/Loader';
 
 const CencalTexi = ({route}) => {
-  // const {id} = route.params;
-  const id = null;
+  const {id} = route.params;
   const [groupValue, setGroupValue] = useState('');
   console.log('🚀 ~ CencalTexi ~ groupValue:', groupValue);
 
   const [modal_visibe, setisModal_visible] = useState(false);
   const [reason, setReason] = useState('');
   const token = useSelector(state => state.authReducer.token);
+  console.log('🚀 ~ CencalTexi ~ token:', token);
   const [loading, setLoading] = useState(false);
+  const [rideloading, setRideloading] = useState(false);
 
   const reason_array = [
     {
@@ -60,10 +61,14 @@ const CencalTexi = ({route}) => {
       status: 'cancel',
       reason: groupValue,
     };
+    setRideloading(true);
     const url = `auth/rider/ride_update/${id}`;
     const response = await Post(url, body, apiHeader(token));
     if (response?.data?.ride_info?.status === 'cancel') {
+      setRideloading(false);
       setisModal_visible(true);
+    } else {
+      setRideloading(false);
     }
   };
 
@@ -87,18 +92,18 @@ const CencalTexi = ({route}) => {
       <Header
         showBack={true}
         headerColor={['white', 'white']}
-        title={'Booking Request'}
+        title={'Cancel Ride'}
       />
       <View style={styles.main_view}>
-        <CustomText style={styles.text}>
-          Please Select the Reason For Cancellation
-        </CustomText>
         {loading ? (
           <View style={{width: windowWidth}}>
             <Loader style={{alignSelf: 'center'}} />
           </View>
         ) : (
           <>
+            <CustomText style={styles.text}>
+              Please Select the Reason For Cancellation
+            </CustomText>
             <FlatList
               data={reason}
               keyExtractor={item => item.id}
@@ -112,17 +117,17 @@ const CencalTexi = ({route}) => {
                         marginTop: moderateScale(20, 0.6),
                       }}>
                       <TouchableOpacity
-                        onPress={() => setGroupValue(item?.description)}
+                        onPress={() => setGroupValue(item?.id)}
                         style={[
                           styles.checked,
                           {
                             backgroundColor:
-                              groupValue === item?.text
+                              item?.id === groupValue
                                 ? Color.blue
                                 : Color.white,
                           },
                         ]}>
-                        {groupValue === item?.description && (
+                        {item?.id === groupValue && (
                           <Icon
                             name="check"
                             size={3}
@@ -161,7 +166,7 @@ const CencalTexi = ({route}) => {
         )}
         <View
           style={{
-            height: windowHeight * 0.35,
+            height: windowHeight * 0.45,
             width: windowWidth * 0.9,
             alignItems: 'center',
             justifyContent: 'flex-end',
@@ -169,7 +174,7 @@ const CencalTexi = ({route}) => {
           <CustomButton
             text={'cancel ride'}
             textColor={Color.white}
-            width={windowWidth * 0.7}
+            width={windowWidth * 0.9}
             height={windowHeight * 0.06}
             bgColor={Color.cartheme}
             borderColor={Color.white}
@@ -177,6 +182,7 @@ const CencalTexi = ({route}) => {
             borderRadius={moderateScale(30, 0.3)}
             isGradient
             onPress={() => onPressCancleRide()}
+            loader={rideloading}
           />
         </View>
       </View>

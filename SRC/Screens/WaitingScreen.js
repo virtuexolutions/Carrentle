@@ -13,6 +13,7 @@ import CustomText from '../Components/CustomText';
 import {Get} from '../Axios/AxiosInterceptorFunction';
 import AcceptRideModal from '../Components/AcceptRideModal';
 import MapViewDirections from 'react-native-maps-directions';
+import {Pusher} from '@pusher/pusher-websocket-react-native';
 
 const WaitingScreen = ({route}) => {
   const {data, type} = route.params;
@@ -26,7 +27,82 @@ const WaitingScreen = ({route}) => {
   const [rideData, setRideData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [riderDate, setRiderDate] = useState(false);
-  const [isModalShown, setIsModalShown] = useState(false);
+  const pusher = Pusher.getInstance();
+  const intervalRef = useRef(null);
+  let myChannel = null;
+  const [eventData, setEventData] = useState(null);
+  console.log('🚀 ~ WaitingScreen ~ eventData:', eventData);
+
+  // const startInterval = () => {
+  //   if (!intervalRef.current) {
+  //     intervalRef.current = setInterval(() => {
+  //       getRiderInfo();
+  //     }, 5000);
+  //   }
+  // };
+
+  useEffect(() => {
+    console.log('useEffect runs');
+    async function connectPusher() {
+      try {
+        await pusher.init({
+          apiKey: '2cbabf5fca8e6316ecfe',
+          cluster: 'ap2',
+        });
+        myChannel = await pusher.subscribe({
+          channelName: `customer-channel${userData?.id}`,
+          onSubscriptionSucceeded: channelName => {
+            console.log(`And here are the channel members: ${myChannel}`);
+            console.log(
+              `Subscribed to ${JSON.stringify(channelName, null, 2)}`,
+            );
+          },
+          onEvent: event => {
+            userData?.id;
+            console.log('Got channel event:', event.data);
+            try {
+              const dataString = JSON.parse(event.data);
+              console.log('Parsed data:', dataString);
+              setEventData(dataString);
+              setModalVisible(true);
+            } catch (error) {
+              console.error('Error parsing event data:', error);
+            }
+          },
+        });
+        await pusher.connect();
+        console.log('hello from pusher');
+      } catch (e) {
+        console.log(`ERROR: ${e}`);
+      }
+    }
+    connectPusher();
+    return async () => {
+      await pusher.unsubscribe({
+        channelName: `customer-channel${userData?.id}`,
+      });
+    };
+  }, []);
+
+  const getRiderInfo = async () => {
+    try {
+      const url = `auth/ride/${data?.ride_id}`;
+
+      const response = await Get(url, token);
+
+      const newStatus = response?.data?.ride_info?.status;
+      const newRideData = response?.data?.ride_info;
+      const newRiderData = response?.data;
+
+      if (newStatus === 'OnTheWay') {
+        setRideData(newRideData);
+        setRiderDate(newRiderData);
+        setModalVisible(true);
+      }
+    } catch (error) {
+      console.error('Error fetching rider info:', error);
+    }
+  };
 
   useEffect(() => {
     if (type === 'fromBoardingPoints') {
@@ -38,31 +114,24 @@ const WaitingScreen = ({route}) => {
           pitchEnabled: false,
         });
       }
-      const interval = setInterval(() => getRiderInfo(), 10000);
-      return () => clearInterval(interval);
     }
   }, []);
 
-  const getRiderInfo = async () => {
-    try {
-      const url = `auth/ride/${data?.ride_id}`;
-      setLoading(true);
-      const response = await Get(url, token);
-      console.log(
-        '🚀 ~ getRiderInfosd ~ response:',
-        response?.data?.ride_info?.status,
-      );
-      setLoading(false);
-      if (response?.data?.ride_info?.status === 'OnTheWay') {
-        setRideData(response.data.ride_info);
-        setRiderDate(response.data);
-        setModalVisible(true);
-      }
-    } catch (error) {
-      setLoading(false);
-      console.error('Error fetching rider info:', error);
-    }
-  };
+  // const getRiderInfo = async () => {
+  //   try {
+  //     const url = `auth/ride/${data?.ride_id}`;
+  //     const response = await Get(url, token);
+  //     setLoading(false);
+  //     if (response?.data?.ride_info?.status === 'OnTheWay') {
+  //       setRideData(response.data.ride_info);
+  //       setRiderDate(response.data);
+  //       setModalVisible(true);
+  //     }
+  //   } catch (error) {
+  //     setLoading(false);
+  //     console.error('Error fetching rider info:', error);
+  //   }
+  // };
 
   const origin = {
     latitude: parseFloat(data?.currentLocationLatitude?.latitude) || 0,
