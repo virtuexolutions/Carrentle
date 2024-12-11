@@ -16,6 +16,8 @@ const initialState = {
   category: [],
   rideStart: false,
   rideData: {},
+  riderChannelName: null,
+  pusherInstance: null,
 };
 
 const CommonSlice = createSlice({
@@ -62,6 +64,16 @@ const CommonSlice = createSlice({
     RemoveToCart(state, action) {
       const itemId = action.payload.id;
       state.cart = state.cart.filter((item, index) => item.id !== itemId);
+    },
+    setRiderChannelName(state, action) {
+      state.riderChannelName = action.payload;
+    },
+    setPusherInstance(state, action) {
+      state.pusherInstance = action.payload;
+    },
+    resetPusher: (state) => {
+      state.pusherInstance = null;
+      state.channelName = null;
     },
 
     EmptyCart(State, action) {
@@ -236,7 +248,10 @@ export const {
   deleteService,
   deleteProducts,
   Order,
-  setRideData
+  setRideData,
+  setRiderChannelName,
+  setPusherInstance,
+  resetPusher
 } = CommonSlice.actions;
 
 export default CommonSlice.reducer;

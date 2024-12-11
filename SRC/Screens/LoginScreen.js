@@ -25,10 +25,15 @@ import ScreenBoiler from '../Components/ScreenBoiler';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import authAction from '../Store/auth-action';
 import {SetFCMToken, setUserToken} from '../Store/slices/auth-slice';
-import {setUserData} from '../Store/slices/common';
+import {
+  setPusherInstance,
+  setRiderChannelName,
+  setUserData,
+} from '../Store/slices/common';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import messaging from '@react-native-firebase/messaging';
 import {validateEmail} from '../Config';
+import {Pusher} from '@pusher/pusher-websocket-react-native';
 
 const LoginScreen = props => {
   const dispatch = useDispatch();
@@ -44,6 +49,8 @@ const LoginScreen = props => {
   const [device_token, setDeviceToken] = useState(null);
   console.log('🚀 ~ LoginScreen ~ device_token:', device_token);
   const fcmToken = useSelector(state => state.authReducer.fcmToken);
+  const {user_type} = useSelector(state => state.authReducer);
+  const pusher = Pusher.getInstance();
 
   useEffect(() => {
     console.log('i am here');
@@ -59,8 +66,8 @@ const LoginScreen = props => {
   const onpressSubmit = async () => {
     const url = 'login';
     const body = {
-      email: username,
-      password: password,
+      email: 'rider@gmail.com',
+      password: 12345678,
       device_token: device_token,
     };
     console.log('🚀 ~ onpressSubmit ~ body:', body);
@@ -73,13 +80,36 @@ const LoginScreen = props => {
       }
     }
     const response = await Post(url, body, apiHeader(token));
-    console.log('==============> l0gin ', response?.data);
     if (response != undefined) {
       setLoading(false);
-      navigation.navigate('MyDrawer');
-      console.log(response?.data, 'dataaaaaaaaa');
-      dispatch(setUserToken({token: response?.data?.token}));
+      // navigation.navigate('MyDrawer');
+      // dispatch(setUserToken({token: response?.data?.token}));
       dispatch(setUserData(response?.data?.user_info));
+      if (user_type === 'Rider' && response?.data?.user_info?.id) {
+        async function connectPusher() {
+          const channelName = `rider-channel-${response?.data?.user_info?.id}`;
+          try {
+            await pusher.init({
+              apiKey: '2cbabf5fca8e6316ecfe',
+              cluster: 'ap2',
+            });
+            myChannel = await pusher.subscribe({
+              channelName: channelName,
+              onSubscriptionSucceeded: channelName => {
+                dispatch(setRiderChannelName(channelName));
+                dispatch(setPusherInstance(pusher));
+              },
+              onSubscriptionError: error => {
+                console.log('data ------========== >', error);
+              },
+            });
+            await pusher.connect();
+          } catch (error) {
+            console.log(error, 'errrrrrror');
+          }
+        }
+        connectPusher();
+      }
       Platform.OS == 'android'
         ? ToastAndroid.show(`Login SuccessFully`, ToastAndroid.SHORT)
         : Alert.alert(`Login SuccessFully`);

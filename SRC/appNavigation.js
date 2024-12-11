@@ -1,7 +1,7 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useSelector} from 'react-redux';
 import navigationService from './navigationService';
 import LoginScreen from './Screens/LoginScreen';
@@ -248,136 +248,94 @@ export const MyDrawer = () => {
   const {user_type} = useSelector(state => state.authReducer);
   const firstScreen = user_type === 'Rider' ? 'DashBoard' : 'HomeScreen';
   const token = useSelector(state => state.authReducer.token);
-  console.log('🚀 ~ MyDrawer ~ token:', token);
   const [modalvisible, setModalVisible] = useState(false);
   const [latestRide, setlatestRide] = useState(null);
-  console.log('🚀 ~ MyDrawer ~ latestRide:', latestRide);
   const [data, setData] = useState(null);
   const [hasShownModal, setHasShownModal] = useState(false);
   const [currentPossition, setcurrentPossition] = useState({});
   const pusher = Pusher.getInstance();
   let myChannel = null;
   const userData = useSelector(state => state.commonReducer?.userData);
-  console.log('🚀 ~ MyDrawer ~ userData:', userData?.id);
 
   const [status, setstatus] = useState('');
+  const channelRef = useRef(null);
 
   // useEffect(() => {
-  //   if (user_type === 'Rider') {
-  //     console.log('pusher chl rha h');
-  //     async function connectPusher() {
-  //       try {
-  //         await pusher.init({
-  //           apiKey: '2cbabf5fca8e6316ecfe',
-  //           cluster: 'ap2',
-  //         });
-  //         myChannel = await pusher.subscribe({
-  //           channelName: `rider-channel-${userData?.id}`,
-  //           onSubscriptionSucceeded: channelName => {
-  //             console.log(
-  //               `Subscribed to ${JSON.stringify(channelName, null, 2)}`,
-  //             );
-  //           },
-  //           onEvent: event => {
-  //             console.log('on event me a rha ha');
-  //             console.log('Got channel event:', event.data);
-  //             const dataString = JSON.parse(event.data);
-  //             if (event.data) {
-  //               setlatestRide(dataString?.ride_info);
-  //               setModalVisible(true);
-  //             }
-  //             console.log('🚀 ~ connectPusher ~ dataString:', dataString);
-  //           },
-  //         });
-  //         await pusher.connect();
-  //         console.log('hello from pusher');
-  //       } catch (e) {
-  //         console.log(`ERROR: ${e}`);
-  //       }
-  //     }
-  //     connectPusher();
+  //   if (user_type === 'Rider' && userData?.id) {
+  //     const channelName = `rider-channel-${userData.id}`;
+
+  //     // async function connectPusher() {
+  //     //   try {
+  //     //     console.log('Initializing Pusher...');
+  //     //     console.log(
+  //     //       '🚀 ~ connectPusher ~ !pusher.isConnected:',
+  //     //       !pusher.isConnected,
+  //     //     );
+  //     //     if (!pusher.isConnected) {
+  //     //       await pusher.init({
+  //     //         apiKey: '2cbabf5fca8e6316ecfe',
+  //     //         cluster: 'ap2',
+  //     //       });
+  //     //       console.log('Pusher initialized');
+  //     //     } else {
+  //     //       console.log('Pusher already connected');
+  //     //     }
+
+  //     //     // Unsubscribe if already subscribed
+  //     //     if (channelRef.current) {
+  //     //       console.log('Unsubscribing from existing channel');
+  //     //       await pusher.unsubscribe({
+  //     //         channelName,
+  //     //       });
+  //     //     }
+
+  //     //     // Subscribe to the new channel
+  //     //     console.log('Subscribing to channel:', channelName);
+  //     //     channelRef.current = await pusher.subscribe({
+  //     //       channelName,
+  //     //       onSubscriptionSucceeded: channel => {
+  //     //         console.log(`Successfully subscribed to ${channel}`);
+  //     //       },
+  //     //       onEvent: event => {
+  //     //         console.log('Event received:', event.data);
+  //     //         try {
+  //     //           const data = JSON.parse(event.data);
+  //     //           if (data?.message?.ride_info) {
+  //     //             setlatestRide(data.message.ride_info);
+  //     //             setModalVisible(true);
+  //     //           }
+  //     //         } catch (error) {
+  //     //           console.error('Error parsing event data:', error);
+  //     //         }
+  //     //       },
+  //     //     });
+
+  //     //     // Connect Pusher
+  //     //     if (!pusher.isConnected) {
+  //     //       console.log('Connecting Pusher...');
+  //     //       await pusher.connect();
+  //     //     }
+  //     //   } catch (error) {
+  //     //     console.error('Pusher connection error:', error);
+  //     //   }
+  //     // }
+  //     // connectPusher();
+
   //     return async () => {
-  //       await pusher.unsubscribe({
-  //         channelName: `rider-channel-${userData?.id}`,
-  //       });
+  //       console.log('Cleaning up Pusher subscription...');
+  //       if (channelRef.current) {
+  //         try {
+  //           await pusher.unsubscribe({
+  //             channelName,
+  //           });
+  //           channelRef.current = null;
+  //         } catch (error) {
+  //           console.error('Error during unsubscription:', error);
+  //         }
+  //       }
   //     };
   //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   if (user_type === 'Rider') {
-  //     const interval = setInterval(() => {
-  //       if (!hasShownModal) {
-  //         getRideHistory();
-  //       }
-  //     }, 5000);
-  //     return () => clearInterval(interval);
-  //   }
-  // }, [hasShownModal]);
-  useEffect(() => {
-    if (user_type === 'Rider') {
-      console.log('Pusher initializing...');
-      async function connectPusher() {
-        try {
-          console.log('trryyyy me aya ha');
-          await pusher.init({
-            apiKey: '2cbabf5fca8e6316ecfe',
-            cluster: 'ap2',
-          });
-          const channelName = `rider-channel-${userData?.id}`;
-          myChannel = await pusher.subscribe({
-            channelName,
-            onSubscriptionSucceeded: () => {
-              console.log(`Subscribed to ${channelName}`);
-            },
-            onEvent: event => {
-              console.log('on event me aya ha');
-              console.log('Received event:', event.data);
-              try {
-                const dataString = JSON.parse(event.data);
-                if (dataString) {
-                  setlatestRide(dataString?.ride_info);
-                  setModalVisible(true);
-                }
-              } catch (error) {
-                console.error('Error parsing event data:', error);
-              }
-            },
-          });
-
-          await pusher.connect();
-        } catch (error) {
-          console.error('Pusher connection error:', error);
-        }
-      }
-      connectPusher();
-
-      return async () => {
-        if (myChannel) {
-          try {
-            await pusher.unsubscribe({
-              channelName: `rider-channel-${userData?.id}`,
-            });
-          } catch (error) {
-            console.error('Error during unsubscription:', error);
-          }
-        }
-      };
-    }
-  }, []);
-
-  // const getRideHistory = async type => {
-  //   const url = `auth/rider/assign-ride`;
-  //   const response = await Get(url, token);
-  //   console.log('🚀 ~ getRideHistory ~ response:', response?.data);
-  //   // if (response?.data?.ride_info != null) {
-  //   //   setlatestRide(response?.data?.ride_info);
-  //   //   if (hasShownModal != true) {
-  //   //     setModalVisible(true);
-  //   //     setHasShownModal(true);
-  //   //   }
-  //   // }
-  // };
+  // }, [user_type, userData?.id]);
 
   useEffect(() => {
     getCurrentLocation();

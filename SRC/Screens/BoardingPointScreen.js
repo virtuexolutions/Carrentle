@@ -42,10 +42,7 @@ const BoardingPointScreen = ({navigation, route}) => {
   const userData = useSelector(state => state.commonReducer.userData);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pickupLocation, setPickUpLocation] = useState({});
-  console.log(
-    '🚀 ~ BoardingPointScreen ~ pickupLocation:',
-    pickupLocation?.name,
-  );
+  console.log('🚀 ~ BoardingPointScreen ~ pickupLocation:', pickupLocation);
   const [dropOffLocation, setDropOffLocation] = useState({});
   const [locationType, setLocationType] = useState('pickup');
   const [isYourLocation, setIsyourLocation] = useState(null);
@@ -93,6 +90,7 @@ const BoardingPointScreen = ({navigation, route}) => {
       ? currentPossition?.longitude
       : Number(pickupLocation?.lng),
   };
+  console.log('🚀 ~ BoardingPointScreen ~ origin:', origin);
   const destinations = {
     latitude: dropOffLocation?.lat || null,
     longitude: dropOffLocation?.lng || null,
@@ -217,10 +215,7 @@ const BoardingPointScreen = ({navigation, route}) => {
       distance: distance,
       amount: fare,
       car_id: carData?.id,
-      date:
-        date === 'BFL'
-          ? moment(bookdate).format('DD-MM-YYYY')
-          : moment(date).format('DD-MM-YYYY'),
+      date: moment(new Date()).format('DD-MM-YYYY'),
       cityFrom: pickupCityName,
       cityTo: DropoffCityName,
     };
@@ -236,6 +231,10 @@ const BoardingPointScreen = ({navigation, route}) => {
     setLoading(true);
     const url = 'auth/bookride';
     const response = await Post(url, data, apiHeader(token));
+    console.log(
+      '🚀 ~ onPressProceed ~ response?.data?.data:',
+      response?.data?.data,
+    );
     if (response?.data?.data != null) {
       const paramsData = {
         currentLocationLatitude: currentPossition,
@@ -503,6 +502,7 @@ const BoardingPointScreen = ({navigation, route}) => {
           </View>
         </View>
       </View>
+
       {Object.keys(currentPossition).length > 0 ? (
         <MapView
           provider={PROVIDER_GOOGLE}

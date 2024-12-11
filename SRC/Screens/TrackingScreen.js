@@ -37,10 +37,13 @@ import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Loader from '../Components/Loader';
 import {customMapStyle} from '../Utillity/mapstyle';
 import navigationService from '../navigationService';
+import {Pusher} from '@pusher/pusher-websocket-react-native';
 
 const TrackingScreen = ({route}) => {
   const focused = useIsFocused();
   const {data, rider_data, description, ride_id} = route.params;
+  console.log('🚀 ~ TrackingScreen ~ rider_data:', rider_data);
+  console.log('🚀 ~ TrackingScreen ~ data:', data);
   console.log('🚀 ~ TrackingScreen ~ ride_id:', ride_id);
   const navigation = useNavigation();
   const currentPossitionRef = useRef(currentPossition);
@@ -51,14 +54,14 @@ const TrackingScreen = ({route}) => {
   const user_type = useSelector(state => state.authReducer.user_type);
   const [currentPossition, setCurrentPossition] = useState({});
   const [time, setTime] = useState(0);
+  console.log('🚀 ~ TrackingScreen ~ time:', time);
   const [startRide, setStartRide] = useState(false);
   const [RiderRideComplete, setRiderRideComplete] = useState(false);
   const [showCancelRide, setshowCancelRide] = useState(false);
   const [reviewModalVisible, setReviewModalVisible] = useState(true);
 
-  const latitude = parseFloat(rider_data?.lat) || 0;
-  console.log('🚀 ~ TrackingScreen ~ rider_data:', rider_data);
-  const longitude = parseFloat(rider_data?.lng) || 0;
+  const latitude = parseFloat(data?.rider?.lat) || 0;
+  const longitude = parseFloat(data?.rider?.lng) || 0;
 
   const [currentState, setCurrentState] = useState('active');
   const [isModalShown, setIsModalShown] = useState(false);
@@ -68,6 +71,9 @@ const TrackingScreen = ({route}) => {
     latitude: 0,
     longitude: 0,
   });
+  const pusher = Pusher.getInstance();
+  const channelRef = useRef(null);
+  console.log('🚀 ~ TrackingScreen ~ origin:', origin);
 
   const [destinations, setDestination] = useState({
     latitude: 0,
@@ -145,6 +151,33 @@ const TrackingScreen = ({route}) => {
 
   useEffect(() => {
     updateStatus('OnTheWay');
+    async function connectPusher() {
+      try {
+        await pusher.init({
+          apiKey: '2cbabf5fca8e6316ecfe',
+          cluster: 'ap2',
+        });
+        if (channelRef.current) {
+          await pusher.unsubscribe({
+            channelName: `update_location-${ride_id}`,
+          });
+          channelRef.current = await pusher.subscribe({
+            channelName: `update_location-${ride_id}`,
+            onSubscriptionSucceeded: channelName => {
+              console.log(`Subscribed to ${channelName}`);
+            },
+            onEvent: event => {
+              console.log('Received event:', event?.data);
+              const dataString = JSON.parse(event.data);
+              console.log('🚀 ~ connectPusher ~ dataString:', dataString);
+            },
+          });
+        }
+        await pusher.connect();
+      } catch (error) {
+        console.log('🚀 ~ connectPusher ~ error:', error);
+      }
+    }
   }, []);
 
   setTimeout(() => {
@@ -174,53 +207,7 @@ const TrackingScreen = ({route}) => {
           latitude,
           longitude,
         }));
-        // async function connectPusher() {
-        //   await pusher.init({
-        //     apiKey: '2cbabf5fca8e6316ecfe',
-        //     cluster: 'ap2',
-        //   });
-        //   myChannel = await pusher.subscribe({
-        //     channelName: `private-rider-channel-${userData?.id}`,
-        //     onSubscriptionSucceeded: channelName => {
-        //       console.log(`Subscribed to ${channelName}`);
-        //     },
-        //     onEvent: event => {
-        //       console.log('Received event:', event.data);
-        //       try {
-        //         const dataString = JSON.parse(event.data);
-        //         console.log('🚀 ~ connectPusher ~ dataString:', dataString);
-        //       } catch (error) {
-        //         console.error('Error parsing event data:', error);
-        //       }
-        //     },
-        //   });
-        //   await pusher.connect();
-        // }
-        // connectPusher();
-        // return async () => {
-        //   if (myChannel) {
-        //     await pusher.unsubscribe({
-        //       channelName: `rider-channel-${userData?.id}`,
-        //     });
-        //   }
-        // };
-        // database()
-        //   .ref(`/locations/${rider_data?.rider?.id}/${'riderTracking'}  `)
-        //   .once('value')
-        //   .then(snapshot => {
-        //     if (snapshot.exists()) {
-        //       const data = snapshot.val();
-        //       const {latitude, longitude} = data;
-        //       setOrigin(data);
-        //       setCurrentPossition(data);
-        //     } else {
-        //       console.log('No data available for this ID.');
-        //     }
-        //   })
-        //   .catch(error => {
-        //     console.error('Error fetching location from Firebase:', error);
-        //   });
-        // updateLocationInFirebase(latitude, longitude);
+        tracklocation(latitude, longitude);
         const isLocationClose = (lat1, lon1, lat2, lon2, threshold = 0.0001) =>
           Math.abs(lat1 - lat2) < threshold &&
           Math.abs(lon1 - lon2) < threshold;
@@ -266,6 +253,16 @@ const TrackingScreen = ({route}) => {
       clearInterval(interval);
     };
   }, [focused]);
+
+  const tracklocation = async ({latitude, longitude}) => {
+    const url = `auth/rider/ride_update/${ride_id}`;
+    const body = {
+      lat: latitude,
+      lng: longitude,
+    };
+    const response = await Post(url, body, apiHeader(token));
+    console.log('🚀 ~ tracklocation ~ response:', response?.data);
+  };
 
   useEffect(() => {
     if (
