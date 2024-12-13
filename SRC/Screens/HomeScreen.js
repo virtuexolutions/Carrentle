@@ -16,6 +16,8 @@ const HomeScreen = ({navigation}) => {
   const token = useSelector(state => state.authReducer.token);
   console.log('🚀 ~ HomeScreen ~ token:', token);
   const [cablist, setCabList] = useState(false);
+  // const pusherInstance = useSelector(state => state.socketReducer.pusherInstance);
+  // console.log("🚀 ~ HomeScreen ~ pusherInstance:", pusherInstance)
 
   useEffect(() => {
     if (token) {
@@ -32,6 +34,11 @@ const HomeScreen = ({navigation}) => {
       setCabList(reponse?.data?.data);
     }
   };
+
+  // console.log(
+  //   '🚀 ~ connectPusher ~ pusher.connectionState:',
+  //   pusherInstance.connectionState,
+  // );
 
   const dummyArray = [
     {

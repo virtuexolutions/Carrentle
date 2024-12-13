@@ -25,19 +25,23 @@ import ScreenBoiler from '../Components/ScreenBoiler';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import authAction from '../Store/auth-action';
 import {SetFCMToken, setUserToken} from '../Store/slices/auth-slice';
-import {
-  setPusherInstance,
-  setRiderChannelName,
-  setUserData,
-} from '../Store/slices/common';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import messaging from '@react-native-firebase/messaging';
 import {validateEmail} from '../Config';
 import {Pusher} from '@pusher/pusher-websocket-react-native';
+import {getPusherInstance} from '../Store/pusherService';
+import {
+  setPusherInstance,
+  setriderChannelName,
+  setUserChannelName,
+  setUserEventData,
+} from '../Store/slices/socket';
+import {setEventDataRider, setUserData} from '../Store/slices/common';
 
 const LoginScreen = props => {
   const dispatch = useDispatch();
   const [username, setUserName] = useState('');
+  console.log('🚀 ~ LoginScreen ~ username:', username);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [imagePicker, setImagePicker] = useState(false);
@@ -50,14 +54,13 @@ const LoginScreen = props => {
   console.log('🚀 ~ LoginScreen ~ device_token:', device_token);
   const fcmToken = useSelector(state => state.authReducer.fcmToken);
   const {user_type} = useSelector(state => state.authReducer);
-  const pusher = Pusher.getInstance();
+  console.log('🚀 ~ LoginScreen ~ user_type:', user_type);
 
   useEffect(() => {
     console.log('i am here');
     messaging()
       .getToken()
       .then(_token => {
-        console.log('sgjdsgdjasdgjagdjagjdgs', _token);
         setDeviceToken(_token);
         dispatch(SetFCMToken({fcmToken: _token}));
       });
@@ -66,8 +69,8 @@ const LoginScreen = props => {
   const onpressSubmit = async () => {
     const url = 'login';
     const body = {
-      email: 'rider@gmail.com',
-      password: 12345678,
+      email: username,
+      password: password,
       device_token: device_token,
     };
     console.log('🚀 ~ onpressSubmit ~ body:', body);
@@ -80,36 +83,62 @@ const LoginScreen = props => {
       }
     }
     const response = await Post(url, body, apiHeader(token));
+    console.log('🚀 ~ onpressSubmit ~ response:', response?.data);
     if (response != undefined) {
       setLoading(false);
       // navigation.navigate('MyDrawer');
-      // dispatch(setUserToken({token: response?.data?.token}));
+      dispatch(setUserToken({token: response?.data?.token}));
       dispatch(setUserData(response?.data?.user_info));
-      if (user_type === 'Rider' && response?.data?.user_info?.id) {
-        async function connectPusher() {
-          const channelName = `rider-channel-${response?.data?.user_info?.id}`;
-          try {
-            await pusher.init({
-              apiKey: '2cbabf5fca8e6316ecfe',
-              cluster: 'ap2',
-            });
-            myChannel = await pusher.subscribe({
-              channelName: channelName,
-              onSubscriptionSucceeded: channelName => {
-                dispatch(setRiderChannelName(channelName));
-                dispatch(setPusherInstance(pusher));
-              },
-              onSubscriptionError: error => {
-                console.log('data ------========== >', error);
-              },
-            });
-            await pusher.connect();
-          } catch (error) {
-            console.log(error, 'errrrrrror');
-          }
-        }
-        connectPusher();
-      }
+      // if (response?.data?.user_info?.id) {
+      //   async function connectPusher() {
+      //     const pusher = await getPusherInstance();
+      //     console.log('🚀 ~ LoginScreen ~ user_type:', user_type);
+      //     try {
+      //       let channelName = '';
+      //       if (user_type === 'Rider') {
+      //         channelName = `rider-channel-${response?.data?.user_info?.id}`;
+      //       } else {
+      //         channelName = `customer-channel-${response?.data?.user_info?.id}`;
+      //       }
+      //       console.log(`Subscribing to channel: ${channelName}`);
+      //       await pusher.connect();
+      //       const myChannel = await pusher.subscribe({
+      //         channelName,
+      //         onSubscriptionSucceeded: () => {
+      //           console.log('Successfully subscribed to:', channelName);
+      //           if (user_type === 'Rider') {
+      //             console.log('yahaa ha');
+      //             dispatch(setriderChannelName(channelName));
+      //           } else {
+      //             setUserChannelName(channelName);
+      //           }
+      //         },
+      //         onSubscriptionError: error => {
+      //           console.error('Subscription error:', error);
+      //         },
+      //         onEvent: event => {
+      //           console.log('Event received:', event.data);
+      //           try {
+      //             const data = JSON.parse(event.data);
+      //             if (user_type === 'Rider' && data?.message?.ride_info) {
+      //               dispatch(setEventDataRider(data.message.ride_info));
+      //             } else {
+      //               setUserEventData(data.message?.ride_info);
+      //             }
+      //           } catch (error) {
+      //             console.error('Error parsing event data:', error);
+      //           }
+      //         },
+      //       });
+
+      //       console.log('Subscription complete for channel:', channelName);
+      //     } catch (error) {
+      //       console.error('Error during Pusher connection:', error);
+      //     }
+      //   }
+
+      //   connectPusher();
+      // }
       Platform.OS == 'android'
         ? ToastAndroid.show(`Login SuccessFully`, ToastAndroid.SHORT)
         : Alert.alert(`Login SuccessFully`);

@@ -1,24 +1,21 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React, {useEffect, useRef, useState} from 'react';
-import {useSelector} from 'react-redux';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import navigationService from './navigationService';
 import LoginScreen from './Screens/LoginScreen';
 import Signup from './Screens/Signup';
-import {Pusher} from '@pusher/pusher-websocket-react-native';
-import Geolocation from '@react-native-community/geolocation';
-import {createDrawerNavigator} from '@react-navigation/drawer';
-import {Icon} from 'native-base';
-import {View} from 'react-native';
+import { Pusher } from '@pusher/pusher-websocket-react-native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { Icon } from 'native-base';
+import { AppState, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Color from './Assets/Utilities/Color';
-import {Get, Post} from './Axios/AxiosInterceptorFunction';
-import AcceptRideModal from './Components/AcceptRideModal';
 import Drawer from './Drawer/Drawer';
 import BoardingPointDetails from './Screens/BoardingPointDetails';
 import BoardingPointScreen from './Screens/BoardingPointScreen';
@@ -52,7 +49,7 @@ import VerifyEmail from './Screens/VerifyEmail';
 import VerifyNumber from './Screens/VerifyNumber';
 import WaitingScreen from './Screens/WaitingScreen';
 import WalkThroughScreen from './Screens/WalkthroughScreen';
-import {apiHeader, windowHeight} from './Utillity/utils';
+import { windowHeight } from './Utillity/utils';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -253,149 +250,19 @@ export const MyDrawer = () => {
   const [data, setData] = useState(null);
   const [hasShownModal, setHasShownModal] = useState(false);
   const [currentPossition, setcurrentPossition] = useState({});
-  const pusher = Pusher.getInstance();
   let myChannel = null;
   const userData = useSelector(state => state.commonReducer?.userData);
+  const [appState, setAppState] = useState(AppState.currentState);
+  console.log('🚀 ~ MyDrawer ~ appState:', appState);
+  const pusherInstance = Pusher.getInstance();
+
+  const riderChannelName = useSelector(
+    state => state.commonReducer.riderChannelName,
+  );
 
   const [status, setstatus] = useState('');
   const channelRef = useRef(null);
-
-  // useEffect(() => {
-  //   if (user_type === 'Rider' && userData?.id) {
-  //     const channelName = `rider-channel-${userData.id}`;
-
-  //     // async function connectPusher() {
-  //     //   try {
-  //     //     console.log('Initializing Pusher...');
-  //     //     console.log(
-  //     //       '🚀 ~ connectPusher ~ !pusher.isConnected:',
-  //     //       !pusher.isConnected,
-  //     //     );
-  //     //     if (!pusher.isConnected) {
-  //     //       await pusher.init({
-  //     //         apiKey: '2cbabf5fca8e6316ecfe',
-  //     //         cluster: 'ap2',
-  //     //       });
-  //     //       console.log('Pusher initialized');
-  //     //     } else {
-  //     //       console.log('Pusher already connected');
-  //     //     }
-
-  //     //     // Unsubscribe if already subscribed
-  //     //     if (channelRef.current) {
-  //     //       console.log('Unsubscribing from existing channel');
-  //     //       await pusher.unsubscribe({
-  //     //         channelName,
-  //     //       });
-  //     //     }
-
-  //     //     // Subscribe to the new channel
-  //     //     console.log('Subscribing to channel:', channelName);
-  //     //     channelRef.current = await pusher.subscribe({
-  //     //       channelName,
-  //     //       onSubscriptionSucceeded: channel => {
-  //     //         console.log(`Successfully subscribed to ${channel}`);
-  //     //       },
-  //     //       onEvent: event => {
-  //     //         console.log('Event received:', event.data);
-  //     //         try {
-  //     //           const data = JSON.parse(event.data);
-  //     //           if (data?.message?.ride_info) {
-  //     //             setlatestRide(data.message.ride_info);
-  //     //             setModalVisible(true);
-  //     //           }
-  //     //         } catch (error) {
-  //     //           console.error('Error parsing event data:', error);
-  //     //         }
-  //     //       },
-  //     //     });
-
-  //     //     // Connect Pusher
-  //     //     if (!pusher.isConnected) {
-  //     //       console.log('Connecting Pusher...');
-  //     //       await pusher.connect();
-  //     //     }
-  //     //   } catch (error) {
-  //     //     console.error('Pusher connection error:', error);
-  //     //   }
-  //     // }
-  //     // connectPusher();
-
-  //     return async () => {
-  //       console.log('Cleaning up Pusher subscription...');
-  //       if (channelRef.current) {
-  //         try {
-  //           await pusher.unsubscribe({
-  //             channelName,
-  //           });
-  //           channelRef.current = null;
-  //         } catch (error) {
-  //           console.error('Error during unsubscription:', error);
-  //         }
-  //       }
-  //     };
-  //   }
-  // }, [user_type, userData?.id]);
-
-  useEffect(() => {
-    getCurrentLocation();
-  }, []);
-
-  const getCurrentLocation = async () => {
-    try {
-      const position = await new Promise((resolve, reject) => {
-        Geolocation.getCurrentPosition(
-          position => {
-            const coords = {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            };
-            resolve(coords);
-          },
-          error => {
-            reject(new Error(error.message));
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 10000,
-          },
-        );
-      });
-      setcurrentPossition(position);
-    } catch (error) {
-      console.error('Error getting location:', error);
-      throw error;
-    }
-  };
-
-  const onpressAccept = async currentStatus => {
-    const body = {
-      lat: currentPossition?.latitude,
-      lng: currentPossition?.longitude,
-      status: currentStatus,
-    };
-    const url = `auth/rider/ride_update/${latestRide?.id}`;
-    const response = await Post(url, body, apiHeader(token));
-    console.log('🚀 ~ onpressAccept ~ response:', response?.data);
-    if (response?.data?.ride_info?.status === 'accept') {
-      setHasShownModal(true);
-      setModalVisible(false);
-      setData(response?.data?.ride_info);
-      navigationService.navigate('TrackingScreen', {
-        data: latestRide,
-        rider_data: response?.data?.ride_info?.rider,
-        ride_id: response?.data?.ride_info?.id,
-      });
-    } else {
-      setHasShownModal(false);
-    }
-    {
-      console.log('RejectRide');
-      setModalVisible(false);
-      setHasShownModal(true);
-    }
-  };
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -433,53 +300,6 @@ export const MyDrawer = () => {
         <DrawerNavigation.Screen name="MyWallet" component={MyWallet} />
         <DrawerNavigation.Screen name="MyJourneys" component={MyJourneys} />
       </DrawerNavigation.Navigator>
-      {modalvisible && (
-        <AcceptRideModal
-          username={latestRide?.user?.name}
-          image={'https://car-rental.cstmpanel.com' + latestRide?.user?.photo}
-          pickupLocation={latestRide?.location_to}
-          dropoffLocation={latestRide?.location_from}
-          distance={latestRide?.distance}
-          seats={latestRide?.carinfo?.seats}
-          CarNumber={latestRide?.carinfo?.no}
-          carName={latestRide?.carinfo?.name}
-          price={latestRide?.amount + ' $'}
-          visible={modalvisible}
-          isRider={true}
-          onpressClose={() => setModalVisible(false)}
-          onpressSeeLocation={() => {
-            navigationService.navigate('WaitingScreen', {
-              data: latestRide,
-              type: 'fromRequest',
-            });
-          }}
-          location={currentPossition}
-          rider_id={latestRide?.id}
-          onpressAccept={() => onpressAccept()}
-          status={status}
-          setstatus={setstatus}
-          AcceptRide={() => {
-            onpressAccept('accept');
-          }}
-          RejectRide={() => {
-            onpressAccept('reject');
-          }}
-          // AcceptRide={() => {
-          //   console.log('AcceptRide');
-          //   setHasShownModal(true);
-          //   navigationService.navigate('WaitingScreen', {
-          //     data: null,
-          //     type: 'fromRequest',
-          //   });
-          // }}
-          // RejectRide={() => {
-          //   console.log('RejectRide');
-
-          //   setModalVisible(false);
-          //   setHasShownModal(true);
-          // }}
-        />
-      )}
     </>
   );
 };

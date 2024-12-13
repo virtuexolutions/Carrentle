@@ -1,9 +1,9 @@
+import {Pusher} from '@pusher/pusher-websocket-react-native';
 import {useIsFocused} from '@react-navigation/native';
 import {Icon} from 'native-base';
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   ScrollView,
   StyleSheet,
@@ -14,7 +14,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {moderateScale} from 'react-native-size-matters';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import {Get} from '../Axios/AxiosInterceptorFunction';
 import CustomText from '../Components/CustomText';
@@ -22,8 +22,13 @@ import Header from '../Components/Header';
 import HistoryComponent from '../Components/HistoryComponent';
 import Loader from '../Components/Loader';
 import navigationService from '../navigationService';
+import {setEventDataRider} from '../Store/slices/common';
+import {
+  setIsSubscribed,
+  setPusherInstance,
+  setriderChannelName,
+} from '../Store/slices/socket';
 import {windowHeight, windowWidth} from '../Utillity/utils';
-import RiderArrivedModal from '../Components/RiderArrivedModal';
 
 const previous_trip_card = [
   {
@@ -68,23 +73,61 @@ const DashBoard = () => {
   const focused = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
   const userData = useSelector(state => state.commonReducer.userData);
+  // console.log("🚀 ~ DashBoard ~ userData11:", userData)
+  const isSubscribed = useSelector(state => state.socketReducer.isSubscribed);
+  console.log('🚀 ~ DashBoard ~ isSubscribed:', isSubscribed);
+
   const [history, setHistory] = useState();
   const [loading, setLoading] = useState(false);
   const [Transactionhistory, setTransactionHistory] = useState([]);
   const [loadMore, setLoadMore] = useState(false);
   const [pageNum, setPageNum] = useState(1);
   const [getMore, setGetMore] = useState(false);
-
-  // Alert.alert(
-  //   'Ride Cancelled',
-  //   'You cancelled the ride within 5 minutes. No charges applied.',
-  //   () => navigationService.navigate('CenCalTaxi', {id: data?.id}),
-  // );
+  const pusher = Pusher.getInstance();
+  console.log('🚀 ~ DashBoard ~ pusher:', pusher?.connectionState);
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    async function connectPusher() {
+      try {
+        // const channelName = `rider-channel-${userData?.id}`;
+        console.log(
+          `Subscribing to channel: ${`rider-channel-${userData?.id}`}`,
+        );
+        await pusher.init({
+          apiKey: '2cbabf5fca8e6316ecfe',
+          cluster: 'ap2',
+        });
+        myChannel = await pusher.subscribe({
+          channelName: `rider-channel-${userData?.id}`,
+          onSubscriptionSucceeded: (channelName, data) => {
+            console.log('Successfully subscribed to:', channelName);
+            dispatch(setriderChannelName(channelName));
+            dispatch(setIsSubscribed(true));
+          },
+          onSubscriptionError: error => {
+            console.error('Subscription error:', error);
+          },
+          onEvent: event => {
+            console.log('Event received:', event.data);
+            const data = JSON.parse(event.data);
+            dispatch(setEventDataRider(data.message.ride_info));
+          },
+        });
+        await pusher.connect();
+      } catch (error) {
+        console.error('Error during Pusher connection:', error);
+      }
+    }
+    if (!isSubscribed) {
+      connectPusher();
+    }
     if (token) {
       getPaymentHistory();
     }
+    // dispatch(setIsSubscribed(false))
+    // pusher.disconnect()
+    // pusher.unsubscribe( {channelName: `rider-channel-${userData?.id}`})
   }, [focused]);
 
   useEffect(() => {

@@ -38,10 +38,15 @@ import Loader from '../Components/Loader';
 import {customMapStyle} from '../Utillity/mapstyle';
 import navigationService from '../navigationService';
 import {Pusher} from '@pusher/pusher-websocket-react-native';
+import {getPusherInstance} from '../Store/pusherService';
 
 const TrackingScreen = ({route}) => {
   const focused = useIsFocused();
-  const {data, rider_data, description, ride_id} = route.params;
+  // const {data, rider_data, description, ride_id} = route.params;
+  const rider_data = null;
+  const description = null;
+  const ride_id = 572;
+  const data = null;
   console.log('🚀 ~ TrackingScreen ~ rider_data:', rider_data);
   console.log('🚀 ~ TrackingScreen ~ data:', data);
   console.log('🚀 ~ TrackingScreen ~ ride_id:', ride_id);
@@ -71,10 +76,9 @@ const TrackingScreen = ({route}) => {
     latitude: 0,
     longitude: 0,
   });
-  const pusher = Pusher.getInstance();
   const channelRef = useRef(null);
   console.log('🚀 ~ TrackingScreen ~ origin:', origin);
-
+  const pusher = Pusher.getInstance();
   const [destinations, setDestination] = useState({
     latitude: 0,
     longitude: 0,
@@ -150,35 +154,34 @@ const TrackingScreen = ({route}) => {
   };
 
   useEffect(() => {
-    updateStatus('OnTheWay');
     async function connectPusher() {
       try {
-        await pusher.init({
-          apiKey: '2cbabf5fca8e6316ecfe',
-          cluster: 'ap2',
-        });
-        if (channelRef.current) {
-          await pusher.unsubscribe({
-            channelName: `update_location-${ride_id}`,
-          });
-          channelRef.current = await pusher.subscribe({
-            channelName: `update_location-${ride_id}`,
-            onSubscriptionSucceeded: channelName => {
-              console.log(`Subscribed to ${channelName}`);
-            },
-            onEvent: event => {
-              console.log('Received event:', event?.data);
-              const dataString = JSON.parse(event.data);
-              console.log('🚀 ~ connectPusher ~ dataString:', dataString);
-            },
-          });
-        }
+        const channelName = `tracking${ride_id}`;
+        console.log(`Subscribing to channel: ${channelName}`);
         await pusher.connect();
+        myChannel = await pusher.subscribe({
+          channelName,
+          onSubscriptionSucceeded: () => {
+            console.log('Successfully subscribed to:', channelName);
+          },
+          onSubscriptionError: error => {
+            console.error('Subscription error:', error);
+          },
+          onEvent: event => {
+            console.log('Event received:', event.data);
+            const data = JSON.parse(event.data);
+            setCurrentPossition({
+            })
+          },
+        });
+        console.log('====================>', pusher.connectionState);
+        console.log('Subscription complete for channel:', channelName);
       } catch (error) {
-        console.log('🚀 ~ connectPusher ~ error:', error);
+        console.error('Error during Pusher connection:', error);
       }
     }
-  }, []);
+    connectPusher();
+  }, [focused]);
 
   setTimeout(() => {
     setshowCancelRide(false);
@@ -197,8 +200,7 @@ const TrackingScreen = ({route}) => {
     }
   };
 
-  useEffect(() => {
-    getCurrentLocation();
+  const watchPosition = () => {
     const watchId = Geolocation.watchPosition(
       position => {
         const {latitude, longitude} = position.coords;
@@ -219,14 +221,10 @@ const TrackingScreen = ({route}) => {
             origin.longitude,
           )
         ) {
-          setRiderRideComplete(true);
-          setStartRide(false);
-          updateStatus('Completed');
+          onCompleteRide();
         }
         if (latitude === origin?.latitude && longitude === origin?.longitude) {
-          setRiderRideComplete(true);
-          setStartRide(false);
-          updateStatus('Completed');
+          onCompleteRide();
         }
       },
       error => console.log('Error getting location:', error),
@@ -236,9 +234,7 @@ const TrackingScreen = ({route}) => {
         interval: 1000,
       },
     );
-
     const initialTime = calculateTravelTime();
-
     const interval = setInterval(() => {
       {
         startRide === true &&
@@ -247,11 +243,73 @@ const TrackingScreen = ({route}) => {
           });
       }
     }, 300000);
-
     return () => {
       Geolocation.clearWatch(watchId);
       clearInterval(interval);
     };
+  };
+
+  const onCompleteRide = async () => {
+    const pusher = await getPusherInstance();
+    const channelName = `update_location-${ride_id}`;
+    pusher.unsubscribe(channelName);
+    setRiderRideComplete(true);
+    setStartRide(false);
+    updateStatus('Completed');
+  };
+
+  useEffect(() => {
+    getCurrentLocation();
+    watchPosition();
+    // const watchId = Geolocation.watchPosition(
+    //   position => {
+    //     const {latitude, longitude} = position.coords;
+    //     setCurrentPossition(prevLocation => ({
+    //       ...prevLocation,
+    //       latitude,
+    //       longitude,
+    //     }));
+    //     tracklocation(latitude, longitude);
+    //     const isLocationClose = (lat1, lon1, lat2, lon2, threshold = 0.0001) =>
+    //       Math.abs(lat1 - lat2) < threshold &&
+    //       Math.abs(lon1 - lon2) < threshold;
+    //     if (
+    //       isLocationClose(
+    //         latitude,
+    //         origin.latitude,
+    //         longitude,
+    //         origin.longitude,
+    //       )
+    //     ) {
+    //       onCompleteRide();
+    //     }
+    //     if (latitude === origin?.latitude && longitude === origin?.longitude) {
+    //       onCompleteRide();
+    //     }
+    //   },
+    //   error => console.log('Error getting location:', error),
+    //   {
+    //     enableHighAccuracy: true,
+    //     distanceFilter: 1,
+    //     interval: 1000,
+    //   },
+    // );
+
+    // const initialTime = calculateTravelTime();
+
+    // const interval = setInterval(() => {
+    //   {
+    //     startRide === true &&
+    //       setTime(prevTime => {
+    //         return prevTime > 5 ? prevTime - 5 : 0;
+    //       });
+    //   }
+    // }, 300000);
+
+    // return () => {
+    //   Geolocation.clearWatch(watchId);
+    //   clearInterval(interval);
+    // };
   }, [focused]);
 
   const tracklocation = async ({latitude, longitude}) => {
@@ -323,17 +381,6 @@ const TrackingScreen = ({route}) => {
     return timeInMinutes;
   };
 
-  // const updateLocationInFirebase = async (latitude, longitude) => {
-  //   try {
-  //     await database()
-  //       .ref(`/locations/${rider_data?.rider?.id}/${'riderTracking'}`)
-  //       .update({latitude, longitude});
-  //     console.log('Location updated in Firebase!');
-  //   } catch (error) {
-  //     console.error('Error updating Firebase:', error);
-  //   }
-  // };
-
   const handleStartRide = () => {
     setRideStart(true);
     setStartRide(false);
@@ -344,23 +391,6 @@ const TrackingScreen = ({route}) => {
     });
   };
 
-  // useEffect(() => {
-  //   database()
-  //     .ref(`/locations/${data?.rider?.id}`)
-  //     .once('value')
-  //     .then(snapshot => {
-  //       if (snapshot.exists()) {
-  //         const locationData = snapshot.val();
-  //         setTrackingLocation(locationData);
-  //       } else {
-  //         console.log('No data available at this reference');
-  //       }
-  //     })
-  //     .catch(error =>
-  //       console.error('Error reading data from Firebase:', error),
-  //     );
-  // }, []);
-
   const trackLocationAndTime = async taskData => {
     const {delay} = taskData;
     while (BackgroundService.isRunning()) {
@@ -368,10 +398,7 @@ const TrackingScreen = ({route}) => {
         const currentLocation = await getCurrentLocation();
         const travelTime = calculateTravelTime();
         setTime(travelTime);
-        // updateLocationInFirebase(
-        //   currentLocation.latitude,
-        //   currentLocation.longitude,
-        // );
+        watchPosition();
       } catch (error) {
         console.error('Error in tracking task:', error);
       }

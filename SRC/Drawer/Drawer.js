@@ -1,5 +1,5 @@
 import {StyleSheet, ScrollView, View, TouchableOpacity} from 'react-native';
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
 import {windowHeight, windowWidth} from '../Utillity/utils';
@@ -17,6 +17,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {SetUserRole, setUserLogoutAuth} from '../Store/slices/auth-slice';
 import {setUserLogOut} from '../Store/slices/common';
 import {imageUrl} from '../Config';
+import {disconnectPusher, getPusherInstance} from '../Store/pusherService';
+import {resetPusher} from '../Store/slices/socket';
 // import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
 const Drawer = () => {
@@ -24,8 +26,20 @@ const Drawer = () => {
   const dispatch = useDispatch();
   const userData = useSelector(state => state.commonReducer.userData);
   const token = useSelector(state => state.authReducer.token);
+  console.log('🚀 ~ Drawer ~ token:', token);
   const role = useSelector(state => state.authReducer.role);
   const {user_type} = useSelector(state => state.authReducer);
+  const riderChannelName = useSelector(
+    state => state.commonReducer.riderChannelName,
+  );
+  console.log('🚀 ~ Drawer ~ riderChannelName:', riderChannelName);
+  const userChannelName = useSelector(
+    state => state.socketReducer.userChannelName,
+  );
+  console.log('🚀 ~ Drawer ~ userChannelName:', userChannelName);
+  const pusherInstance = useSelector(
+    state => state.socketReducer.pusherInstance,
+  );
 
   const adminData = [
     // {
@@ -106,12 +120,41 @@ const Drawer = () => {
       iconName: 'power',
       iconType: Feather,
       onPress: () => {
-        dispatch(setUserLogoutAuth());
-        dispatch(setUserLogOut());
-        dispatch(SetUserRole(''));
+        logoutUser();
       },
     },
   ];
+  // useEffect(() => {
+  //   if (pusherInstance && riderChannelName) {
+  //     const channel = pusherInstance.channels.get(riderChannelName);
+  //     console.log('🚀 ~ useEffect ~ channel:', channel?.channelName);
+  //     // if (channel === riderChannelName) {
+  //     //   channel.bind('event_name', data => {
+  //     //     console.log('Received event data:', data);
+  //     //     dispatch(setEventData(data));
+  //     //   });
+
+  //     //   channel.bind('subscription_succeeded', () => {
+  //     //     console.log(`Successfully subscribed to ${channelName}`);
+  //     //   });
+  //     // } else {
+  //     //   console.error('Channel not found');
+  //     // }
+  //   }
+  // }, [dispatch, pusherInstance]);
+
+  const logoutUser = async () => {
+    const pusher = await getPusherInstance();
+    try {
+      console.log(pusher.connectionState, 'connectionState');
+      pusher.unsubscribe(riderChannelName);
+      dispatch(setUserLogoutAuth());
+      dispatch(setUserLogOut());
+      dispatch(resetPusher());
+    } catch (error) {
+      console.error('Error while disconnecting Pusher:', error);
+    }
+  };
 
   return (
     <ScreenBoiler

@@ -19,6 +19,8 @@ import Color from './SRC/Assets/Utilities/Color';
 import {moderateScale} from 'react-native-size-matters';
 import CustomImage from './SRC/Components/CustomImage';
 import {TouchableOpacity} from 'react-native';
+import {getDefaultMiddleware} from '@reduxjs/toolkit';
+import {getPusherInstance} from './SRC/Store/pusherService';
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   PushNotification.localNotification({
@@ -43,6 +45,9 @@ const App = () => {
       console.log('Authorization status:', authStatus);
     }
   };
+  const customizedMiddleware = getDefaultMiddleware({
+    serializableCheck: false,
+  });
 
   useEffect(() => {
     requestUserPermission();
@@ -55,7 +60,14 @@ const App = () => {
   };
 
   console.reportErrorsAsExceptions = false;
+
+  // const ConnectPusher = async () => {
+  //   const pusher = await getPusherInstance();
+  //   await pusher.connect();
+  // };
+
   useEffect(() => {
+    // ConnectPusher();
     requestUserPermission();
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       setNotificationModal(true);
@@ -68,7 +80,6 @@ const App = () => {
       }, 3000);
       return () => clearTimeout(timer);
     });
-
     messaging()
       .getInitialNotification()
       .then(remoteMessage => {
@@ -78,7 +89,7 @@ const App = () => {
           });
         }
       });
-  });
+  }, []);
 
   return (
     <NativeBaseProvider>

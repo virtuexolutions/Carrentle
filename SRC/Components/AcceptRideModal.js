@@ -17,31 +17,20 @@ import CustomText from './CustomText';
 import {tr} from 'date-fns/locale';
 
 const AcceptRideModal = ({
-  username,
-  isSentRequest,
   pickupLocation,
   dropoffLocation,
   distance,
-  time,
-  item,
   price,
-  image,
-  onPressMessageBtn,
   visible,
-  setVisible,
   seats,
   CarNumber,
   carName,
   onpressClose,
   isRider,
-  location,
-  rider_id,
   AcceptRide,
   RejectRide,
-  onpressAccept,
-  setstatus,
-  status,
   OnPressSeeRider,
+  data,
 }) => {
   const {user_type} = useSelector(state => state.authReducer);
   const userData = useSelector(state => state.commonReducer.userData);
@@ -78,11 +67,11 @@ const AcceptRideModal = ({
           <View style={styles.userImage}>
             <CustomImage
               style={{height: '100%', width: '100%', overflow: 'hidden'}}
-              source={{uri: image}}
+              source={{uri: 'https://car-rental.cstmpanel.com' + data?.photo}}
             />
           </View>
           <View style={styles.rowInnerView}>
-            <CustomText style={styles.text}>{username}</CustomText>
+            <CustomText style={styles.text}>{data?.name}</CustomText>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Rating
                 type="custom"

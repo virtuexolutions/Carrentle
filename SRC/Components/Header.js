@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Icon} from 'native-base';
 import {
   View,
@@ -12,7 +12,7 @@ import {DrawerActions, useNavigation} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import Color from '../Assets/Utilities/Color';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import CustomText from './CustomText';
 import CustomImage from './CustomImage';
 const {height, width} = Dimensions.get('window');
@@ -22,12 +22,18 @@ import {useDispatch, useSelector} from 'react-redux';
 import {imageUrl} from '../Config';
 import {setUserLogout, setUserLogoutAuth} from '../Store/slices/auth-slice';
 import LinearGradient from 'react-native-linear-gradient';
-import {setUserLogOut} from '../Store/slices/common';
+import {setEventDataRider, setUserLogOut} from '../Store/slices/common';
 import navigationService from '../navigationService';
+import AcceptRideModal from './AcceptRideModal';
+import Geolocation from '@react-native-community/geolocation';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import {getPusherInstance} from '../Store/pusherService';
 
 const Header = props => {
   const dispatch = useDispatch();
   const notification = useSelector(state => state.commonReducer.notification);
+  const riderEvent = useSelector(state => state.socketReducer.riderEvent);
+  console.log('🚀 ~ Header ~ riderEvent:', riderEvent);
   const cartData = useSelector(state => state.commonReducer.cart);
   const navigationN = useNavigation();
   // const navigation = useNavigation();
@@ -52,6 +58,8 @@ const Header = props => {
   const user = useSelector(state => state.commonReducer.userData);
   const userRole = useSelector(state => state.commonReducer.selectedRole);
   const token = useSelector(state => state.authReducer.token);
+  const [currentPossition, setcurrentPossition] = useState({});
+
   const statusArray = [
     {label: 'Change Password', value: 'ChangePassword'},
     {label: 'Terms & Conditions', value: 'TermsAndConditions'},
@@ -74,6 +82,64 @@ const Header = props => {
       },
     ]);
     return true;
+  };
+
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
+
+  const getCurrentLocation = async () => {
+    try {
+      const position = await new Promise((resolve, reject) => {
+        Geolocation.getCurrentPosition(
+          position => {
+            const coords = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            };
+            resolve(coords);
+          },
+          error => {
+            reject(new Error(error.message));
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 10000,
+          },
+        );
+      });
+      setcurrentPossition(position);
+    } catch (error) {
+      console.error('Error getting location:', error);
+      throw error;
+    }
+  };
+
+  const onpressAccept = async currentStatus => {
+    const body = {
+      lat: currentPossition?.latitude,
+      lng: currentPossition?.longitude,
+      status: currentStatus,
+    };
+    console.log('🚀 ~ onpressAccept ~ body:', body);
+    const url = `auth/rider/ride_update/${riderEventData?.id}`;
+    const response = await Post(url, body, apiHeader(token));
+    console.log('🚀 ~ onpressAccept ~ response:', response?.data);
+    if (response?.data?.ride_info?.status === 'accept') {
+      dispatch(setEventDataRider({}));
+      setData(response?.data?.ride_info);
+      navigationService.navigate('TrackingScreen', {
+        data: latestRide,
+        rider_data: response?.data?.ride_info?.rider,
+        ride_id: response?.data?.ride_info?.id,
+      });
+    } else {
+      dispatch(setEventDataRider({}));
+    }
+    {
+      console.log('RejectRide');
+    }
   };
 
   return (
@@ -203,6 +269,36 @@ const Header = props => {
           />
         </View>
       )}
+      <AcceptRideModal
+        data={riderEvent?.user}
+        visible={Object.keys(riderEvent)?.length > 0}
+        pickupLocation={riderEvent?.location_to}
+        dropoffLocation={riderEvent?.location_from}
+        distance={riderEvent?.distance}
+        seats={riderEvent?.carinfo?.seats}
+        CarNumber={riderEvent?.carinfo?.no}
+        carName={riderEvent?.carinfo?.name}
+        price={riderEvent?.amount + ' $'}
+        isRider={true}
+        onpressClose={() => setModalVisible(false)}
+        onpressSeeLocation={() => {
+          navigationService.navigate('WaitingScreen', {
+            data: riderEvent,
+            type: 'fromRequest',
+          });
+        }}
+        // location={currentPossition}
+        rider_id={riderEvent?.id}
+        // onpressAccept={() => onpressAccept()}
+        // status={status}
+        // setstatus={setstatus}
+        AcceptRide={() => {
+          onpressAccept('accept');
+        }}
+        RejectRide={() => {
+          onpressAccept('reject');
+        }}
+      />
     </LinearGradient>
   );
 };

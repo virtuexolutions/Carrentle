@@ -1,24 +1,55 @@
-import { createSlice } from "@reduxjs/toolkit";
+import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
-  socket: null,
+  isSubscribed: false,
+  pusherInstance: null,
+  riderChannelName: null,
+  userChannelName: null,
+  riderEvent: {},
+  userEventData: {},
 };
 
 const socketSlice = createSlice({
-  name: "socketReducer",
+  name: 'socketReducer',
   initialState: initialState,
   reducers: {
-    updateSocket(state, action) {
-      console.log(
-        "in reduxx============>",
-        action.payload,
-        "fffffffffffdfsdsdsd"
-      );
-      state.socket = action.payload;
+    setIsSubscribed(state, action) {
+      state.isSubscribed = action.payload;
+    },
+    setPusherInstance(state, action) {
+      state.pusherInstance = action.payload;
+    },
+    setriderChannelName(state, action) {
+      state.riderChannelName = action.payload;
+      console.log('🚀 ~ setriderChannelName ~ action.payload:', action.payload);
+    },
+    setRiderEvent(state, action) {
+      state.riderEvent = action.payload;
+      console.log('🚀 ~ setRiderEvent ~ action.payload:', action.payload);
+    },
+    resetPusher: state => {
+      state.pusherInstance = null;
+      state.riderChannelName = null;
+    },
+    setUserChannelName(state, action) {
+      state.userChannelName = action.payload;
+      console.log('🚀 ~ setUserChannelName ~ action.payload:', action.payload);
+    },
+    setUserEventData(state, action) {
+      state.userEventData = action.payload;
+      console.log('🚀 ~ setUserEventData ~ action.payload:', action.payload);
     },
   },
 });
 
-export const { updateSocket } = socketSlice.actions;
+export const {
+  setIsSubscribed,
+  setPusherInstance,
+  resetPusher,
+  setUserChannelName,
+  setriderChannelName,
+  setUserEventData,
+  setRiderEvent,
+} = socketSlice.actions;
 
 export default socketSlice.reducer;

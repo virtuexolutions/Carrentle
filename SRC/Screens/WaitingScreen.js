@@ -25,93 +25,12 @@ const WaitingScreen = ({route}) => {
   const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
   const [loading, setLoading] = useState(false);
   const [rideData, setRideData] = useState(null);
-  console.log("🚀 ~ WaitingScreen ~ rideData:", rideData)
+  console.log('🚀 ~ WaitingScreen ~ rideData:', rideData);
   const [modalVisible, setModalVisible] = useState(false);
   const [riderDate, setRiderDate] = useState(false);
-  console.log("🚀 ~ WaitingScreen ~ riderDate:", riderDate)
-  const pusher = Pusher.getInstance();
-  const channelRef = useRef(null);
-
-  // const startInterval = () => {
-  //   if (!intervalRef.current) {
-  //     intervalRef.current = setInterval(() => {
-  //       getRiderInfo();
-  //     }, 5000);
-  //   }
-  // };
-
-  // Original Code
-  useEffect(() => {
-    console.log('Pusher initializing...');
-    async function connectPusher() {
-      try {
-        await pusher.init({
-          apiKey: '2cbabf5fca8e6316ecfe',
-          cluster: 'ap2',
-        });
-
-        if (channelRef.current) {
-          await pusher.unsubscribe({
-            channelName: `customer-channel-${userData.id}`,
-          });
-        }
-        channelRef.current = await pusher.subscribe({
-          channelName: `customer-channel-${userData.id}`,
-          onSubscriptionSucceeded: channelName => {
-            console.log(`Subscribed to ${channelName}`);
-          },
-          onEvent: event => {
-            console.log('Received event:', event.data);
-            const dataString = JSON.parse(event.data);
-            console.log('🚀 ~ connectPusher ~ dataString:', dataString);
-            if (dataString) {
-              setRideData(dataString?.message?.ride_info);
-              setRiderDate(dataString?.message);
-              setModalVisible(true);
-            }
-          },
-        });
-        await pusher.connect();
-      } catch (error) {
-        console.error('Pusher connection error:', error);
-      }
-    }
-
-    connectPusher();
-
-    return async () => {
-      if (channelRef.current) {
-        try {
-          await pusher.unsubscribe({
-            channelName: `customer-channel-${userData.id}`,
-          });
-          channelRef.current = null;
-        } catch (error) {
-          console.error('Error during unsubscription:', error);
-        }
-      }
-    };
-  }, [userData?.id]);
-
-  // const getRiderInfo = async () => {
-  //   try {
-  //     const url = `auth/ride/${data?.ride_id}`;
-
-  //     const response = await Get(url, token);
-
-  //     const newStatus = response?.data?.ride_info?.status;
-  //     const newRideData = response?.data?.ride_info;
-  //     const newRiderData = response?.data;
-
-  //     if (newStatus === 'OnTheWay') {
-  //       setRideData(newRideData);
-  //       setRiderDate(newRiderData);
-  //       setModalVisible(true);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching rider info:', error);
-  //   }
-  // };
+  console.log('🚀 ~ WaitingScreen ~ riderDate:', riderDate);
+  const userEventData = useSelector(state => state.socketReducer.userEventData);
+  console.log('🚀 ~ WaitingScreen ~ userEventData:', userEventData);
 
   useEffect(() => {
     if (type === 'fromBoardingPoints') {
@@ -271,46 +190,7 @@ const WaitingScreen = ({route}) => {
               }}
             />
           </View>
-          {rideData != null ? (
-            <AcceptRideModal
-              visible={modalVisible}
-              setVisible={setModalVisible}
-              username={rideData?.rider?.name}
-              image={
-                'https://car-rental.cstmpanel.com' + rideData?.rider?.photo
-              }
-              pickupLocation={rideData?.location_to}
-              dropoffLocation={rideData?.location_from}
-              distance={rideData?.distance}
-              seats={rideData?.carinfo?.seats}
-              CarNumber={rideData?.carinfo?.no}
-              carName={rideData?.carinfo?.name}
-              price={rideData?.amount + ' $'}
-              onpressClose={() => navigation.navigate('HomeScreen')}
-              onPressMessageBtn={() =>
-                Platform.OS == 'android'
-                  ? ToastAndroid.show(
-                      `We are Currently unavailable`,
-                      ToastAndroid.SHORT,
-                    )
-                  : Alert.alert(`We are Currently unavailable`)
-              }
-              onpressSeeLocation={() =>
-                navigation.navigate('TrackingScreen', {
-                  data: rideData,
-                  description: riderDate,
-                  ride_id: data?.ride_id,
-                })
-              }
-              OnPressSeeRider={() => {
-                navigation.navigate('TrackingScreen', {
-                  data: rideData,
-                  description: riderDate,
-                  ride_id: data?.ride_id,
-                });
-              }}
-            />
-          ) : (
+          {userEventData === null && (
             <View style={styles.waiting_main_view}>
               <View style={styles.waiting_sub_view}>
                 <View style={styles.animation_view}>
@@ -327,6 +207,43 @@ const WaitingScreen = ({route}) => {
               </View>
             </View>
           )}
+          <AcceptRideModal
+            // visible={user}
+            data={userEventData?.rider}
+            // setVisible={setModalVisible}
+            username={userEventData?.rider?.name}
+            image={'https://car-rental.cstmpanel.com' + rideData?.rider?.photo}
+            pickupLocation={userEventData?.location_to}
+            dropoffLocation={userEventData?.location_from}
+            distance={userEventData?.distance}
+            seats={userEventData?.carinfo?.seats}
+            CarNumber={userEventData?.carinfo?.no}
+            carName={userEventData?.carinfo?.name}
+            price={userEventData?.amount + ' $'}
+            onpressClose={() => navigation.navigate('HomeScreen')}
+            onPressMessageBtn={() =>
+              Platform.OS == 'android'
+                ? ToastAndroid.show(
+                    `We are Currently unavailable`,
+                    ToastAndroid.SHORT,
+                  )
+                : Alert.alert(`We are Currently unavailable`)
+            }
+            onpressSeeLocation={() =>
+              navigation.navigate('TrackingScreen', {
+                data: userEventData,
+                description: userEventData,
+                ride_id: userEventData?.ride_id,
+              })
+            }
+            OnPressSeeRider={() => {
+              navigation.navigate('TrackingScreen', {
+                data: userEventData,
+                description: userEventData,
+                ride_id: userEventData?.ride_id,
+              });
+            }}
+          />
         </>
       )}
     </View>
