@@ -10,10 +10,8 @@ import LottieView from 'lottie-react-native';
 import RippleEffect from '../Components/RippleEffect';
 import {moderateScale} from 'react-native-size-matters';
 import CustomText from '../Components/CustomText';
-import {Get} from '../Axios/AxiosInterceptorFunction';
 import AcceptRideModal from '../Components/AcceptRideModal';
 import MapViewDirections from 'react-native-maps-directions';
-import {Pusher} from '@pusher/pusher-websocket-react-native';
 
 const WaitingScreen = ({route}) => {
   const {data, type} = route.params;

@@ -20,7 +20,6 @@ import {moderateScale} from 'react-native-size-matters';
 import CustomImage from './SRC/Components/CustomImage';
 import {TouchableOpacity} from 'react-native';
 import {getDefaultMiddleware} from '@reduxjs/toolkit';
-import {getPusherInstance} from './SRC/Store/pusherService';
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   PushNotification.localNotification({
@@ -89,7 +88,8 @@ const App = () => {
           });
         }
       });
-  }, []);
+    console.log("Running Firebase Notification ==> ")
+  });
 
   return (
     <NativeBaseProvider>

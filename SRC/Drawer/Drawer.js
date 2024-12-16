@@ -18,7 +18,7 @@ import {SetUserRole, setUserLogoutAuth} from '../Store/slices/auth-slice';
 import {setUserLogOut} from '../Store/slices/common';
 import {imageUrl} from '../Config';
 import {disconnectPusher, getPusherInstance} from '../Store/pusherService';
-import {resetPusher} from '../Store/slices/socket';
+import {resetPusher, setIsSubscribed, setRiderIsSubscribed, setUserIsSubscribed} from '../Store/slices/socket';
 // import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
 const Drawer = () => {
@@ -150,7 +150,14 @@ const Drawer = () => {
       pusher.unsubscribe(riderChannelName);
       dispatch(setUserLogoutAuth());
       dispatch(setUserLogOut());
-      dispatch(resetPusher());
+      if(user_type?.toLowerCase() == "rider"){
+        dispatch(setRiderIsSubscribed(false))
+      }else{
+        setUserIsSubscribed(false)
+      }
+      // dispatch(setIsSubscribed(false))
+      // dispatch(resetPusher());
+
     } catch (error) {
       console.error('Error while disconnecting Pusher:', error);
     }

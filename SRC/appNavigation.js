@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import navigationService from './navigationService';
 import LoginScreen from './Screens/LoginScreen';
 import Signup from './Screens/Signup';
-import { Pusher } from '@pusher/pusher-websocket-react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Icon } from 'native-base';
 import { AppState, View } from 'react-native';
@@ -244,25 +243,7 @@ export const MyDrawer = () => {
   const DrawerNavigation = createDrawerNavigator();
   const {user_type} = useSelector(state => state.authReducer);
   const firstScreen = user_type === 'Rider' ? 'DashBoard' : 'HomeScreen';
-  const token = useSelector(state => state.authReducer.token);
-  const [modalvisible, setModalVisible] = useState(false);
-  const [latestRide, setlatestRide] = useState(null);
-  const [data, setData] = useState(null);
-  const [hasShownModal, setHasShownModal] = useState(false);
-  const [currentPossition, setcurrentPossition] = useState({});
-  let myChannel = null;
-  const userData = useSelector(state => state.commonReducer?.userData);
-  const [appState, setAppState] = useState(AppState.currentState);
-  console.log('🚀 ~ MyDrawer ~ appState:', appState);
-  const pusherInstance = Pusher.getInstance();
-
-  const riderChannelName = useSelector(
-    state => state.commonReducer.riderChannelName,
-  );
-
-  const [status, setstatus] = useState('');
-  const channelRef = useRef(null);
-  const dispatch = useDispatch();
+ 
 
   return (
     <>

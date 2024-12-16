@@ -27,12 +27,11 @@ import navigationService from '../navigationService';
 import AcceptRideModal from './AcceptRideModal';
 import Geolocation from '@react-native-community/geolocation';
 import {Post} from '../Axios/AxiosInterceptorFunction';
-import {getPusherInstance} from '../Store/pusherService';
 
 const Header = props => {
   const dispatch = useDispatch();
   const notification = useSelector(state => state.commonReducer.notification);
-  const riderEvent = useSelector(state => state.socketReducer.riderEvent);
+  const riderEvent = useSelector(state => state.commonReducer.riderEventData);
   console.log('🚀 ~ Header ~ riderEvent:', riderEvent);
   const cartData = useSelector(state => state.commonReducer.cart);
   const navigationN = useNavigation();
@@ -58,7 +57,9 @@ const Header = props => {
   const user = useSelector(state => state.commonReducer.userData);
   const userRole = useSelector(state => state.commonReducer.selectedRole);
   const token = useSelector(state => state.authReducer.token);
+  console.log("🚀 ~ Header ~ token:", token)
   const [currentPossition, setcurrentPossition] = useState({});
+  const [data, setData] = useState();
 
   const statusArray = [
     {label: 'Change Password', value: 'ChangePassword'},
@@ -122,8 +123,8 @@ const Header = props => {
       lng: currentPossition?.longitude,
       status: currentStatus,
     };
-    console.log('🚀 ~ onpressAccept ~ body:', body);
-    const url = `auth/rider/ride_update/${riderEventData?.id}`;
+//  return   console.log('🚀 ~ onpressAccept ~ body:', body, riderEvent?.id);
+    const url = `auth/rider/ride_update/${riderEvent?.id}`;
     const response = await Post(url, body, apiHeader(token));
     console.log('🚀 ~ onpressAccept ~ response:', response?.data);
     if (response?.data?.ride_info?.status === 'accept') {
@@ -271,7 +272,7 @@ const Header = props => {
       )}
       <AcceptRideModal
         data={riderEvent?.user}
-        visible={Object.keys(riderEvent)?.length > 0}
+        visible={Object.keys(riderEvent || {})?.length > 0}
         pickupLocation={riderEvent?.location_to}
         dropoffLocation={riderEvent?.location_from}
         distance={riderEvent?.distance}

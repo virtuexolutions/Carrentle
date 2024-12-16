@@ -1,7 +1,8 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
-  isSubscribed: false,
+  riderIsSubscribed: false,
+  userIsSubscribed: false,
   pusherInstance: null,
   riderChannelName: null,
   userChannelName: null,
@@ -13,8 +14,11 @@ const socketSlice = createSlice({
   name: 'socketReducer',
   initialState: initialState,
   reducers: {
-    setIsSubscribed(state, action) {
-      state.isSubscribed = action.payload;
+    setRiderIsSubscribed(state, action) {
+      state.riderIsSubscribed = action.payload;
+    },
+    setUserIsSubscribed(state, action) {
+      state.userIsSubscribed = action.payload;
     },
     setPusherInstance(state, action) {
       state.pusherInstance = action.payload;
@@ -39,11 +43,13 @@ const socketSlice = createSlice({
       state.userEventData = action.payload;
       console.log('🚀 ~ setUserEventData ~ action.payload:', action.payload);
     },
+    
   },
 });
 
 export const {
-  setIsSubscribed,
+  setRiderIsSubscribed,
+  setUserIsSubscribed,
   setPusherInstance,
   resetPusher,
   setUserChannelName,

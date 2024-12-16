@@ -24,7 +24,7 @@ import Loader from '../Components/Loader';
 import navigationService from '../navigationService';
 import {setEventDataRider} from '../Store/slices/common';
 import {
-  setIsSubscribed,
+  setRiderIsSubscribed,
   setPusherInstance,
   setriderChannelName,
 } from '../Store/slices/socket';
@@ -74,7 +74,7 @@ const DashBoard = () => {
   const token = useSelector(state => state.authReducer.token);
   const userData = useSelector(state => state.commonReducer.userData);
   // console.log("🚀 ~ DashBoard ~ userData11:", userData)
-  const isSubscribed = useSelector(state => state.socketReducer.isSubscribed);
+  const isSubscribed = useSelector(state => state.socketReducer.riderIsSubscribed);
   console.log('🚀 ~ DashBoard ~ isSubscribed:', isSubscribed);
 
   const [history, setHistory] = useState();
@@ -103,11 +103,12 @@ const DashBoard = () => {
           onSubscriptionSucceeded: (channelName, data) => {
             console.log('Successfully subscribed to:', channelName);
             dispatch(setriderChannelName(channelName));
-            dispatch(setIsSubscribed(true));
+            dispatch(setRiderIsSubscribed(true));
           },
           onSubscriptionError: error => {
             console.error('Subscription error:', error);
           },
+          // onConnec
           onEvent: event => {
             console.log('Event received:', event.data);
             const data = JSON.parse(event.data);
@@ -119,16 +120,24 @@ const DashBoard = () => {
         console.error('Error during Pusher connection:', error);
       }
     }
-    if (!isSubscribed) {
+
+    if(pusher.connectionState == "DISCONNECTED"){
       connectPusher();
     }
+    if (!isSubscribed) {
+      console.log("Running if block");
+
+      connectPusher();
+    }
+   
+  }, [focused]);
+
+  useEffect(() => {
     if (token) {
       getPaymentHistory();
     }
-    // dispatch(setIsSubscribed(false))
-    // pusher.disconnect()
-    // pusher.unsubscribe( {channelName: `rider-channel-${userData?.id}`})
-  }, [focused]);
+  }, [focused])
+  
 
   useEffect(() => {
     setPageNum(1);
