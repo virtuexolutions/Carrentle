@@ -35,12 +35,6 @@ const CommonSlice = createSlice({
       state.riderEventData = action.payload;
       console.log('🚀 ~ setEventDataRider ~ action.payload:', action.payload);
     },
-    // setRiderModalVisible(state, action) {
-    //   state.riderModalVisible = action.payload;
-    // },
-    setUserEventData(state, action) {
-      state.userEventData = action.payload;
-    },
   },
 });
 

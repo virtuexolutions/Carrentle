@@ -32,7 +32,7 @@ const Header = props => {
   const dispatch = useDispatch();
   const notification = useSelector(state => state.commonReducer.notification);
   const riderEvent = useSelector(state => state.commonReducer.riderEventData);
-  console.log('🚀 ~ Header ~ riderEvent:', riderEvent);
+  // console.log('🚀 ~ Header ~ riderEvent:', riderEvent);
   const cartData = useSelector(state => state.commonReducer.cart);
   const navigationN = useNavigation();
   // const navigation = useNavigation();
@@ -54,12 +54,13 @@ const Header = props => {
   } = props;
 
   const [searchText, setSearchText] = useState('');
+  const user_type = useSelector(state => state.authReducer.user_type);
   const user = useSelector(state => state.commonReducer.userData);
   const userRole = useSelector(state => state.commonReducer.selectedRole);
   const token = useSelector(state => state.authReducer.token);
-  console.log("🚀 ~ Header ~ token:", token)
+  console.log('🚀 ~ Header ~ token:', token);
+  // console.log('🚀 ~ Header ~ token:', token);
   const [currentPossition, setcurrentPossition] = useState({});
-  const [data, setData] = useState();
 
   const statusArray = [
     {label: 'Change Password', value: 'ChangePassword'},
@@ -123,15 +124,14 @@ const Header = props => {
       lng: currentPossition?.longitude,
       status: currentStatus,
     };
-//  return   console.log('🚀 ~ onpressAccept ~ body:', body, riderEvent?.id);
+    //  return   console.log('🚀 ~ onpressAccept ~ body:', body, riderEvent?.id);
     const url = `auth/rider/ride_update/${riderEvent?.id}`;
     const response = await Post(url, body, apiHeader(token));
-    console.log('🚀 ~ onpressAccept ~ response:', response?.data);
+     console.log('🚀 ~ onpressAccept ~ response:', response);
     if (response?.data?.ride_info?.status === 'accept') {
       dispatch(setEventDataRider({}));
-      setData(response?.data?.ride_info);
       navigationService.navigate('TrackingScreen', {
-        data: latestRide,
+        data: response?.data?.ride_info,
         rider_data: response?.data?.ride_info?.rider,
         ride_id: response?.data?.ride_info?.id,
       });
@@ -270,36 +270,38 @@ const Header = props => {
           />
         </View>
       )}
-      <AcceptRideModal
-        data={riderEvent?.user}
-        visible={Object.keys(riderEvent || {})?.length > 0}
-        pickupLocation={riderEvent?.location_to}
-        dropoffLocation={riderEvent?.location_from}
-        distance={riderEvent?.distance}
-        seats={riderEvent?.carinfo?.seats}
-        CarNumber={riderEvent?.carinfo?.no}
-        carName={riderEvent?.carinfo?.name}
-        price={riderEvent?.amount + ' $'}
-        isRider={true}
-        onpressClose={() => setModalVisible(false)}
-        onpressSeeLocation={() => {
-          navigationService.navigate('WaitingScreen', {
-            data: riderEvent,
-            type: 'fromRequest',
-          });
-        }}
-        // location={currentPossition}
-        rider_id={riderEvent?.id}
-        // onpressAccept={() => onpressAccept()}
-        // status={status}
-        // setstatus={setstatus}
-        AcceptRide={() => {
-          onpressAccept('accept');
-        }}
-        RejectRide={() => {
-          onpressAccept('reject');
-        }}
-      />
+      {user_type?.toLowerCase() == 'rider' && (
+        <AcceptRideModal
+          data={riderEvent?.user}
+          visible={Object.keys(riderEvent || {})?.length > 0}
+          pickupLocation={riderEvent?.location_to}
+          dropoffLocation={riderEvent?.location_from}
+          distance={riderEvent?.distance}
+          seats={riderEvent?.carinfo?.seats}
+          CarNumber={riderEvent?.carinfo?.no}
+          carName={riderEvent?.carinfo?.name}
+          price={riderEvent?.amount + ' $'}
+          isRider={true}
+          onpressClose={() => setModalVisible(false)}
+          onpressSeeLocation={() => {
+            navigationService.navigate('WaitingScreen', {
+              data: riderEvent,
+              type: 'fromRequest',
+            });
+          }}
+          // location={currentPossition}
+          rider_id={riderEvent?.id}
+          // onpressAccept={() => onpressAccept()}
+          // status={status}
+          // setstatus={setstatus}
+          AcceptRide={() => {
+            onpressAccept('accept');
+          }}
+          RejectRide={() => {
+            onpressAccept('reject');
+          }}
+        />
+      )}
     </LinearGradient>
   );
 };

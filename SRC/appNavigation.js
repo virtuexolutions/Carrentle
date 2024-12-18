@@ -1,16 +1,16 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, { useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, {useRef, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import navigationService from './navigationService';
 import LoginScreen from './Screens/LoginScreen';
 import Signup from './Screens/Signup';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { Icon } from 'native-base';
-import { AppState, View } from 'react-native';
+import {createDrawerNavigator} from '@react-navigation/drawer';
+import {Icon} from 'native-base';
+import {AppState, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -48,7 +48,7 @@ import VerifyEmail from './Screens/VerifyEmail';
 import VerifyNumber from './Screens/VerifyNumber';
 import WaitingScreen from './Screens/WaitingScreen';
 import WalkThroughScreen from './Screens/WalkthroughScreen';
-import { windowHeight } from './Utillity/utils';
+import {windowHeight} from './Utillity/utils';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -243,7 +243,6 @@ export const MyDrawer = () => {
   const DrawerNavigation = createDrawerNavigator();
   const {user_type} = useSelector(state => state.authReducer);
   const firstScreen = user_type === 'Rider' ? 'DashBoard' : 'HomeScreen';
- 
 
   return (
     <>
@@ -254,8 +253,10 @@ export const MyDrawer = () => {
           headerShown: false,
           drawerStyle: {width: '80%'},
         }}>
-        <DrawerNavigation.Screen name="DashBoard" component={DashBoard} />
-        <DrawerNavigation.Screen name="HomeScreen" component={HomeScreen} />
+        <DrawerNavigation.Screen
+          name={user_type === 'Rider' ? 'DashBoard' : 'HomeScreen'}
+          component={user_type === 'Rider' ? DashBoard : HomeScreen}
+        />
         <DrawerNavigation.Screen
           name="PaymentHistory"
           component={PaymentHistory}

@@ -4,7 +4,7 @@ import {windowHeight, windowWidth} from '../Utillity/utils';
 import Header from '../Components/Header';
 import Color from '../Assets/Utilities/Color';
 import {useNavigation} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import MapView, {Circle, Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import LottieView from 'lottie-react-native';
 import RippleEffect from '../Components/RippleEffect';
@@ -12,6 +12,7 @@ import {moderateScale} from 'react-native-size-matters';
 import CustomText from '../Components/CustomText';
 import AcceptRideModal from '../Components/AcceptRideModal';
 import MapViewDirections from 'react-native-maps-directions';
+import {setUserEventData} from '../Store/slices/socket';
 
 const WaitingScreen = ({route}) => {
   const {data, type} = route.params;
@@ -28,7 +29,14 @@ const WaitingScreen = ({route}) => {
   const [riderDate, setRiderDate] = useState(false);
   console.log('🚀 ~ WaitingScreen ~ riderDate:', riderDate);
   const userEventData = useSelector(state => state.socketReducer.userEventData);
+  const [evenrData, setEventData] = useState({});
+  console.log('🚀 ~ WaitingScreen ~ evenrData:', evenrData);
+  const requestModalVisible = useSelector(
+    state => state.socketReducer.requestModalVisible,
+  );
+  console.log('🚀 ~ WaitingScreen ~ requestModalVisible:', requestModalVisible);
   console.log('🚀 ~ WaitingScreen ~ userEventData:', userEventData);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (type === 'fromBoardingPoints') {
@@ -42,6 +50,10 @@ const WaitingScreen = ({route}) => {
       }
     }
   }, [mapRef.current]);
+
+  useEffect(() => {
+    setEventData(userEventData);
+  }, [userEventData]);
 
   // const getRiderInfo = async () => {
   //   try {
@@ -188,25 +200,23 @@ const WaitingScreen = ({route}) => {
               }}
             />
           </View>
-          {userEventData === null && (
-            <View style={styles.waiting_main_view}>
-              <View style={styles.waiting_sub_view}>
-                <View style={styles.animation_view}>
-                  <LottieView
-                    autoPlay
-                    loop
-                    style={styles.waiting_animation}
-                    source={require('../Assets/animations/waiting.json')}
-                  />
-                </View>
-                <CustomText isBold style={{fontSize: moderateScale(18, 0.6)}}>
-                  Wating Rider to Accept Your Ride
-                </CustomText>
+          <View style={styles.waiting_main_view}>
+            <View style={styles.waiting_sub_view}>
+              <View style={styles.animation_view}>
+                <LottieView
+                  autoPlay
+                  loop
+                  style={styles.waiting_animation}
+                  source={require('../Assets/animations/waiting.json')}
+                />
               </View>
+              <CustomText isBold style={{fontSize: moderateScale(18, 0.6)}}>
+                Wating Rider to Accept Your Ride
+              </CustomText>
             </View>
-          )}
+          </View>
           <AcceptRideModal
-            // visible={user}
+            visible={Object.keys(userEventData).length > 0}
             data={userEventData?.rider}
             // setVisible={setModalVisible}
             username={userEventData?.rider?.name}
@@ -218,7 +228,10 @@ const WaitingScreen = ({route}) => {
             CarNumber={userEventData?.carinfo?.no}
             carName={userEventData?.carinfo?.name}
             price={userEventData?.amount + ' $'}
-            onpressClose={() => navigation.navigate('HomeScreen')}
+            onpressClose={() => {
+              console.log('object');
+              dispatch(setUserEventData({}));
+            }}
             onPressMessageBtn={() =>
               Platform.OS == 'android'
                 ? ToastAndroid.show(
@@ -227,18 +240,20 @@ const WaitingScreen = ({route}) => {
                   )
                 : Alert.alert(`We are Currently unavailable`)
             }
-            onpressSeeLocation={() =>
+            onpressSeeLocation={() => {
+              dispatch(setUserEventData({}));
               navigation.navigate('TrackingScreen', {
-                data: userEventData,
-                description: userEventData,
-                ride_id: userEventData?.ride_id,
-              })
-            }
+                data: evenrData,
+                description: evenrData,
+                ride_id: evenrData?.ride_id,
+              });
+            }}
             OnPressSeeRider={() => {
-              navigation.navigate('TrackingScreen', {
-                data: userEventData,
-                description: userEventData,
-                ride_id: userEventData?.ride_id,
+              dispatch(setUserEventData({}));
+              navigation.navigate('CabTracking', {
+                data: evenrData,
+                description: evenrData,
+                ride_id: evenrData?.ride_id,
               });
             }}
           />

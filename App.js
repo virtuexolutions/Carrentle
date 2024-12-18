@@ -65,31 +65,31 @@ const App = () => {
   //   await pusher.connect();
   // };
 
-  useEffect(() => {
-    // ConnectPusher();
-    requestUserPermission();
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      setNotificationModal(true);
-      setNotification({
-        title: remoteMessage.notification.title,
-        body: remoteMessage.notification.body,
-      });
-      const timer = setTimeout(() => {
-        setNotificationModal(false);
-      }, 3000);
-      return () => clearTimeout(timer);
-    });
-    messaging()
-      .getInitialNotification()
-      .then(remoteMessage => {
-        if (remoteMessage && remoteMessage.data?.screen) {
-          navigation.navigate(remoteMessage.data.screen, {
-            messageData: remoteMessage.data,
-          });
-        }
-      });
-    console.log("Running Firebase Notification ==> ")
-  });
+  // useEffect(() => {
+  //   // ConnectPusher();
+  //   requestUserPermission();
+  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
+  //     setNotificationModal(true);
+  //     setNotification({
+  //       title: remoteMessage.notification.title,
+  //       body: remoteMessage.notification.body,
+  //     });
+  //     const timer = setTimeout(() => {
+  //       setNotificationModal(false);
+  //     }, 3000);
+  //     return () => clearTimeout(timer);
+  //   });
+  //   messaging()
+  //     .getInitialNotification()
+  //     .then(remoteMessage => {
+  //       if (remoteMessage && remoteMessage.data?.screen) {
+  //         navigation.navigate(remoteMessage.data.screen, {
+  //           messageData: remoteMessage.data,
+  //         });
+  //       }
+  //     });
+  //   console.log('Running Firebase Notification ==> ');
+  // }, []);
 
   return (
     <NativeBaseProvider>

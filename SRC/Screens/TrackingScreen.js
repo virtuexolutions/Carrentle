@@ -21,7 +21,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
@@ -37,19 +37,13 @@ import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Loader from '../Components/Loader';
 import {customMapStyle} from '../Utillity/mapstyle';
 import navigationService from '../navigationService';
-import {Pusher} from '@pusher/pusher-websocket-react-native';
-import {getPusherInstance} from '../Store/pusherService';
+import {setUserEventData} from '../Store/slices/socket';
 
 const TrackingScreen = ({route}) => {
   const focused = useIsFocused();
-  // const {data, rider_data, description, ride_id} = route.params;
-  const rider_data = null;
-  const description = null;
-  const ride_id = 572;
-  const data = null;
-  console.log('🚀 ~ TrackingScreen ~ rider_data:', rider_data);
+  const {data, rider_data, description, ride_id} = route.params;
   console.log('🚀 ~ TrackingScreen ~ data:', data);
-  console.log('🚀 ~ TrackingScreen ~ ride_id:', ride_id);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const currentPossitionRef = useRef(currentPossition);
   const timeRef = useRef(time);
@@ -58,16 +52,17 @@ const TrackingScreen = ({route}) => {
   const token = useSelector(state => state.authReducer.token);
   const user_type = useSelector(state => state.authReducer.user_type);
   const [currentPossition, setCurrentPossition] = useState({});
-  const [time, setTime] = useState(0);
+  const [time, setTime] = useState(15);
   console.log('🚀 ~ TrackingScreen ~ time:', time);
   const [startRide, setStartRide] = useState(false);
   const [RiderRideComplete, setRiderRideComplete] = useState(false);
   const [showCancelRide, setshowCancelRide] = useState(false);
   const [reviewModalVisible, setReviewModalVisible] = useState(true);
+  const userEventData = useSelector(state => state.socketReducer.userEventData);
 
-  const latitude = parseFloat(data?.rider?.lat) || 0;
-  const longitude = parseFloat(data?.rider?.lng) || 0;
-
+  const latitude = parseFloat(currentPossition?.latitude) || 0;
+  const longitude = parseFloat(currentPossition?.longitude) || 0;
+  const [isRiderHere, setIsRiderHere] = useState(false);
   const [currentState, setCurrentState] = useState('active');
   const [isModalShown, setIsModalShown] = useState(false);
   const [startTime, setStartTime] = useState(null);
@@ -78,25 +73,10 @@ const TrackingScreen = ({route}) => {
   });
   const channelRef = useRef(null);
   console.log('🚀 ~ TrackingScreen ~ origin:', origin);
-  const pusher = Pusher.getInstance();
   const [destinations, setDestination] = useState({
     latitude: 0,
     longitude: 0,
   });
-
-  useEffect(() => {
-    if (user_type === 'Rider' && currentPossition) {
-      setOrigin({
-        latitude: parseFloat(currentPossition.latitude) || 0,
-        longitude: parseFloat(currentPossition.longitude) || 0,
-      });
-    } else if (latitude && longitude) {
-      setOrigin({
-        latitude: parseFloat(latitude) || 0,
-        longitude: parseFloat(longitude) || 0,
-      });
-    }
-  }, [user_type, currentPossition, latitude, longitude]);
 
   console.log(
     data?.pickup_location_lat,
@@ -104,22 +84,15 @@ const TrackingScreen = ({route}) => {
     'ata?.pickup_location_lat && data?.pickup_location_lng',
   );
   useEffect(() => {
-    if (
-      RiderRideComplete &&
-      data?.dropoff_location_lat &&
-      data?.dropoff_location_lng
-    ) {
-      setDestination({
-        latitude: parseFloat(data.dropoff_location_lat) || 0,
-        longitude: parseFloat(data.dropoff_location_lng) || 0,
-      });
-    } else if (data?.pickup_location_lat && data?.pickup_location_lng) {
-      setDestination({
-        latitude: parseFloat(data.pickup_location_lat) || 0,
-        longitude: parseFloat(data.pickup_location_lng) || 0,
-      });
-    }
-  }, [RiderRideComplete, data]);
+    setOrigin({
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+    });
+    setDestination({
+      latitude: parseFloat(data?.pickup_location_lat),
+      longitude: parseFloat(data?.pickup_location_lng),
+    });
+  }, []);
 
   useEffect(() => {
     currentPossitionRef.current = currentPossition;
@@ -129,78 +102,26 @@ const TrackingScreen = ({route}) => {
     timeRef.current = time;
   }, [time]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      getRiderInfo();
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const getRiderInfo = async () => {
-    try {
-      const url = `auth/ride/${ride_id}`;
-      const response = await Get(url, token);
-      console.log(
-        '🚀 ~ getRiderInfo ~ response?.data?.ride_info?.status:',
-        response?.data?.ride_info?.status,
-      );
-      if (response?.data?.ride_info?.status === 'cancel') {
-        setcancelRide(true);
-      }
-    } catch (error) {
-      setLoading(false);
-      console.error('Error fetching rider info:', error);
-    }
-  };
-
-  useEffect(() => {
-    async function connectPusher() {
-      try {
-        const channelName = `tracking${ride_id}`;
-        console.log(`Subscribing to channel: ${channelName}`);
-        await pusher.connect();
-        myChannel = await pusher.subscribe({
-          channelName,
-          onSubscriptionSucceeded: () => {
-            console.log('Successfully subscribed to:', channelName);
-          },
-          onSubscriptionError: error => {
-            console.error('Subscription error:', error);
-          },
-          onEvent: event => {
-            console.log('Event received:', event.data);
-            const data = JSON.parse(event.data);
-            setCurrentPossition({
-            })
-          },
-        });
-        console.log('====================>', pusher.connectionState);
-        console.log('Subscription complete for channel:', channelName);
-      } catch (error) {
-        console.error('Error during Pusher connection:', error);
-      }
-    }
-    connectPusher();
-  }, [focused]);
-
   setTimeout(() => {
     setshowCancelRide(false);
   }, 5 * 60 * 1000);
+
+  console.log('🚀 ~ updateStatus ~ data?.id:', data?.id);
 
   const updateStatus = async status => {
     const body = {
       lat: currentPossition?.latitude,
       lng: currentPossition?.longitude,
-      status: status,
+      status: 'OnTheWay',
     };
     const url = `auth/rider/ride_update/${data?.id}`;
+    console.log('bodyyyyyyyy', body, url);
     const response = await Post(url, body, apiHeader(token));
-    if (response?.data?.ride_info?.status === 'complete') {
-      setReviewModalVisible(true);
-    }
+    console.log('🚀 ~ updateStatus ~ response:', response);
   };
 
-  const watchPosition = () => {
+  useEffect(() => {
+    getCurrentLocation();
     const watchId = Geolocation.watchPosition(
       position => {
         const {latitude, longitude} = position.coords;
@@ -221,10 +142,7 @@ const TrackingScreen = ({route}) => {
             origin.longitude,
           )
         ) {
-          onCompleteRide();
-        }
-        if (latitude === origin?.latitude && longitude === origin?.longitude) {
-          onCompleteRide();
+          setIsRiderHere(true);
         }
       },
       error => console.log('Error getting location:', error),
@@ -234,7 +152,9 @@ const TrackingScreen = ({route}) => {
         interval: 1000,
       },
     );
+
     const initialTime = calculateTravelTime();
+
     const interval = setInterval(() => {
       {
         startRide === true &&
@@ -243,83 +163,21 @@ const TrackingScreen = ({route}) => {
           });
       }
     }, 300000);
+
     return () => {
       Geolocation.clearWatch(watchId);
       clearInterval(interval);
     };
-  };
-
-  const onCompleteRide = async () => {
-    const pusher = await getPusherInstance();
-    const channelName = `update_location-${ride_id}`;
-    pusher.unsubscribe(channelName);
-    setRiderRideComplete(true);
-    setStartRide(false);
-    updateStatus('Completed');
-  };
-
-  useEffect(() => {
-    getCurrentLocation();
-    watchPosition();
-    // const watchId = Geolocation.watchPosition(
-    //   position => {
-    //     const {latitude, longitude} = position.coords;
-    //     setCurrentPossition(prevLocation => ({
-    //       ...prevLocation,
-    //       latitude,
-    //       longitude,
-    //     }));
-    //     tracklocation(latitude, longitude);
-    //     const isLocationClose = (lat1, lon1, lat2, lon2, threshold = 0.0001) =>
-    //       Math.abs(lat1 - lat2) < threshold &&
-    //       Math.abs(lon1 - lon2) < threshold;
-    //     if (
-    //       isLocationClose(
-    //         latitude,
-    //         origin.latitude,
-    //         longitude,
-    //         origin.longitude,
-    //       )
-    //     ) {
-    //       onCompleteRide();
-    //     }
-    //     if (latitude === origin?.latitude && longitude === origin?.longitude) {
-    //       onCompleteRide();
-    //     }
-    //   },
-    //   error => console.log('Error getting location:', error),
-    //   {
-    //     enableHighAccuracy: true,
-    //     distanceFilter: 1,
-    //     interval: 1000,
-    //   },
-    // );
-
-    // const initialTime = calculateTravelTime();
-
-    // const interval = setInterval(() => {
-    //   {
-    //     startRide === true &&
-    //       setTime(prevTime => {
-    //         return prevTime > 5 ? prevTime - 5 : 0;
-    //       });
-    //   }
-    // }, 300000);
-
-    // return () => {
-    //   Geolocation.clearWatch(watchId);
-    //   clearInterval(interval);
-    // };
   }, [focused]);
 
   const tracklocation = async ({latitude, longitude}) => {
-    const url = `auth/rider/ride_update/${ride_id}`;
+    const url = `auth/rider/update_location/${ride_id}`;
     const body = {
       lat: latitude,
       lng: longitude,
     };
     const response = await Post(url, body, apiHeader(token));
-    console.log('🚀 ~ tracklocation ~ response:', response?.data);
+    return console.log('🚀 ~ tracklocation ~ response:', response?.data);
   };
 
   useEffect(() => {
@@ -398,7 +256,7 @@ const TrackingScreen = ({route}) => {
         const currentLocation = await getCurrentLocation();
         const travelTime = calculateTravelTime();
         setTime(travelTime);
-        watchPosition();
+        // watchPosition();
       } catch (error) {
         console.error('Error in tracking task:', error);
       }
@@ -473,6 +331,7 @@ const TrackingScreen = ({route}) => {
 
   useEffect(() => {
     setStartTime(new Date());
+    dispatch(setUserEventData({}));
   }, []);
 
   const CancelRide = async () => {
@@ -509,10 +368,10 @@ const TrackingScreen = ({route}) => {
     }
   };
 
-  const RiderArrived = async () => {
-    const url = `auth/rider-arrived/${ride_id}`;
-    const reponse = await Post(url, {}, apiHeader(token));
-  };
+  // const RiderArrived = async () => {
+  //   const url = `auth/rider-arrived/${ride_id}`;
+  //   const reponse = await Post(url, {}, apiHeader(token));
+  // };
 
   return (
     <>
@@ -541,43 +400,19 @@ const TrackingScreen = ({route}) => {
             style={styles.map}>
             {!isNaN(origin?.latitude) && !isNaN(origin?.longitude) && (
               <Marker coordinate={origin}>
-                {user_type === 'Rider' ? (
-                  <View
+                <View
+                  style={{
+                    width: moderateScale(60, 0.6),
+                    height: moderateScale(60, 0.6),
+                  }}>
+                  <CustomImage
                     style={{
-                      width: moderateScale(60, 0.6),
-                      height: moderateScale(60, 0.6),
-                    }}>
-                    <LottieView
-                      autoPlay
-                      loop
-                      style={{
-                        height: '100%',
-                        width: '100%',
-                        alignItems: 'center',
-                        alignSelf: 'center',
-                      }}
-                      source={require('../Assets/animations/location_pin_amination.json')}
-                    />
-                  </View>
-                ) : (
-                  <View
-                    style={{
-                      width: moderateScale(60, 0.6),
-                      height: moderateScale(60, 0.6),
-                    }}>
-                    <LottieView
-                      autoPlay
-                      loop
-                      style={{
-                        height: '100%',
-                        width: '100%',
-                        alignItems: 'center',
-                        alignSelf: 'center',
-                      }}
-                      source={require('../Assets/animations/location_pin.json')}
-                    />
-                  </View>
-                )}
+                      width: '100%',
+                      height: '100%',
+                    }}
+                    source={require('../Assets/Images/car_icon.png')}
+                  />
+                </View>
               </Marker>
             )}
             {description?.stop && (
@@ -613,43 +448,16 @@ const TrackingScreen = ({route}) => {
             {!isNaN(destinations?.latitude) &&
               !isNaN(destinations?.longitude) && (
                 <Marker coordinate={destinations}>
-                  {user_type === 'Rider' ? (
-                    <View
-                      style={{
-                        width: moderateScale(60, 0.6),
-                        height: moderateScale(60, 0.6),
-                      }}>
-                      <LottieView
-                        autoPlay
-                        loop
-                        style={{
-                          height: '100%',
-                          width: '100%',
-                          alignItems: 'center',
-                          alignSelf: 'center',
-                        }}
-                        source={require('../Assets/animations/location_pin.json')}
-                      />
-                    </View>
-                  ) : (
-                    <View
-                      style={{
-                        width: moderateScale(60, 0.6),
-                        height: moderateScale(60, 0.6),
-                      }}>
-                      <LottieView
-                        autoPlay
-                        loop
-                        style={{
-                          height: '100%',
-                          width: '100%',
-                          alignItems: 'center',
-                          alignSelf: 'center',
-                        }}
-                        source={require('../Assets/animations/location_pin_amination.json')}
-                      />
-                    </View>
-                  )}
+                  <View
+                    style={{
+                      width: moderateScale(50, 0.6),
+                      height: moderateScale(50, 0.6),
+                    }}>
+                    <CustomImage
+                      style={{width: '100%', height: '100%'}}
+                      source={require('../Assets/Images/destination_icon.png')}
+                    />
+                  </View>
                 </Marker>
               )}
           </MapView>
@@ -661,19 +469,14 @@ const TrackingScreen = ({route}) => {
             styles.card_main_view,
             {
               height:
-                user_type === 'Rider'
-                  ? windowHeight * 0.5
-                  : windowHeight * 0.45,
+                startRide != true ? windowHeight * 0.42 : windowHeight * 0.35,
             },
           ]}>
           <View style={styles.image_view}>
             <CustomImage
               source={
                 {
-                  uri:
-                    user_type === 'Rider'
-                      ? baseUrl + rider_data?.photo
-                      : baseUrl + rider_data?.photo,
+                  uri: baseUrl + rider_data?.photo,
                 } || require('../Assets/Images/no_user_image.png')
               }
               style={{
@@ -683,16 +486,14 @@ const TrackingScreen = ({route}) => {
               }}
             />
           </View>
-          <View style={{top: moderateScale(30, 0.6)}}>
+          <View style={{top: moderateScale(-1, 0.6)}}>
             <CustomText
               isBold
               style={{
                 fontSize: moderateScale(20, 0.6),
                 textAlign: 'center',
               }}>
-              {user_type === 'Rider'
-                ? data?.user?.name
-                : rider_data?.name || 'Test User'}
+              {data?.user?.name}
             </CustomText>
             {user_type === 'Customer' && (
               <Rating
@@ -733,154 +534,70 @@ const TrackingScreen = ({route}) => {
                 />
               </TouchableOpacity>
             </View>
-            {user_type === 'Customer' && (
-              <View style={styles.rating_box_view}>
-                <View style={styles.rating_box_inner_view}>
-                  <Icon
-                    name="star"
-                    color={Color.darkBlue}
-                    as={Ionicons}
-                    size={moderateScale(15, 0.6)}
-                  />
-                  <View style={styles.text_view}>
-                    <CustomText
-                      isBold
-                      style={{fontSize: moderateScale(18, 0.6)}}>
-                      4.7
-                    </CustomText>
-                    <CustomText
-                      style={{
-                        color: Color.darkGray,
-                        fontSize: moderateScale(13, 0.6),
-                        marginLeft: moderateScale(3, 0.6),
-                      }}>
-                      Stars
-                    </CustomText>
-                  </View>
-                </View>
-                <View style={styles.rating_box_inner_view}>
-                  <Icon
-                    name="clock"
-                    color={Color.darkBlue}
-                    as={Entypo}
-                    size={moderateScale(15, 0.6)}
-                  />
-                  {time != 0 ? (
-                    <View style={styles.text_view}>
-                      <CustomText
-                        isBold
-                        style={{fontSize: moderateScale(18, 0.6)}}>
-                        {time}
-                      </CustomText>
-                      <CustomText
-                        style={{
-                          color: Color.darkGray,
-                          fontSize: moderateScale(13, 0.6),
-                          marginLeft: moderateScale(3, 0.6),
-                        }}>
-                        Mins
-                      </CustomText>
-                    </View>
-                  ) : (
-                    <CustomText
-                      style={{
-                        color: Color.darkGray,
-                        fontSize: moderateScale(13, 0.6),
-                        marginLeft: moderateScale(3, 0.6),
-                      }}>
-                      any Time
-                    </CustomText>
-                  )}
-                </View>
-                <View style={styles.rating_box_inner_view}>
-                  <Icon
-                    name="currency-usd"
-                    color={Color.darkBlue}
-                    as={MaterialCommunityIcons}
-                    size={moderateScale(15, 0.6)}
-                  />
-                  <View style={styles.text_view}>
-                    <CustomText
-                      isBold
-                      style={{fontSize: moderateScale(18, 0.6)}}>
-                      {data?.carinfo?.price}
-                    </CustomText>
-                    <CustomText
-                      style={{
-                        color: Color.darkGray,
-                        fontSize: moderateScale(13, 0.6),
-                        marginLeft: moderateScale(3, 0.6),
-                      }}>
-                      $
-                    </CustomText>
-                  </View>
-                </View>
-              </View>
-            )}
-            {user_type === 'Rider' && (
-              <View style={styles.text_view2}>
-                <View>
-                  <View style={{flexDirection: 'row'}}>
-                    <Icon name="map-pin" as={Feather} color={Color.orange} />
-                    <CustomText
-                      isBold={true}
-                      style={{
-                        fontSize: 13,
-                        paddingHorizontal: moderateScale(5, 0.6),
-                      }}>
-                      pickupLocatoion
-                    </CustomText>
-                    <CustomText
-                      isBold
-                      style={[
-                        styles.text1,
-                        {
-                          position: 'absolute',
-                          color: 'black',
-                          paddingVertical: moderateScale(10, 0.6),
-                          top: 11,
-                          // marginLeft: moderateScale(-3, 0.6),
-                          transform: [{rotate: '-90deg'}],
-                        },
-                      ]}>
-                      - - -
-                    </CustomText>
-                  </View>
+            <View style={styles.text_view2}>
+              <View>
+                <View style={{flexDirection: 'row'}}>
+                  <Icon name="map-pin" as={Feather} color={Color.orange} />
                   <CustomText
+                    isBold={true}
                     style={{
-                      fontSize: 10,
-                      width: windowWidth * 0.4,
-                      marginLeft: moderateScale(18, 0.6),
+                      fontSize: 13,
+                      paddingHorizontal: moderateScale(5, 0.6),
                     }}>
-                    {data?.location_from}
+                    pickupLocatoion
                   </CustomText>
+                  <CustomText
+                    isBold
+                    style={[
+                      styles.text1,
+                      {
+                        position: 'absolute',
+                        color: 'black',
+                        paddingVertical: moderateScale(10, 0.6),
+                        top: 11,
+                        // marginLeft: moderateScale(-3, 0.6),
+                        transform: [{rotate: '-90deg'}],
+                      },
+                    ]}>
+                    - - -
+                  </CustomText>
+                </View>
+                <CustomText
+                  numberOfLines={1}
+                  style={{
+                    fontSize: 10,
+                    width: windowWidth * 0.4,
+                    marginLeft: moderateScale(18, 0.6),
+                  }}>
+                  {data?.location_from}
+                </CustomText>
 
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      marginTop: moderateScale(7, 0.6),
-                    }}>
-                    <Icon name="map-pin" as={Feather} color={Color.cartheme} />
-                    <CustomText
-                      isBold={true}
-                      style={{
-                        fontSize: 13,
-                        paddingHorizontal: moderateScale(5, 0.6),
-                      }}>
-                      drop off location
-                    </CustomText>
-                  </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    marginTop: moderateScale(7, 0.6),
+                  }}>
+                  <Icon name="map-pin" as={Feather} color={Color.cartheme} />
                   <CustomText
+                    isBold={true}
                     style={{
-                      fontSize: 10,
-                      width: windowWidth * 0.4,
-                      marginLeft: moderateScale(18, 0.6),
+                      fontSize: 13,
+                      paddingHorizontal: moderateScale(5, 0.6),
                     }}>
-                    {data?.location_to}
+                    drop off location
                   </CustomText>
                 </View>
+                <CustomText
+                  numberOfLines={1}
+                  style={{
+                    fontSize: 10,
+                    width: windowWidth * 0.4,
+                    marginLeft: moderateScale(18, 0.6),
+                  }}>
+                  {data?.location_to}
+                </CustomText>
               </View>
-            )}
+            </View>
             <CustomButton
               text={'cancel ride'}
               textColor={Color.white}
@@ -894,52 +611,85 @@ const TrackingScreen = ({route}) => {
               isGradient
               onPress={() => CancelRide()}
             />
-            {user_type === 'Rider' && (
-              <>
-                {startRide != true && (
-                  <View>
-                    <CustomButton
-                      textColor={Color.white}
-                      text={'Start'}
-                      width={windowWidth * 0.8}
-                      height={windowHeight * 0.06}
-                      bgColor={Color.cartheme}
-                      borderColor={Color.white}
-                      borderWidth={1}
-                      marginTop={moderateScale(6, 0.6)}
-                      borderRadius={moderateScale(30, 0.3)}
-                      isGradient
-                      onPress={() => {
-                        setStartRide(true);
-                        RiderArrived();
-                      }}
-                    />
-                  </View>
-                )}
-              </>
-            )}
-            {user_type === 'Rider' && (
-              <>
-                {startRide && (
-                  <CustomButton
-                    text={'Start Ride'}
-                    textColor={Color.white}
-                    width={windowWidth * 0.8}
-                    height={windowHeight * 0.06}
-                    marginTop={moderateScale(20, 0.3)}
-                    bgColor={Color.cartheme}
-                    borderColor={Color.white}
-                    borderWidth={1}
-                    borderRadius={moderateScale(30, 0.3)}
-                    isGradient
-                    onPress={() => handleStartRide()}
-                  />
-                )}
-              </>
+            {startRide != true && (
+              <View>
+                <CustomButton
+                  textColor={Color.white}
+                  text={'Start'}
+                  width={windowWidth * 0.8}
+                  height={windowHeight * 0.06}
+                  bgColor={Color.cartheme}
+                  borderColor={Color.white}
+                  borderWidth={1}
+                  marginTop={moderateScale(6, 0.6)}
+                  borderRadius={moderateScale(30, 0.3)}
+                  isGradient
+                  onPress={() => {
+                    setStartRide(true);
+                    // updateStatus('OnTheWay');
+                    // watchPosition();
+                  }}
+                />
+              </View>
             )}
           </View>
         </View>
       </View>
+      <Modal
+        swipeDirection="up"
+        transparent
+        visible={isRiderHere}
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <View
+          style={{
+            height: windowHeight,
+            width: windowWidth,
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <View
+            style={{
+              height: windowHeight * 0.3,
+              width: windowWidth * 0.9,
+              marginBottom: moderateScale(20, 0.6),
+              backgroundColor: Color.white,
+              borderRadius: moderateScale(20, 0.6),
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <View
+              style={{
+                width: windowWidth * 0.7,
+                height: windowWidth * 0.45,
+              }}>
+              <LottieView
+                autoPlay
+                loop
+                style={{
+                  height: '100%',
+                  width: '100%',
+                  alignItems: 'center',
+                  alignSelf: 'center',
+                }}
+                source={require('../Assets/animations/cab_arrived_animation.json')}
+              />
+            </View>
+            <CustomText
+              isBold
+              style={{
+                textAlign: 'center',
+                padding: moderateScale(12, 0.6),
+                fontSize: moderateScale(15, 0.6),
+              }}>
+              Please Wait for the user untill they arrived to cab
+            </CustomText>
+          </View>
+        </View>
+      </Modal>
       <Modal
         swipeDirection="up"
         transparent
@@ -1127,7 +877,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5.46,
     elevation: 9,
     backgroundColor: Color.white,
-    top: -50,
+    top: -70,
     position: 'absolute',
   },
   image_main_view: {

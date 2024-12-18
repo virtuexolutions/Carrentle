@@ -11,16 +11,20 @@ import Loader from '../Components/Loader';
 import {
   setIsSubscribed,
   setPusherInstance,
+  setRequestModalVisible,
   setriderChannelName,
   setUserChannelName,
+  setUserEventData,
   setUserIsSubscribed,
 } from '../Store/slices/socket';
 import {setEventDataRider} from '../Store/slices/common';
-import { useIsFocused } from '@react-navigation/native';
-import { Pusher } from '@pusher/pusher-websocket-react-native';
+import {useIsFocused} from '@react-navigation/native';
+import {Pusher} from '@pusher/pusher-websocket-react-native';
 const HomeScreen = ({navigation}) => {
   const focused = useIsFocused();
-  const isSubscribed = useSelector(state => state.socketReducer.userIsSubscribed);
+  const isSubscribed = useSelector(
+    state => state.socketReducer.userIsSubscribed,
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [rbRef, setRbRef] = useState(null);
   const [review, setReview] = useState(false);
@@ -30,11 +34,13 @@ const HomeScreen = ({navigation}) => {
   console.log('🚀 ~ HomeScreen ~ token:', token);
   const [cablist, setCabList] = useState(false);
   const dispatch = useDispatch();
+  const userEventData = useSelector(state => state.socketReducer.userEventData);
+  console.log('🚀 ~ HomeScreen ~ userEventData:', userEventData);
 
   const pusher = Pusher.getInstance();
-  console.log("🚀 ~ HomeScreen ~ Pusher: ",pusher.connectionState)
+  console.log('🚀 ~ HomeScreen ~ Pusher: ', pusher.connectionState);
 
-    useEffect(() => {
+  useEffect(() => {
     async function connectPusher() {
       try {
         // const channelName = `rider-channel-${userData?.id}`;
@@ -49,16 +55,17 @@ const HomeScreen = ({navigation}) => {
           channelName: `customer-channel-${userData?.id}`,
           onSubscriptionSucceeded: (channelName, data) => {
             console.log('Successfully subscribed to:', channelName);
-            dispatch(setUserChannelName(channelName));
+            dispatch(setUserChannelName(`customer-channel-${userData?.id}`));
             dispatch(setUserIsSubscribed(true));
           },
           onSubscriptionError: error => {
             console.error('Subscription error:', error);
           },
           onEvent: event => {
+            // dispatch(setUserEventData({}))
             console.log('Event received:', event.data);
             const data = JSON.parse(event.data);
-            dispatch(setEventDataRider(data.message.ride_info));
+            dispatch(setUserEventData(data.message.ride_info));
           },
         });
         await pusher.connect();
@@ -66,11 +73,11 @@ const HomeScreen = ({navigation}) => {
         console.error('Error during Pusher connection:', error);
       }
     }
-    if (!isSubscribed) {
-      console.log("Running if block");
+    // console.log("Running if block");
+    if (pusher.connectionState == 'DISCONNECTED') {
       connectPusher();
     }
-   
+
     // dispatch(setIsSubscribed(false))
     // pusher.disconnect()
     // pusher.unsubscribe( {channelName: `rider-channel-${userData?.id}`})
@@ -86,6 +93,7 @@ const HomeScreen = ({navigation}) => {
     const url = 'auth/customer/car_list';
     setIsLoading(true);
     const reponse = await Get(url, token);
+    console.log("🚀 ~ getCabList ~ reponse:", reponse?.data)
     setIsLoading(false);
     if (reponse != undefined) {
       setCabList(reponse?.data?.data);

@@ -1,24 +1,28 @@
-import {StyleSheet, ScrollView, View, TouchableOpacity} from 'react-native';
-import React, {useState, useRef, useEffect} from 'react';
-import Color from '../Assets/Utilities/Color';
-import CustomImage from '../Components/CustomImage';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
-import ScreenBoiler from '../Components/ScreenBoiler';
-import CustomText from '../Components/CustomText';
+import {Pusher} from '@pusher/pusher-websocket-react-native';
+import {useNavigation} from '@react-navigation/native';
 import {Divider, Icon} from 'native-base';
-import Feather from 'react-native-vector-icons/Feather';
+import React from 'react';
+import {ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {moderateScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
+import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {SetUserRole, setUserLogoutAuth} from '../Store/slices/auth-slice';
-import {setUserLogOut} from '../Store/slices/common';
+import Color from '../Assets/Utilities/Color';
+import CustomImage from '../Components/CustomImage';
+import CustomText from '../Components/CustomText';
+import ScreenBoiler from '../Components/ScreenBoiler';
 import {imageUrl} from '../Config';
-import {disconnectPusher, getPusherInstance} from '../Store/pusherService';
-import {resetPusher, setIsSubscribed, setRiderIsSubscribed, setUserIsSubscribed} from '../Store/slices/socket';
+import {setUserLogoutAuth} from '../Store/slices/auth-slice';
+import {setUserLogOut} from '../Store/slices/common';
+import {
+  resetPusher,
+  setRiderIsSubscribed,
+  setUserIsSubscribed,
+} from '../Store/slices/socket';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 // import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
 const Drawer = () => {
@@ -26,21 +30,20 @@ const Drawer = () => {
   const dispatch = useDispatch();
   const userData = useSelector(state => state.commonReducer.userData);
   const token = useSelector(state => state.authReducer.token);
-  console.log('🚀 ~ Drawer ~ token:', token);
+  const pusher = Pusher.getInstance();
   const role = useSelector(state => state.authReducer.role);
   const {user_type} = useSelector(state => state.authReducer);
   const riderChannelName = useSelector(
-    state => state.commonReducer.riderChannelName,
+    state => state.socketReducer.riderChannelName,
   );
-  console.log('🚀 ~ Drawer ~ riderChannelName:', riderChannelName);
   const userChannelName = useSelector(
     state => state.socketReducer.userChannelName,
   );
   console.log('🚀 ~ Drawer ~ userChannelName:', userChannelName);
+
   const pusherInstance = useSelector(
     state => state.socketReducer.pusherInstance,
   );
-
   const adminData = [
     // {
     //   name: 'Home',
@@ -127,7 +130,6 @@ const Drawer = () => {
   // useEffect(() => {
   //   if (pusherInstance && riderChannelName) {
   //     const channel = pusherInstance.channels.get(riderChannelName);
-  //     console.log('🚀 ~ useEffect ~ channel:', channel?.channelName);
   //     // if (channel === riderChannelName) {
   //     //   channel.bind('event_name', data => {
   //     //     console.log('Received event data:', data);
@@ -144,20 +146,35 @@ const Drawer = () => {
   // }, [dispatch, pusherInstance]);
 
   const logoutUser = async () => {
-    const pusher = await getPusherInstance();
     try {
       console.log(pusher.connectionState, 'connectionState');
-      pusher.unsubscribe(riderChannelName);
+      if (user_type === 'Rider') {
+        if (riderChannelName) {
+          pusher.disconnect();
+          // console.log('Rider');
+          // pusher.unsubscribe(riderChannelName);
+          // dispatch(setRiderIsSubscribed(false));
+        } else {
+          console.warn('Rider channel name is null or undefined');
+        }
+      } else {
+        if (userChannelName) {
+          console.log('User');
+          pusher.disconnect();
+          // pusher.unsubscribe(`customer-channel-${userData?.id}`);
+          // dispatch(setUserIsSubscribed(false));
+          // console.log(
+          //   '🚀 ~ logoutUser ~   pusher.unsubscribe(`customer-channel-${userData?.id}`):',
+          //   pusher.unsubscribe(`customer-channel-${userData?.id}`),
+          // );
+        } else {
+          console.warn('User channel name is null or undefined');
+        }
+      }
+
       dispatch(setUserLogoutAuth());
       dispatch(setUserLogOut());
-      if(user_type?.toLowerCase() == "rider"){
-        dispatch(setRiderIsSubscribed(false))
-      }else{
-        setUserIsSubscribed(false)
-      }
-      // dispatch(setIsSubscribed(false))
-      // dispatch(resetPusher());
-
+      dispatch(resetPusher());
     } catch (error) {
       console.error('Error while disconnecting Pusher:', error);
     }

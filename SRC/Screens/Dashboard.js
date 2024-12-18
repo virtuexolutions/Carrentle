@@ -22,13 +22,13 @@ import Header from '../Components/Header';
 import HistoryComponent from '../Components/HistoryComponent';
 import Loader from '../Components/Loader';
 import navigationService from '../navigationService';
-import {setEventDataRider} from '../Store/slices/common';
 import {
   setRiderIsSubscribed,
   setPusherInstance,
   setriderChannelName,
 } from '../Store/slices/socket';
 import {windowHeight, windowWidth} from '../Utillity/utils';
+import { setEventDataRider } from '../Store/slices/common';
 
 const previous_trip_card = [
   {
@@ -74,7 +74,9 @@ const DashBoard = () => {
   const token = useSelector(state => state.authReducer.token);
   const userData = useSelector(state => state.commonReducer.userData);
   // console.log("🚀 ~ DashBoard ~ userData11:", userData)
-  const isSubscribed = useSelector(state => state.socketReducer.riderIsSubscribed);
+  const isSubscribed = useSelector(
+    state => state.socketReducer.riderIsSubscribed,
+  );
   console.log('🚀 ~ DashBoard ~ isSubscribed:', isSubscribed);
 
   const [history, setHistory] = useState();
@@ -90,7 +92,6 @@ const DashBoard = () => {
   useEffect(() => {
     async function connectPusher() {
       try {
-        // const channelName = `rider-channel-${userData?.id}`;
         console.log(
           `Subscribing to channel: ${`rider-channel-${userData?.id}`}`,
         );
@@ -108,7 +109,6 @@ const DashBoard = () => {
           onSubscriptionError: error => {
             console.error('Subscription error:', error);
           },
-          // onConnec
           onEvent: event => {
             console.log('Event received:', event.data);
             const data = JSON.parse(event.data);
@@ -120,24 +120,16 @@ const DashBoard = () => {
         console.error('Error during Pusher connection:', error);
       }
     }
-
-    if(pusher.connectionState == "DISCONNECTED"){
+    if (pusher.connectionState == 'DISCONNECTED') {
       connectPusher();
     }
-    if (!isSubscribed) {
-      console.log("Running if block");
-
-      connectPusher();
-    }
-   
   }, [focused]);
 
   useEffect(() => {
     if (token) {
       getPaymentHistory();
     }
-  }, [focused])
-  
+  }, [focused]);
 
   useEffect(() => {
     setPageNum(1);
@@ -305,7 +297,6 @@ const DashBoard = () => {
           }}>
           Latest Assign Rides
         </CustomText>
-
         {loading ? (
           <Loader
             style={{

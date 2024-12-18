@@ -35,8 +35,7 @@ const MessagesScreen = ({route}) => {
   const {rider_id, data} = route.params;
   console.log('🚀 ~ MessagesScreen ~ rider_id:', rider_id);
   const userRole = useSelector(state => state.commonReducer.selectedRole);
-  const user = useSelector(state => state.commonReducer.userData);
-  console.log('🚀 ~ MessagesScreen ~ user:', user?.id);
+  const userData = useSelector(state => state.commonReducer.userData);
   const token = useSelector(state => state.authReducer.token);
   console.log('🚀 ~ MessagesScreen ~ token:', token);
   const pusher = Pusher.getInstance();
@@ -57,7 +56,7 @@ const MessagesScreen = ({route}) => {
           cluster: 'ap2',
         });
         myChannel = await pusher.subscribe({
-          channelName: `my-channel-${user?.id}`,
+          channelName: `my-channel-${userData?.id}`,
           onSubscriptionSucceeded: channelName => {
             console.log(`And here are the channel members: ${myChannel}`);
             console.log(
@@ -65,14 +64,14 @@ const MessagesScreen = ({route}) => {
             );
           },
           onEvent: event => {
-            user?.id;
+            userData?.id;
             console.log('Got channel event:', event.data);
             const dataString = JSON.parse(event.data);
             console.log(
               '🚀 ~ connectPusher ~ dataString:',
               dataString?.message,
             );
-            if (dataString?.message.target_id == user?.id) {
+            if (dataString?.message.target_id == userData?.id) {
               setMessages(previousMessages =>
                 GiftedChat.append(previousMessages, dataString?.message),
               );
@@ -89,7 +88,7 @@ const MessagesScreen = ({route}) => {
     connectPusher();
     getChatListingData();
     return async () => {
-      await pusher.unsubscribe({channelName: `my-channel-${user?.id}`});
+      await pusher.unsubscribe({channelName: `my-channel-${userData?.id}`});
     };
   }, []);
 
@@ -102,7 +101,7 @@ const MessagesScreen = ({route}) => {
   };
 
   const getChatListingData = async () => {
-    const url = `auth/message_list?user_id=${user?.id}&target_id=${rider_id}`;
+    const url = `auth/message_list?user_id=${userData?.id}&target_id=${rider_id}`;
     setIsLoading(true);
     const response = await Get(url, token);
     console.log('🚀 ~ getChatListingData ~ response:', response?.data);
@@ -125,9 +124,9 @@ const MessagesScreen = ({route}) => {
         text: messages[0].text,
         createAt: new Date(),
         user: {
-          _id: user?.id,
-          name: `${user?.name}`,
-          avatar: baseUrl + user?.photo,
+          _id: userData?.id,
+          name: `${userData?.name}`,
+          avatar: baseUrl + userData?.photo,
         },
       };
       console.log('🚀 ~ MessagesScreen ~ newMessage:', newMessage);
@@ -135,7 +134,7 @@ const MessagesScreen = ({route}) => {
         GiftedChat.append(previousMessages, newMessage),
       );
       startChat({
-        chat_id: user?.id,
+        chat_id: userData?.id,
         target_id: rider_id,
         ...newMessage,
       });
@@ -154,7 +153,7 @@ const MessagesScreen = ({route}) => {
               fontSize: moderateScale(20, 0.6),
               color: Color.darkGray,
             }}>
-            {user_type === 'Rider' ? data?.user?.name : data?.rider?.name}
+            {user_type === 'Rider' ? data?.userData?.name : data?.rider?.name}
           </CustomText>
         </View>
         <View
@@ -167,7 +166,7 @@ const MessagesScreen = ({route}) => {
             source={{
               uri:
                 user_type === 'Rider'
-                  ? baseUrl + data?.user?.photo
+                  ? baseUrl + data?.userData?.photo
                   : baseUrl + data?.rider?.photo,
             }}
             style={{
@@ -288,9 +287,9 @@ const MessagesScreen = ({route}) => {
         )}
         onSend={messages => onSend(messages)}
         user={{
-          _id: user?.id,
-          name: user?.name,
-          avatar: baseUrl + user?.photo,
+          _id: userData?.id,
+          name: userData?.name,
+          avatar: baseUrl + userData?.photo,
         }}
       />
     </SafeAreaView>

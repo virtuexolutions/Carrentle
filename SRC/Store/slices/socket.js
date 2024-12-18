@@ -4,8 +4,8 @@ const initialState = {
   riderIsSubscribed: false,
   userIsSubscribed: false,
   pusherInstance: null,
-  riderChannelName: null,
-  userChannelName: null,
+  riderChannelName: '',
+  userChannelName: '',
   riderEvent: {},
   userEventData: {},
 };
@@ -34,6 +34,8 @@ const socketSlice = createSlice({
     resetPusher: state => {
       state.pusherInstance = null;
       state.riderChannelName = null;
+      state.userChannelName = null;
+      state.userEventData = null;
     },
     setUserChannelName(state, action) {
       state.userChannelName = action.payload;
@@ -43,13 +45,12 @@ const socketSlice = createSlice({
       state.userEventData = action.payload;
       console.log('🚀 ~ setUserEventData ~ action.payload:', action.payload);
     },
-    
   },
 });
 
 export const {
-  setRiderIsSubscribed,
   setUserIsSubscribed,
+  setRiderIsSubscribed,
   setPusherInstance,
   resetPusher,
   setUserChannelName,
