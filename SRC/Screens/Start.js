@@ -1,28 +1,28 @@
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import React, {useState} from 'react';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { moderateScale } from 'react-native-size-matters';
-import { useDispatch } from 'react-redux';
+import {moderateScale} from 'react-native-size-matters';
+import {useDispatch} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import ScreenBoiler from '../Components/ScreenBoiler';
-import { windowHeight, windowWidth } from '../Utillity/utils';
-import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { setUserType } from '../Store/slices/auth-slice';
+import {windowHeight, windowWidth} from '../Utillity/utils';
+import {useNavigation} from '@react-navigation/native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {setUserType} from '../Store/slices/auth-slice';
 import localStoreUtil from '../Utillity/localstoreUntil';
 
 const Start = () => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
+
   const onPressButton = async type => {
-    await localStoreUtil.store_data('user_type', type);
-    dispatch(setUserType(type));
-    navigation.navigate('LoginScreen');
+    navigation.navigate('LoginScreen', {type: type});
   };
+
   return (
+
     <SafeAreaView style={{flex: 1}}>
       <ScreenBoiler
         statusBarBackgroundColor={'white'}
@@ -52,7 +52,7 @@ const Start = () => {
             </View>
             <CustomButton
               onPress={() => {
-                onPressButton('Rider');
+                onPressButton('rider');
               }}
               text={'Rider'}
               fontSize={moderateScale(14, 0.3)}
@@ -68,7 +68,7 @@ const Start = () => {
             />
             <CustomButton
               onPress={() => {
-                onPressButton('Customer');
+                onPressButton('customer');
               }}
               text={'Customer'}
               fontSize={moderateScale(14, 0.3)}
@@ -86,10 +86,13 @@ const Start = () => {
         </ScrollView>
       </ScreenBoiler>
     </SafeAreaView>
+
   );
+
 };
 
 const styles = StyleSheet.create({
+  
   container: {
     paddingTop: windowHeight * 0.1,
     height: windowHeight,
@@ -139,6 +142,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: moderateScale(40, 0.6),
   },
+
 });
 
 export default Start;

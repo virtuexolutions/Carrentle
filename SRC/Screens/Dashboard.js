@@ -28,7 +28,7 @@ import {
   setriderChannelName,
 } from '../Store/slices/socket';
 import {windowHeight, windowWidth} from '../Utillity/utils';
-import { setEventDataRider } from '../Store/slices/common';
+import {setEventDataRider} from '../Store/slices/common';
 
 const previous_trip_card = [
   {
@@ -73,7 +73,6 @@ const DashBoard = () => {
   const focused = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
   const userData = useSelector(state => state.commonReducer.userData);
-  // console.log("🚀 ~ DashBoard ~ userData11:", userData)
   const isSubscribed = useSelector(
     state => state.socketReducer.riderIsSubscribed,
   );
@@ -120,6 +119,10 @@ const DashBoard = () => {
         console.error('Error during Pusher connection:', error);
       }
     }
+    console.log(
+      '🚀 ~ useEffect ~ pusher.connectionState:',
+      pusher.connectionState,
+    );
     if (pusher.connectionState == 'DISCONNECTED') {
       connectPusher();
     }

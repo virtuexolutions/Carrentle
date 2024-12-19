@@ -73,7 +73,7 @@ const RiderArrivedModal = ({isModalVisible, onPressStart, onpressClose}) => {
               color: Color.darkBlue,
               textAlign: 'center',
             }}>
-            {user_type === 'Rider'
+            {user_type === 'rider'
               ? 'Waiting For Customer'
               : 'Your Cab Is Arrived at Your Pickup Location'}
           </CustomText>

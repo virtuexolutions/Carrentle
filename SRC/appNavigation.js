@@ -242,6 +242,7 @@ export const TabNavigation = () => {
 export const MyDrawer = () => {
   const DrawerNavigation = createDrawerNavigator();
   const {user_type} = useSelector(state => state.authReducer);
+  console.log("🚀 ~ MyDrawer ~ user_type:", user_type)
   const firstScreen = user_type === 'Rider' ? 'DashBoard' : 'HomeScreen';
 
   return (

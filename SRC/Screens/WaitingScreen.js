@@ -18,6 +18,7 @@ const WaitingScreen = ({route}) => {
   const {data, type} = route.params;
   const navigation = useNavigation();
   const userData = useSelector(state => state.commonReducer?.userData);
+  console.log("🚀 ~ WaitingScreen ~ userData:", userData)
   const token = useSelector(state => state.authReducer.token);
   const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
   const mapRef = useRef(null);
@@ -216,7 +217,7 @@ const WaitingScreen = ({route}) => {
             </View>
           </View>
           <AcceptRideModal
-            visible={Object.keys(userEventData).length > 0}
+            visible={Object.keys(userEventData || {}).length > 0}
             data={userEventData?.rider}
             // setVisible={setModalVisible}
             username={userEventData?.rider?.name}

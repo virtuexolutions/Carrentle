@@ -26,10 +26,9 @@ const HomeScreen = ({navigation}) => {
     state => state.socketReducer.userIsSubscribed,
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [rbRef, setRbRef] = useState(null);
-  const [review, setReview] = useState(false);
   const token = useSelector(state => state.authReducer.token);
   const userData = useSelector(state => state.commonReducer.userData);
+  console.log('🚀 ~ HomeScreen ~ userData:', userData?.id);
 
   console.log('🚀 ~ HomeScreen ~ token:', token);
   const [cablist, setCabList] = useState(false);
@@ -39,6 +38,8 @@ const HomeScreen = ({navigation}) => {
 
   const pusher = Pusher.getInstance();
   console.log('🚀 ~ HomeScreen ~ Pusher: ', pusher.connectionState);
+
+  console.log('casjdahjsdada');
 
   useEffect(() => {
     async function connectPusher() {
@@ -62,7 +63,6 @@ const HomeScreen = ({navigation}) => {
             console.error('Subscription error:', error);
           },
           onEvent: event => {
-            // dispatch(setUserEventData({}))
             console.log('Event received:', event.data);
             const data = JSON.parse(event.data);
             dispatch(setUserEventData(data.message.ride_info));
@@ -73,14 +73,13 @@ const HomeScreen = ({navigation}) => {
         console.error('Error during Pusher connection:', error);
       }
     }
-    // console.log("Running if block");
+    console.log(
+      '🚀 ~ useEffect ~ pusher.connectionState:',
+      pusher.connectionState,
+    );
     if (pusher.connectionState == 'DISCONNECTED') {
       connectPusher();
     }
-
-    // dispatch(setIsSubscribed(false))
-    // pusher.disconnect()
-    // pusher.unsubscribe( {channelName: `rider-channel-${userData?.id}`})
   }, [focused]);
 
   useEffect(() => {
@@ -93,7 +92,7 @@ const HomeScreen = ({navigation}) => {
     const url = 'auth/customer/car_list';
     setIsLoading(true);
     const reponse = await Get(url, token);
-    console.log("🚀 ~ getCabList ~ reponse:", reponse?.data)
+    console.log('🚀 ~ getCabList ~ reponse:', reponse?.data);
     setIsLoading(false);
     if (reponse != undefined) {
       setCabList(reponse?.data?.data);

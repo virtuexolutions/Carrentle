@@ -19,7 +19,7 @@ import {setUserLogoutAuth} from '../Store/slices/auth-slice';
 import {setUserLogOut} from '../Store/slices/common';
 import {
   resetPusher,
-  setRiderIsSubscribed,
+  setriderIsSubscribed,
   setUserIsSubscribed,
 } from '../Store/slices/socket';
 import {windowHeight, windowWidth} from '../Utillity/utils';
@@ -153,9 +153,9 @@ const Drawer = () => {
           pusher.disconnect();
           // console.log('Rider');
           // pusher.unsubscribe(riderChannelName);
-          // dispatch(setRiderIsSubscribed(false));
+          // dispatch(setriderIsSubscribed(false));
         } else {
-          console.warn('Rider channel name is null or undefined');
+          console.warn('rider channel name is null or undefined');
         }
       } else {
         if (userChannelName) {
@@ -163,10 +163,6 @@ const Drawer = () => {
           pusher.disconnect();
           // pusher.unsubscribe(`customer-channel-${userData?.id}`);
           // dispatch(setUserIsSubscribed(false));
-          // console.log(
-          //   '🚀 ~ logoutUser ~   pusher.unsubscribe(`customer-channel-${userData?.id}`):',
-          //   pusher.unsubscribe(`customer-channel-${userData?.id}`),
-          // );
         } else {
           console.warn('User channel name is null or undefined');
         }

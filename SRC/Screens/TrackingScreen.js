@@ -687,6 +687,26 @@ const TrackingScreen = ({route}) => {
               }}>
               Please Wait for the user untill they arrived to cab
             </CustomText>
+            <CustomButton
+              text={'Start Ride'}
+              textColor={Color.white}
+              borderWidth={2}
+              borderColor={Color.white}
+              borderRadius={moderateScale(30, 0.3)}
+              width={windowWidth * 0.6}
+              height={windowHeight * 0.05}
+              marginTop={moderateScale(10, 0.3)}
+              bgColor={Color.cartheme}
+              isBold
+              isGradient
+              textTransform={'capitalize'}
+              onPress={() => {
+                const url = `https://www.google.com/maps/dir/?api=1&origin=${origin?.latitude},${origin?.longitude}&destination=${origin?.latitude},${origin?.longitude}&travelmode=driving`;
+                Linking.openURL(url).catch(err =>
+                  console.error('An error occurred', err),
+                );
+              }}
+            />
           </View>
         </View>
       </Modal>

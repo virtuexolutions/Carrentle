@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Linking, StyleSheet, View} from 'react-native';
 import {Rating} from 'react-native-ratings';
 import {moderateScale} from 'react-native-size-matters';
 import Color from '../Assets/Utilities/Color';
@@ -104,75 +104,6 @@ const BookYourCapComponent = ({item}) => {
           <CustomText style={styles.text1}>{item?.seats + ' seats'}</CustomText>
         </View>
       </View>
-      {/* <View style={styles.seatView}>
-        <View>
-          <View
-            style={{
-              flexDirection: 'row',
-              // paddingVertical :moderateScale(5,.6)
-            }}>
-            <Icon
-              name="map-marker"
-              as={FontAwesome}
-              size={moderateScale(12, 0.6)}
-              color={'#FF8A00'}
-            />
-            <CustomText
-              style={[
-                styles.text1,
-                {
-                  paddingBottom: moderateScale(10, 0.6),
-                },
-              ]}>
-              {item?.pickUppoint}
-            </CustomText>
-          </View>
-          <CustomText
-            isBold
-            style={[
-              styles.text1,
-              {
-                position: 'absolute',
-                color: 'black',
-                top: 17,
-                marginLeft: moderateScale(-7, 0.6),
-                transform: [{ rotate: '-90deg' }],
-              },
-            ]}>
-            -----
-          </CustomText>
-
-          <View
-            style={{
-              flexDirection: 'row',
-              paddingVertical: moderateScale(10, 0.6),
-            }}>
-            <Icon
-              name="map-marker"
-              as={FontAwesome}
-              size={moderateScale(12, 0.6)}
-              color={'#72AFED'}
-            />
-            <CustomText style={styles.text1}>{item?.dropLocation}</CustomText>
-          </View>
-        </View>
-        <View
-          style={{
-            marginTop: moderateScale(20, 0.3),
-          }}>
-          <CustomText style={styles.text2}>available seats</CustomText>
-          <CustomText
-            style={[
-              styles.text1,
-              {
-                textAlign: 'center',
-              },
-            ]}>
-            {item?.availableSeat}
-          </CustomText>
-        </View>
-      </View> */}
-
       <CustomButton
         onPress={() => {
           navigation.navigate('BoardingPointScreen', {
@@ -193,57 +124,6 @@ const BookYourCapComponent = ({item}) => {
         isGradient
         textTransform={'capitalize'}
       />
-      {/* <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          width: windowWidth * 0.8,
-          alignSelf: 'center',
-          justifyContent: 'space-between',
-          paddingHorizontal: moderateScale(12, 0.6),
-          marginTop: moderateScale(10, 0.6),
-        }}>
-        <CustomButton
-          onPress={() => {
-            navigation.navigate('BoardingPointScreen', {
-              carData: item,
-              date: 'BFN',
-            });
-          }}
-          text={'Book for Now'}
-          textColor={Color.white}
-          borderWidth={2}
-          borderColor={Color.white}
-          borderRadius={moderateScale(30, 0.3)}
-          width={windowWidth * 0.35}
-          height={windowHeight * 0.06}
-          marginTop={moderateScale(10, 0.3)}
-          bgColor={Color.cartheme}
-          isBold
-          isGradient
-          textTransform={'capitalize'}
-        />
-        <CustomButton
-          onPress={() => {
-            navigation.navigate('BoardingPointScreen', {
-              carData: item,
-              date: 'BFL',
-            });
-          }}
-          text={'Book for Later'}
-          textColor={Color.white}
-          borderWidth={2}
-          borderColor={Color.white}
-          borderRadius={moderateScale(30, 0.3)}
-          width={windowWidth * 0.35}
-          height={windowHeight * 0.06}
-          marginTop={moderateScale(10, 0.3)}
-          bgColor={Color.cartheme}
-          isBold
-          isGradient
-          textTransform={'capitalize'}
-        />
-      </View> */}
     </View>
   );
 };
@@ -251,7 +131,6 @@ const BookYourCapComponent = ({item}) => {
 export default BookYourCapComponent;
 const styles = StyleSheet.create({
   container: {
-    // height: windowHeight * 0.45,
     paddingVertical: moderateScale(10, 0.6),
     borderRadius: moderateScale(10, 6),
     borderWidth: 1.5,
