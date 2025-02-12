@@ -1,5 +1,5 @@
 import Geolocation from '@react-native-community/geolocation';
-import database from '@react-native-firebase/database';
+import database, {update} from '@react-native-firebase/database';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import haversineDistance from 'haversine-distance';
 import LottieView from 'lottie-react-native';
@@ -10,7 +10,9 @@ import {
   AppState,
   Linking,
   Modal,
+  Platform,
   StyleSheet,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -40,11 +42,12 @@ import navigationService from '../navigationService';
 import {Pusher} from '@pusher/pusher-websocket-react-native';
 import {getPusherInstance} from '../Store/pusherService';
 import {setUserEventData} from '../Store/slices/socket';
+import {color} from 'native-base/lib/typescript/theme/styled-system';
 
 const CabTracking = ({route}) => {
   const focused = useIsFocused();
   const {data, ride_id} = route.params;
-  console.log('🚀 ~ CabTracking ~ data:', JSON.stringify(data, null, 2));
+  console.log('🚀 ~ CabTracking ~ data:', data);
   // const data = {
   //   amount: 58,
   //   carId: 1,
@@ -123,7 +126,6 @@ const CabTracking = ({route}) => {
   const user_type = useSelector(state => state.authReducer.user_type);
   const [currentPossition, setCurrentPossition] = useState({});
   const [time, setTime] = useState(0);
-  console.log('🚀 ~ CabTracking ~ time:', time);
   const [startRide, setStartRide] = useState(false);
   const [RiderRideComplete, setRiderRideComplete] = useState(false);
   const [showCancelRide, setshowCancelRide] = useState(false);
@@ -136,6 +138,7 @@ const CabTracking = ({route}) => {
   const [currentState, setCurrentState] = useState('active');
   const [startTime, setStartTime] = useState(null);
   const [cancelride, setcancelRide] = useState(false);
+  const [iswaiting, setIswaiting] = useState(false);
   const [origin, setOrigin] = useState({
     latitude: 0,
     longitude: 0,
@@ -147,6 +150,31 @@ const CabTracking = ({route}) => {
   });
 
   useEffect(() => {
+    if (userEventData?.status === 'OnTheWay') {
+      Platform.OS == 'android'
+        ? ToastAndroid.show(`Your Cab is On the way`, ToastAndroid.SHORT)
+        : Alert.alert(`Your Cab is On the way`);
+    } else if (userEventData?.status === 'Arrived') {
+      setIsRiderHere(true);
+      Platform.OS == 'android'
+        ? ToastAndroid.show(
+            `Your Cab is on your pickup location`,
+            ToastAndroid.SHORT,
+          )
+        : Alert.alert(`Your Cab is on your pickup location`);
+    } else if (userEventData?.status === 'OnGoing') {
+      setIsRiderHere(false);
+      Platform.OS == 'android'
+        ? ToastAndroid.show(`Your Ride is start now`, ToastAndroid.SHORT)
+        : Alert.alert(`Your Ride is start now`);
+    } else if (userEventData?.status === 'Completed') {
+      setReviewModalVisible(true);
+      Platform.OS == 'android'
+        ? ToastAndroid.show(`Your Ride is completed`, ToastAndroid.SHORT)
+        : Alert.alert(`Your Ride is Completed`);
+    } else if (userEventData?.status === 'Cancel') {
+      showCancelRide(true);
+    }
     setOrigin({
       latitude: parseFloat(latitude),
       longitude: parseFloat(longitude),
@@ -165,82 +193,102 @@ const CabTracking = ({route}) => {
     timeRef.current = time;
   }, [time]);
 
-  useEffect(() => {
-    dispatch(setUserEventData({}));
-    async function connectPusher() {
-      try {
-        await pusher.init({
-          apiKey: '2cbabf5fca8e6316ecfe',
-          cluster: 'ap2',
-        });
-        const channelName = `tracking-${data?.id}`;
-        console.log(`Subscribing to channel: ${channelName}`);
-        await pusher.connect();
-        myChannel = await pusher.subscribe({
-          channelName,
-          onSubscriptionSucceeded: () => {
-            console.log('Successfully subscribed to:', channelName);
-          },
-          onSubscriptionError: error => {
-            console.error('Subscription error:', error);
-          },
-          onEvent: event => {
-            console.log('Event received:', event.data);
-            const datastring = JSON.parse(event.data?.message);
-            const latitude = datastring?.data?.lat;
-            const longitude = datastring?.data?.lng;
-            setOrigin({
-              latitude: latitude,
-              longitude: longitude,
-            });
-            const isLocationClose = (
-              lat1,
-              lon1,
-              lat2,
-              lon2,
-              threshold = 0.0001,
-            ) =>
-              Math.abs(lat1 - lat2) < threshold &&
-              Math.abs(lon1 - lon2) < threshold;
-            if (
-              isLocationClose === false &&
-              isLocationClose(
-                latitude,
-                destinations.latitude,
-                longitude,
-                destinations.longitude,
-              )
-            ) {
-              setIsRiderHere(true);
-            }
-          },
-        });
-        console.log('====================>', pusher.connectionState);
-        console.log('Subscription complete for channel:', channelName);
-      } catch (error) {
-        console.error('Error during Pusher connection:', error);
-      }
-    }
-    if (pusher.connectionState == 'DISCONNECTED') {
-      connectPusher();
-    }
-  }, [focused]);
+  // useEffect(() => {
+  //   dispatch(setUserEventData({}));
+  //   async function connectPusher() {
+  //     try {
+  //       await pusher.init({
+  //         apiKey: '2cbabf5fca8e6316ecfe',
+  //         cluster: 'ap2',
+  //       });
+  //       const channelName = `tracking-${data?.id}`;
+  //       console.log(`Subscribing to channel: ${channelName}`);
+  //       await pusher.connect();
+  //       myChannel = await pusher.subscribe({
+  //         channelName,
+  //         onSubscriptionSucceeded: () => {
+  //           console.log('Successfully subscribed to:', channelName);
+  //         },
+  //         onSubscriptionError: error => {
+  //           console.error('Subscription error:', error);
+  //         },
+  //         onEvent: event => {
+  //           console.log('Event received:', event.data);
+  //           const datastring = JSON.parse(event.data?.message);
+  //           const latitude = datastring?.data?.lat;
+  //           const longitude = datastring?.data?.lng;
+  //           setOrigin({
+  //             latitude: latitude,
+  //             longitude: longitude,
+  //           });
+  //           Platform.OS == 'android'
+  //             ? ToastAndroid.show(
+  //                 event?.data?.message?.text,
+  //                 ToastAndroid.SHORT,
+  //               )
+  //             : Alert.alert(event?.data?.message?.text);
+  //           if (event?.data?.message?.ride_info?.status === 'ontheway') {
+  //             Alert.alert('Yout Cab is on the way please wait!');
+  //             Platform.OS == 'android'
+  //               ? ToastAndroid.show(
+  //                   event?.data?.message?.text,
+  //                   ToastAndroid.SHORT,
+  //                 )
+  //               : Alert.alert('Yout Cab is on the way please wait!');
+  //             iswaiting(true);
+  //           } else if (
+  //             event?.data?.message?.ride_info?.status === 'completed'
+  //           ) {
+  //             setReviewModalVisible(true);
+  //           }
+  //           const isLocationClose = (
+  //             lat1,
+  //             lon1,
+  //             lat2,
+  //             lon2,
+  //             threshold = 0.0001,
+  //           ) =>
+  //             Math.abs(lat1 - lat2) < threshold &&
+  //             Math.abs(lon1 - lon2) < threshold;
+  //           if (
+  //             isLocationClose === false &&
+  //             isLocationClose(
+  //               latitude,
+  //               destinations.latitude,
+  //               longitude,
+  //               destinations.longitude,
+  //             )
+  //           ) {
+  //             setIsRiderHere(true);
+  //           }
+  //         },
+  //       });
+  //       console.log('====================>', pusher.connectionState);
+  //       console.log('Subscription complete for channel:', channelName);
+  //     } catch (error) {
+  //       console.error('Error during Pusher connection:', error);
+  //     }
+  //   }
+  //   if (pusher.connectionState == 'DISCONNECTED') {
+  //     connectPusher();
+  //   }
+  // }, [focused]);
 
   setTimeout(() => {
     setshowCancelRide(false);
   }, 5 * 60 * 1000);
 
-  useEffect(() => {
-    mapRef.current.animateToRegion(
-      {
-        latitude: origin?.latitude,
-        longitude: origin?.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      },
-      1000,
-    );
-  }, []);
+  // useEffect(() => {
+  //   mapRef.current.animateToRegion(
+  //     {
+  //       latitude: origin?.latitude,
+  //       longitude: origin?.longitude,
+  //       latitudeDelta: 0.01,
+  //       longitudeDelta: 0.01,
+  //     },
+  //     1000,
+  //   );
+  // }, []);
 
   const getCurrentLocation = async () => {
     try {
@@ -378,6 +426,18 @@ const CabTracking = ({route}) => {
     };
     mapRef.current?.animateToRegion(reigion, 1000);
   }, [origin]);
+
+  const updateStatus = async status => {
+    const body = {
+      lat: currentPossition?.latitude,
+      lng: currentPossition?.longitude,
+      status: status,
+    };
+    const url = `auth/rider/ride_update/${data?.id}`;
+    console.log('bodyyyyyyyy', body, url);
+    const response = await Post(url, body, apiHeader(token));
+    console.log('🚀 ~ updateStatus ~ response:', response);
+  };
 
   const CancelRide = async () => {
     const currentTime = new Date();
@@ -525,7 +585,12 @@ const CabTracking = ({route}) => {
               }}
             />
           </View>
-          <View style={{top: moderateScale(-1, 0.6)}}>
+          <View
+            style={{
+              top: moderateScale(-1, 0.6),
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
             <CustomText
               isBold
               style={{
@@ -571,6 +636,18 @@ const CabTracking = ({route}) => {
                 />
               </TouchableOpacity>
             </View>
+            {userEventData?.status === 'OnTheWay' && (
+              <CustomText
+                isBold
+                style={{
+                  fontSize: moderateScale(12, 0.6),
+                  textAlign: 'center',
+                  color: Color.black,
+                  width: windowWidth * 0.7,
+                }}>
+                Waiting for your cab its on the way
+              </CustomText>
+            )}
             <View style={styles.rating_box_view}>
               <View style={styles.rating_box_inner_view}>
                 <Icon
@@ -886,7 +963,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     borderTopLeftRadius: moderateScale(40, 0.6),
     borderTopRightRadius: moderateScale(40, 0.6),
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: Color.white,
     paddingHorizontal: moderateScale(20, 0.6),
@@ -932,8 +1009,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rating_box_view: {
-    width: windowWidth * 0.8,
-    height: windowHeight * 0.1,
+    width: windowWidth * 0.7,
+    height: windowHeight * 0.08,
     backgroundColor: Color.lightGrey,
     marginTop: moderateScale(10, 0.6),
     flexDirection: 'row',

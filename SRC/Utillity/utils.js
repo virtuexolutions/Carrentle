@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dimensions, PermissionsAndroid} from 'react-native';
+import { Dimensions, PermissionsAndroid } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -63,6 +63,22 @@ const requestWritePermission = async () => {
   }
 };
 
+
+
+const requestPostNotifications = async () => {
+  try {
+    const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('sucessfully get post notification permission');
+    } else {
+      console.log('post notification permission denied');
+    }
+  } catch {
+    console.warn(err);
+
+  }
+}
+
 const apiHeader = (token, isFormData) => {
   if (token && !isFormData) {
     return {
@@ -120,4 +136,5 @@ export {
   ContainsHTML,
   windowWidth,
   windowHeight,
+  requestPostNotifications
 };

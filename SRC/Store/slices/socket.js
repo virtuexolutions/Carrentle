@@ -25,11 +25,9 @@ const socketSlice = createSlice({
     },
     setriderChannelName(state, action) {
       state.riderChannelName = action.payload;
-      console.log('🚀 ~ setriderChannelName ~ action.payload:', action.payload);
     },
     setRiderEvent(state, action) {
       state.riderEvent = action.payload;
-      console.log('🚀 ~ setRiderEvent ~ action.payload:', action.payload);
     },
     resetPusher: state => {
       state.pusherInstance = null;
@@ -39,11 +37,9 @@ const socketSlice = createSlice({
     },
     setUserChannelName(state, action) {
       state.userChannelName = action.payload;
-      console.log('🚀 ~ setUserChannelName ~ action.payload:', action.payload);
     },
     setUserEventData(state, action) {
       state.userEventData = action.payload;
-      console.log('🚀 ~ setUserEventData ~ action.payload:', action.payload);
     },
   },
 });

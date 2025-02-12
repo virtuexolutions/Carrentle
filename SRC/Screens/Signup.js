@@ -14,11 +14,13 @@ import CustomText from '../Components/CustomText';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import {setUserToken} from '../Store/slices/auth-slice';
+import {setUserToken, setUserType} from '../Store/slices/auth-slice';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {Post} from '../Axios/AxiosInterceptorFunction';
+import {setUserData} from '../Store/slices/common';
 
-const Signup = () => {
+const Signup = ({route}) => {
+  const {type} = route.params;
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
@@ -62,7 +64,7 @@ const Signup = () => {
       email: email,
       password: password,
       phone: phoneNumber,
-      role: user_type,
+      role: type,
       confirm_password: confirmPass,
       device_token: fcmToken,
     };
@@ -77,12 +79,34 @@ const Signup = () => {
     const response = await Post(url, body, apiHeader());
     setIsLoading(false);
     console.log('body ====================> ', body, response?.data);
-    if (response != undefined) {
-      navigation.navigate('Login');
-      console.log(response?.data, 'dataaaaaaaaa');
-      console.log(response?.data, 'dataaaaaaaaa');
+    // if (response != undefined) {
+    //   navigation.navigate('Login');
+    //   console.log(response?.data, 'dataaaaaaaaa');
+    //   console.log(response?.data, 'dataaaaaaaaa');
+    //   dispatch(setUserToken({token: response?.data?.token}));
+    //   dispatch(setUserData(response?.data?.user_info));
+    // }
+    if (response?.data?.user_info?.role === type.toLowerCase()) {
+      setIsLoading(false);
       dispatch(setUserToken({token: response?.data?.token}));
       dispatch(setUserData(response?.data?.user_info));
+      dispatch(setUserType(type));
+      Platform.OS == 'android'
+        ? ToastAndroid.show(`Login SuccessFully`, ToastAndroid.SHORT)
+        : Alert.alert(`Login SuccessFully`);
+    } else {
+      Alert.alert(
+        'Invalid User Type',
+        'Please Select Valid User Type',
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.goBack(),
+          },
+        ],
+        {cancelable: false},
+      );
+      setIsLoading(false);
     }
   };
 

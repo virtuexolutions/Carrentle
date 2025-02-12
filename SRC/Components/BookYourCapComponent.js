@@ -1,29 +1,29 @@
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import {Linking, StyleSheet, View} from 'react-native';
-import {Rating} from 'react-native-ratings';
-import {moderateScale} from 'react-native-size-matters';
+import { Alert, Linking, Platform, StyleSheet, ToastAndroid, View } from 'react-native';
+import { Rating } from 'react-native-ratings';
+import { moderateScale } from 'react-native-size-matters';
 import Color from '../Assets/Utilities/Color';
-import {baseUrl} from '../Config';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { baseUrl } from '../Config';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 import CustomButton from './CustomButton';
 import CustomImage from './CustomImage';
 import CustomText from './CustomText';
 
-const BookYourCapComponent = ({item}) => {
+const BookYourCapComponent = ({ item, pending_ride }) => {
   const navigation = useNavigation();
   return (
     <View style={[styles.container, styles.shadowprops]}>
       <View style={styles.imageContainer}>
         <CustomImage
-          style={{height: '100%', width: '100%'}}
-          source={{uri: baseUrl + item?.image}}
+          style={{ height: '100%', width: '100%' }}
+          source={{ uri: baseUrl + item?.image }}
         />
       </View>
       <View style={styles.row}>
         <View style={styles.rowInnerView}>
           <CustomText style={styles.text}>{item?.no}</CustomText>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Rating
               type="custom"
               startingValue={item?.ratings}
@@ -51,9 +51,9 @@ const BookYourCapComponent = ({item}) => {
         {item?.name}
       </CustomText>
       <View style={styles.distanceView}>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{ flexDirection: 'row' }}>
           <View
-            style={{height: windowHeight * 0.028, width: windowWidth * 0.1}}>
+            style={{ height: windowHeight * 0.028, width: windowWidth * 0.1 }}>
             <CustomImage
               style={{
                 height: '100%',
@@ -106,10 +106,16 @@ const BookYourCapComponent = ({item}) => {
       </View>
       <CustomButton
         onPress={() => {
+          // if (pending_ride) {
+          //   Platform.OS == 'android'
+          //     ? ToastAndroid.show(`Your cab is already on the way! Please wait until your current ride is completed before booking another one`, ToastAndroid.SHORT)
+          //     : Alert.alert(`Your cab is already on the way! Please wait until your current ride is completed before booking another one`);
+          // } else {
           navigation.navigate('BoardingPointScreen', {
             carData: item,
             date: 'BFN',
           });
+          // }
         }}
         text={'Book Now'}
         textColor={Color.white}
@@ -122,6 +128,7 @@ const BookYourCapComponent = ({item}) => {
         bgColor={Color.cartheme}
         isBold
         isGradient
+        // disabled={pending_ride}
         textTransform={'capitalize'}
       />
     </View>

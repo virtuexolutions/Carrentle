@@ -1,14 +1,14 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 
-import {Rating} from 'react-native-ratings';
+import { Rating } from 'react-native-ratings';
 import CustomImage from '../Components/CustomImage';
-import {Icon} from 'native-base';
+import { Icon } from 'native-base';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale} from 'react-native-size-matters';
+import { windowHeight, windowWidth } from '../Utillity/utils';
+import { moderateScale } from 'react-native-size-matters';
 import CustomText from './CustomText';
 import Color from '../Assets/Utilities/Color';
 
@@ -21,7 +21,7 @@ const BookingCard = ({
   price,
   image,
   stops,
-  date,
+  date, time,
   disable,
   onpressSetDate,
 }) => {
@@ -30,13 +30,13 @@ const BookingCard = ({
       <View style={styles.row}>
         <View style={styles.userImage}>
           <CustomImage
-            style={{height: '100%', width: '100%', overflow: 'hidden'}}
-            source={{uri: image}}
+            style={{ height: '100%', width: '100%', overflow: 'hidden' }}
+            source={{ uri: image }}
           />
         </View>
         <View style={styles.rowInnerView}>
           <CustomText style={styles.text}>{username}</CustomText>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Rating
               type="custom"
               startingValue={5}
@@ -56,12 +56,10 @@ const BookingCard = ({
             </CustomText>
           </View>
         </View>
-        {/* <TouchableOpacity style={styles.btn}>
-          <CustomImage source={require('../Assets/Images/phone.png')} />
-        </TouchableOpacity> */}
-        {/* <TouchableOpacity style={styles.btn} onPress={onPressMessageBtn}>
-          <CustomImage source={require('../Assets/Images/message.png')} />
-        </TouchableOpacity> */}
+        <View>
+          <CustomText isBold style={styles.text2}>Ride Time</CustomText>
+          <CustomText style={styles.text1}>{time}</CustomText>
+        </View>
       </View>
       {isSentRequest ? null : (
         <CustomText isBold style={styles.heading}>
@@ -137,7 +135,7 @@ const BookingCard = ({
         </>
       )}
       <View style={isSentRequest ? styles.details_view : styles.distanceView}>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{ flexDirection: 'row' }}>
           {isSentRequest ? null : (
             <>
               <View
@@ -186,14 +184,14 @@ const BookingCard = ({
             </CustomText>
             <CustomText style={styles.text1}>{distance + ' Km'}</CustomText>
           </View>
-          <View style={{marginLeft: moderateScale(20, 0.3)}}>
+          <View style={{ marginLeft: moderateScale(20, 0.3) }}>
             <CustomText isBold style={styles.text2}>
               price
             </CustomText>
             <CustomText style={styles.text1}>{price}</CustomText>
           </View>
           <View
-            style={{marginLeft: moderateScale(20, 0.3), alignItems: 'center'}}>
+            style={{ marginLeft: moderateScale(20, 0.3), alignItems: 'center' }}>
             <CustomText isBold style={styles.text2}>
               Additional Stops
             </CustomText>
@@ -202,7 +200,7 @@ const BookingCard = ({
           <TouchableOpacity
             disabled={disable}
             onPress={onpressSetDate}
-            style={{marginLeft: moderateScale(20, 0.3)}}>
+            style={{ marginLeft: moderateScale(20, 0.3) }}>
             <CustomText isBold style={styles.text2}>
               Booking Date
             </CustomText>

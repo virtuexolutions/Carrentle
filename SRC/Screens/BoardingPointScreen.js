@@ -1,9 +1,9 @@
 import database from '@react-native-firebase/database';
-import {getDistance, isValidCoordinate} from 'geolib';
+import { getDistance, isValidCoordinate } from 'geolib';
 import LottieView from 'lottie-react-native';
 import moment from 'moment';
-import {Divider, Icon} from 'native-base';
-import React, {useEffect, useRef, useState} from 'react';
+import { Divider, Icon } from 'native-base';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Platform,
@@ -14,15 +14,15 @@ import {
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import Geolocation from 'react-native-geolocation-service';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 import AskLocationComponent from '../Components/AskLocationComponent';
 import BookingCard from '../Components/BookingCard';
 import CustomButton from '../Components/CustomButton';
@@ -30,11 +30,11 @@ import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import Loader from '../Components/Loader';
 import SearchLocationModal from '../Components/SearchLocationModal';
-import {baseUrl} from '../Config';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { baseUrl } from '../Config';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
-const BoardingPointScreen = ({navigation, route}) => {
-  const {carData, date} = route.params;
+const BoardingPointScreen = ({ navigation, route }) => {
+  const { carData, date } = route.params;
   const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
   const mapRef = useRef(null);
   const token = useSelector(state => state.authReducer.token);
@@ -54,11 +54,13 @@ const BoardingPointScreen = ({navigation, route}) => {
   const [currentPossition, setcurrentPossition] = useState({});
   const [distance, setDistance] = useState(0);
   const [time, setTime] = useState(0);
+  console.log("🚀 ~ BoardingPointScreen ~ time:", time)
   const [fare, setFare] = useState(0);
   const [Flatprice, setFlatprice] = useState(0);
   const [resultModalVisible, setResultModalVisible] = useState(false);
   const [additionStops, setAdditionStops] = useState(false);
   const [stops, setStops] = useState([]);
+  console.log("🚀 ~ BoardingPointScreen ~ stops:", stops)
   const [loading, setLoading] = useState(0);
   const [address, setAddress] = useState('');
   const [bookdate, setbookDate] = useState(new Date());
@@ -67,20 +69,6 @@ const BoardingPointScreen = ({navigation, route}) => {
   console.log('🚀 ~ BoardingPointScreen ~ pickupCityName:', pickupCityName);
   const [DropoffCityName, setDropOffCityName] = useState(null);
   const [regiontype, setRegionType] = useState('');
-
-  useEffect(() => {
-    updateLocationInFirebase();
-  }, []);
-
-  const updateLocationInFirebase = (lat, lng) => {
-    database()
-      .ref(`/locations/${'userId'}`)
-      .set({
-        latitude: 'lat',
-        longitude: 'lng',
-      })
-      .then(() => console.log('Location updated in Firebase!'));
-  };
 
   const origin = {
     latitude: isYourLocation
@@ -97,6 +85,45 @@ const BoardingPointScreen = ({navigation, route}) => {
   };
 
   useEffect(() => {
+    console.log('yahaaa a rha ha')
+    if ((currentPossition || pickupLocation?.lat) && dropOffLocation?.lat != null) {
+      const dropLocation = {
+        latitude: parseFloat(dropOffLocation?.lat),
+        longitude: parseFloat(dropOffLocation?.lng)
+      }
+      const checkDistanceBetween = getDistance(currentPossition, dropLocation);
+      let km = Math.round(checkDistanceBetween / 1000);
+      const distanceInMiles = km / 1.60934;
+      const getTravelTime = async () => {
+        const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
+        try {
+          const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${pickupLocation?.lat || currentPossition?.latitude},${pickupLocation?.lng || currentPossition?.longitude}&destinations=${dropOffLocation.lat},${dropOffLocation.lng}&key=${GOOGLE_MAPS_API_KEY}`;
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const data = await response.json();
+          if (data.status === 'OK') {
+            const distanceMatrix = data.rows[0].elements[0];
+            const travelTime = distanceMatrix.duration.text;
+            let travelTimeNum = parseInt(travelTime);
+            let roundedTime = Math.ceil(travelTimeNum / 5) * 5;
+            let roundedTimeText = `${roundedTime} min`;
+            console.log("🚀 ~ getTravelTime ~ roundedTimeText:", roundedTimeText);
+            return setTime(roundedTimeText);
+          } else {
+            console.error('Error fetching travel time:', data.status);
+            return null;
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      };
+      getTravelTime();
+    }
+  }, [currentPossition]);
+
+  useEffect(() => {
     if (dropOffLocation && pickupLocation) {
       const checkDistanceBetween = getDistance(pickupLocation, dropOffLocation);
       let km = Math.round(checkDistanceBetween / 1000);
@@ -111,7 +138,7 @@ const BoardingPointScreen = ({navigation, route}) => {
     getCurrentLocation();
     const watchId = Geolocation.watchPosition(
       position => {
-        const {latitude, longitude} = position.coords;
+        const { latitude, longitude } = position.coords;
         setPickUpLocation(prevLocation => ({
           ...prevLocation,
           latitude,
@@ -119,7 +146,7 @@ const BoardingPointScreen = ({navigation, route}) => {
         }));
       },
       error => console.log('errrorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr', error),
-      {enableHighAccuracy: true, distanceFilter: 10, interval: 1000},
+      { enableHighAccuracy: true, distanceFilter: 10, interval: 1000 },
     );
     return () => {
       Geolocation.clearWatch(watchId);
@@ -129,7 +156,7 @@ const BoardingPointScreen = ({navigation, route}) => {
   useEffect(() => {
     if (!origin || !destinations) return;
     mapRef.current?.fitToSuppliedMarkers(['origin', 'destination'], {
-      edgePadding: {top: 50, right: 50, bottom: 50, left: 50},
+      edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
     });
   }, [origin, destinations]);
 
@@ -205,7 +232,8 @@ const BoardingPointScreen = ({navigation, route}) => {
 
   const onPressProceed = async () => {
     const formData = new FormData();
-    const data = {
+    const url = 'auth/bookride';
+    const body = {
       location_from: pickupLocation?.name || address,
       location_to: dropOffLocation?.name,
       pickup_location_lat: pickupLocation?.lat || currentPossition?.latitude,
@@ -219,23 +247,20 @@ const BoardingPointScreen = ({navigation, route}) => {
       cityFrom: pickupCityName,
       cityTo: DropoffCityName,
     };
-    for (let key in data) {
-      if (data[key] == '') {
-        return Platform.OS == 'android'
-          ? ToastAndroid.show(` ${key} field is empty`, ToastAndroid.SHORT)
-          : Alert.alert(` ${key} field is empty`);
-      }
-      formData.append(key, data[key]);
+    stops?.forEach((item, index) => {
+      formData.append(`pickup[${index}][lat]`, item?.lat);
+      formData.append(`pickup[${index}][lng]`, item?.lng);
+    });
+    for (let key in body) {
+      formData.append(key, body[key]);
     }
-    let newObj = {...data, stops: stops};
-    setLoading(true);
-    const url = 'auth/bookride';
-    const response = await Post(url, data, apiHeader(token));
-    console.log(
-      '🚀 ~ onPressProceed ~ response?.data?.data:',
-      response?.data?.data,
-    );
+    // setLoading(true);
+    console.log("🚀 ~ requestforRide ~ body:", formData)
+    const response = await Post(url, formData, apiHeader(token));
+    console.log('🚀  requestforRide  response:', response?.data);
+    setLoading(false);
     if (response?.data?.data != null) {
+
       const paramsData = {
         currentLocationLatitude: currentPossition,
         pickupLocation: pickupLocation,
@@ -249,7 +274,64 @@ const BoardingPointScreen = ({navigation, route}) => {
         type: 'fromBoardingPoints',
       });
     }
-  };
+  }
+
+  // const onPressProceed = async () => {
+  //   const formData = new FormData();
+  //   const data = {
+  //     location_from: pickupLocation?.name || address,
+  //     location_to: dropOffLocation?.name,
+  //     pickup_location_lat: pickupLocation?.lat || currentPossition?.latitude,
+  //     pickup_location_lng: pickupLocation?.lat || currentPossition?.longitude,
+  //     dropoff_location_lat: dropOffLocation?.lat,
+  //     dropoff_location_lng: dropOffLocation?.lng,
+  //     distance: distance,
+  //     amount: fare,
+  //     car_id: carData?.id,
+  //     date: moment(new Date()).format('DD-MM-YYYY'),
+  //     cityFrom: pickupCityName,
+  //     cityTo: DropoffCityName,
+  //   };
+  //   stops?.forEach((item, index) => {
+  //     console.log("🚀 ~ stops?.forEach ~ item:", item)
+  //     formData.append(`pickup[${index}][pickup_lat]`, item?.lat);
+  //     formData.append(`pickup[${index}][pickup_lng]`, item?.lng);
+  //   });
+  //   console.log("🚀 ~ stops?.forEach ~ formData:", formData)
+  //   // setLoading(true);
+  //   console.log("🚀 ~ onPressProceed ~ newObj:", newObj)
+  //   console.log(
+  //     '🚀 ~ onPressProceed ~ response?.data?.data:',
+  //     response?.data,
+  //   );
+  //   for (let key in data) {
+  //     if (data[key] == '') {
+  //       return Platform.OS == 'android'
+  //         ? ToastAndroid.show(` ${key} field is empty`, ToastAndroid.SHORT)
+  //         : Alert.alert(` ${key} field is empty`);
+  //     }
+  //     formData.append(key, data[key]);
+  //   }
+  //   let newObj = { ...data };
+  //   return console.log("🚀 ~ onPressProceed ~ data:", data)
+  //   const url = 'auth/bookride';
+  //   const response = await Post(url, data, apiHeader(token));
+
+  //   if (response?.data?.data != null) {
+  //     const paramsData = {
+  //       currentLocationLatitude: currentPossition,
+  //       pickupLocation: pickupLocation,
+  //       dropOffLocation: dropOffLocation,
+  //       carData: carData,
+  //       ride_id: response?.data?.data?.id,
+  //     };
+  //     setLoading(false);
+  //     navigation.navigate('WaitingScreen', {
+  //       data: paramsData,
+  //       type: 'fromBoardingPoints',
+  //     });
+  //   }
+  // };
 
   useEffect(() => {
     if (pickupCityName && DropoffCityName) {
@@ -315,7 +397,7 @@ const BoardingPointScreen = ({navigation, route}) => {
   };
 
   const fareStructure = {
-    1: {baseFare: 10, additionalFarePerMile: 1},
+    1: { baseFare: 10, additionalFarePerMile: 1 },
     2: {
       baseFare: 10,
       additionalFarePerMile: 2,
@@ -328,7 +410,7 @@ const BoardingPointScreen = ({navigation, route}) => {
       minDistance: 76,
       maxDistance: 150,
     },
-    4: {baseFare: 10, additionalFarePerMile: 1.5, minDistance: 151},
+    4: { baseFare: 10, additionalFarePerMile: 1.5, minDistance: 151 },
   };
 
   const calculateFare = distance => {
@@ -380,7 +462,7 @@ const BoardingPointScreen = ({navigation, route}) => {
       <Header
         index
         title={'Boarding Point'}
-        textstyle={{color: Color.darkGray}}
+        textstyle={{ color: Color.darkGray }}
         headerColor={['white', 'white']}
         hideUser={false}
         navigation={navigation}
@@ -404,7 +486,7 @@ const BoardingPointScreen = ({navigation, route}) => {
             borderRadius: moderateScale(10, 0.2),
             padding: moderateScale(12, 0.2),
           }}>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Icon
               as={Entypo}
               name="dot-single"
@@ -428,7 +510,7 @@ const BoardingPointScreen = ({navigation, route}) => {
                 {pickupLocation?.name
                   ? pickupLocation?.name
                   : (isYourLocation && ' Your Live Location') ||
-                    'Choose Pickup Location'}
+                  'Choose Pickup Location'}
                 {/* {Object.keys(pickupLocation).length > 0
                   ? pickupLocation?.name || isYourLocation
                     ? 'Pick Location'
@@ -444,20 +526,20 @@ const BoardingPointScreen = ({navigation, route}) => {
             </TouchableOpacity>
           </View>
           <View style={styles.dotView}>
-            <View style={{gap: -5}}>
+            <View style={{ gap: -5 }}>
               <Icon
                 as={Entypo}
                 name="dots-two-vertical"
                 size={moderateScale(24, 0.2)}
-                style={{color: '#fcf36b'}}
-                // color={}
+                style={{ color: '#fcf36b' }}
+              // color={}
               />
               <Icon
                 as={Entypo}
                 name="dots-two-vertical"
                 size={moderateScale(24, 0.2)}
-                style={{color: '#fcf36b'}}
-                // color={}
+                style={{ color: '#fcf36b' }}
+              // color={}
               />
             </View>
             <Divider
@@ -468,7 +550,7 @@ const BoardingPointScreen = ({navigation, route}) => {
               borderColor={'#b0adad'}
             />
           </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Icon
               as={Entypo}
               name="dot-single"
@@ -536,7 +618,7 @@ const BoardingPointScreen = ({navigation, route}) => {
           {stops.map((stop, index) => (
             <Marker
               key={index}
-              coordinate={{latitude: stop.lat, longitude: stop.lng}}
+              coordinate={{ latitude: stop.lat, longitude: stop.lng }}
               title={`Stop ${index + 1}`}
               description={
                 stop.name ||
@@ -546,7 +628,7 @@ const BoardingPointScreen = ({navigation, route}) => {
             />
           ))}
           {Object.keys(pickupLocation).length > 0 &&
-          Object.keys(dropOffLocation).length > 0 ? (
+            Object.keys(dropOffLocation).length > 0 ? (
             <MapViewDirections
               origin={origin}
               destination={destinations}
@@ -596,7 +678,7 @@ const BoardingPointScreen = ({navigation, route}) => {
           as={MaterialIcons}
           name="my-location"
           size={moderateScale(24, 0.2)}
-          style={{color: 'blue'}}
+          style={{ color: 'blue' }}
         />
       </TouchableOpacity>
       {Object.keys(pickupLocation).length > 0 &&
@@ -616,13 +698,13 @@ const BoardingPointScreen = ({navigation, route}) => {
               date={
                 date === 'BFN'
                   ? new Date().getDate() +
-                    ' - ' +
-                    new Date().getMonth() +
-                    ' - ' +
-                    new Date().getFullYear()
+                  ' - ' +
+                  new Date().getMonth() +
+                  ' - ' +
+                  new Date().getFullYear()
                   : bookdate
-                  ? moment(bookdate).format('DD-MM-YYYY')
-                  : 'Add You booking date'
+                    ? moment(bookdate).format('DD-MM-YYYY')
+                    : 'Add You booking date'
               }
               disable={date === 'BFN' ? true : false}
               onpressSetDate={() => {

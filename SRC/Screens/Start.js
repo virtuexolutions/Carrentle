@@ -16,13 +16,11 @@ import localStoreUtil from '../Utillity/localstoreUntil';
 
 const Start = () => {
   const navigation = useNavigation();
-
   const onPressButton = async type => {
     navigation.navigate('LoginScreen', {type: type});
   };
 
   return (
-
     <SafeAreaView style={{flex: 1}}>
       <ScreenBoiler
         statusBarBackgroundColor={'white'}
@@ -52,7 +50,7 @@ const Start = () => {
             </View>
             <CustomButton
               onPress={() => {
-                onPressButton('rider');
+                onPressButton('Rider');
               }}
               text={'Rider'}
               fontSize={moderateScale(14, 0.3)}
@@ -68,7 +66,7 @@ const Start = () => {
             />
             <CustomButton
               onPress={() => {
-                onPressButton('customer');
+                onPressButton('Customer');
               }}
               text={'Customer'}
               fontSize={moderateScale(14, 0.3)}
@@ -86,13 +84,10 @@ const Start = () => {
         </ScrollView>
       </ScreenBoiler>
     </SafeAreaView>
-
   );
-
 };
 
 const styles = StyleSheet.create({
-  
   container: {
     paddingTop: windowHeight * 0.1,
     height: windowHeight,
@@ -142,7 +137,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: moderateScale(40, 0.6),
   },
-
 });
 
 export default Start;

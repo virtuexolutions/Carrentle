@@ -1,11 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {PersistGate} from 'redux-persist/integration/react';
-import {Provider, useDispatch} from 'react-redux';
-import {NativeBaseProvider, View} from 'native-base';
-import {store, persistor} from './SRC/Store/index';
+import React, { useEffect, useState } from 'react';
+import { PersistGate } from 'redux-persist/integration/react';
+import { Provider, useDispatch } from 'react-redux';
+import { NativeBaseProvider, View } from 'native-base';
+import { store, persistor } from './SRC/Store/index';
 import {
   requestCameraPermission,
   requestLocationPermission,
+  requestPostNotifications,
   requestWritePermission,
   windowHeight,
   windowWidth,
@@ -16,10 +17,13 @@ import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 import CustomText from './SRC/Components/CustomText';
 import Color from './SRC/Assets/Utilities/Color';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import CustomImage from './SRC/Components/CustomImage';
-import {TouchableOpacity} from 'react-native';
-import {getDefaultMiddleware} from '@reduxjs/toolkit';
+import { AppState, TouchableOpacity, PermissionsAndroid } from 'react-native';
+import { getDefaultMiddleware } from '@reduxjs/toolkit';
+import BackgroundService from 'react-native-background-actions';
+import Geolocation from '@react-native-community/geolocation';
+import { setAppIsInBackground } from './SRC/Store/slices/common';
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   PushNotification.localNotification({
@@ -33,7 +37,6 @@ const App = () => {
   const [notification, setNotification] = useState();
   const [notificationModal, setNotificationModal] = useState(false);
   console.reportErrorsAsExceptions = false;
-
   const requestUserPermission = async () => {
     const authStatus = await messaging().requestPermission();
     const enabled =
@@ -51,14 +54,18 @@ const App = () => {
   useEffect(() => {
     requestUserPermission();
   });
-
+  const [currentState, setCurrentState] = useState('active');
   const [publishableKey, setPublishableKey] = useState('');
+  const [currentPosition, setCurrentPosition] = useState(null);
   const fetchPublishableKey = async () => {
     const key = await fetchKey();
     setPublishableKey(key);
   };
+  let watchId = null;
 
   console.reportErrorsAsExceptions = false;
+
+
 
   // const ConnectPusher = async () => {
   //   const pusher = await getPusherInstance();
@@ -66,19 +73,22 @@ const App = () => {
   // };
 
   // useEffect(() => {
-  //   // ConnectPusher();
-  //   requestUserPermission();
+  //   const requestPermission = async () => {
+  //     await requestUserPermission();
+  //   };
   //   const unsubscribe = messaging().onMessage(async remoteMessage => {
   //     setNotificationModal(true);
   //     setNotification({
-  //       title: remoteMessage.notification.title,
-  //       body: remoteMessage.notification.body,
+  //       title: remoteMessage.notification?.title,
+  //       body: remoteMessage.notification?.body,
   //     });
   //     const timer = setTimeout(() => {
   //       setNotificationModal(false);
   //     }, 3000);
+
   //     return () => clearTimeout(timer);
   //   });
+
   //   messaging()
   //     .getInitialNotification()
   //     .then(remoteMessage => {
@@ -88,8 +98,14 @@ const App = () => {
   //         });
   //       }
   //     });
+
   //   console.log('Running Firebase Notification ==> ');
+
+  //   return () => {
+  //     unsubscribe();
+  //   };
   // }, []);
+
 
   return (
     <NativeBaseProvider>
@@ -134,7 +150,7 @@ const App = () => {
             }}>
             <CustomImage
               source={require('./SRC/Assets/Images/logo.png')}
-              style={{width: '120%', height: '100%'}}
+              style={{ width: '120%', height: '100%' }}
               resizeMode={'contain'}
             />
           </View>
@@ -144,13 +160,13 @@ const App = () => {
               width: '90%',
             }}>
             {notification?.title != undefined && (
-              <CustomText style={{fontSize: moderateScale(12, 0.6)}} isBold>
+              <CustomText style={{ fontSize: moderateScale(12, 0.6) }} isBold>
                 {notification?.title}
               </CustomText>
             )}
             <CustomText
               numberOfLines={1}
-              style={{fontSize: moderateScale(11, 0.6), color: Color.grey}}>
+              style={{ fontSize: moderateScale(11, 0.6), color: Color.grey }}>
               {notification?.body}
             </CustomText>
           </View>
@@ -168,6 +184,7 @@ const MainContainer = () => {
       await requestCameraPermission();
       await requestWritePermission();
       await requestLocationPermission();
+      await requestPostNotifications();
     }
     GetPermission();
   }, []);

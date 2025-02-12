@@ -1,16 +1,16 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React, {useRef, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import navigationService from './navigationService';
 import LoginScreen from './Screens/LoginScreen';
 import Signup from './Screens/Signup';
-import {createDrawerNavigator} from '@react-navigation/drawer';
-import {Icon} from 'native-base';
-import {AppState, View} from 'react-native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { Icon } from 'native-base';
+import { AppState, PermissionsAndroid, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -48,7 +48,10 @@ import VerifyEmail from './Screens/VerifyEmail';
 import VerifyNumber from './Screens/VerifyNumber';
 import WaitingScreen from './Screens/WaitingScreen';
 import WalkThroughScreen from './Screens/WalkthroughScreen';
-import {windowHeight} from './Utillity/utils';
+import { windowHeight } from './Utillity/utils';
+import BackgroundService from 'react-native-background-actions';
+import Geolocation from '@react-native-community/geolocation';
+import { setAppIsInBackground, setCurrentLocation } from './Store/slices/common';
 
 const AppNavigator = () => {
   const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
@@ -56,23 +59,142 @@ const AppNavigator = () => {
   const role = useSelector(state => state.authReducer.role);
   const isVerified = useSelector(state => state.authReducer.isVerified);
   const token = useSelector(state => state.authReducer.token);
-  const {user_type} = useSelector(state => state.authReducer);
+  const { user_type } = useSelector(state => state.authReducer);
+  const appIsInBackground = useSelector(state => state.commonReducer.appIsInBackground);
   const RootNav = createNativeStackNavigator();
   const RootNavLogged = createNativeStackNavigator();
+  const [currentState, setCurrentState] = useState('active');
+  const [publishableKey, setPublishableKey] = useState('');
+  const [currentPosition, setCurrentPosition] = useState(null);
+  console.log("🚀 ~ AppNavigator ~ currentPosition:", currentPosition)
+  console.log("🚀 ~ AppNavigator ~ appIsInBackground:", appIsInBackground)
+  const dispatch = useDispatch();
+
+  const _handleAppStateChange = async nextAppState => {
+    console.log("🚀 ~ App ~ nextAppState:", nextAppState)
+    if (nextAppState === 'active') {
+      dispatch(setAppIsInBackground(false))
+    } else if (nextAppState.match(/inactive|background/)) {
+      setCurrentState(nextAppState);
+      dispatch(setAppIsInBackground(true))
+    }
+    else {
+      console.log('elseeee me ha')
+      setCurrentState(nextAppState);
+      dispatch(setAppIsInBackground(true))
+    }
+  }
+
+
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', _handleAppStateChange)
+    return () => {
+      subscription.remove()
+    }
+  }, [])
+
+  const options = {
+    taskName: 'Tracking Time and Location',
+    taskTitle: 'Tracking Your Ride',
+    taskDesc: 'Updating location and travel time',
+    taskIcon: {
+      name: 'ic_launcher',
+      type: 'mipmap',
+    },
+    color: '#ff00ff',
+    linkingURI: 'myapp://TrackingScreen',
+    parameters: {
+      delay: 30000,
+    },
+  };
+
+  // const requestPermissions = async () => {
+  //   try {
+  //     const granted = await PermissionsAndroid.requestMultiple([
+  //       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+  //       PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
+  //     ]);
+  //     return granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] === 'granted' &&
+  //       granted[PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION] === 'granted';
+  //   } catch (err) {
+  //     console.warn(err);
+  //     return false;
+  //   }
+  // };
+
+  const startLocationTracking = async () => {
+    console.log('funcationn me ha')
+    // let permissionResult = await requestPermissions()
+    // console.log("🚀 ~ startLocationTracking ~ permissionResult:", permissionResult)
+    watchId = Geolocation.watchPosition(
+      position => {
+        const { latitude, longitude } = position.coords;
+        console.log("🚀 ~ startLocationTracking ~ latitude:", latitude, longitude)
+        setCurrentPosition(prevLocation => ({
+          ...prevLocation,
+          latitude,
+          longitude,
+        }));
+        dispatch(setCurrentLocation({
+          latitude: latitude,
+          longitude: longitude,
+        }))
+      },
+      error => console.log('Error getting location:', error),
+      {
+        enableHighAccuracy: true,
+        distanceFilter: 1000,
+        timeout: 30000,
+        maximumAge: 10000,
+        interval: 20000,
+      }
+    );
+    return new Promise(resolve => { })
+  };
+
+  const toggleBackground = async () => {
+    if (!BackgroundService.isRunning()) {
+      try {
+        await BackgroundService.start(startLocationTracking, options);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      await BackgroundService.stop();
+      console.log('✅ background Actions has been stopped.');
+    }
+  };
+
+  useEffect(() => {
+    if (user_type === 'Rider') {
+
+      if (appIsInBackground) {
+        console.log("BG ACTIONS Should be run......", appIsInBackground);
+        toggleBackground()
+      } else {
+        console.log('background stop')
+        BackgroundService.stop()
+      }
+    }
+  }, [appIsInBackground, user_type === 'Rider'])
+
+
+  let watchId = null;
 
   const AppNavigatorContainer = () => {
     const firstScreen =
       walkThrough == false
         ? 'WalkThroughScreen'
         : token == null
-        ? 'Start'
-        : 'MyDrawer';
+          ? 'Start'
+          : 'MyDrawer';
 
     return (
       <NavigationContainer ref={navigationService.navigationRef}>
         <RootNav.Navigator
           initialRouteName={firstScreen}
-          screenOptions={{headerShown: false}}>
+          screenOptions={{ headerShown: false }}>
           <RootNav.Screen name="MyDrawer" component={MyDrawer} />
           <RootNav.Screen
             name="WalkThroughScreen"
@@ -127,7 +249,7 @@ const AppNavigator = () => {
           <RootNav.Screen
             name="TrackingScreen"
             component={TrackingScreen}
-            options={{unmountOnBlur: false}}
+            options={{ unmountOnBlur: false }}
           />
           <RootNav.Screen name="CabTracking" component={CabTracking} />
         </RootNav.Navigator>
@@ -157,7 +279,7 @@ export const TabNavigation = () => {
       //     </LinearGradient>
       //   );
       // }}
-      screenOptions={({route}) => ({
+      screenOptions={({ route }) => ({
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
@@ -167,7 +289,7 @@ export const TabNavigation = () => {
           // borderTopRightRadius:15,
           // paddingVertical:5
         },
-        tabBarIcon: ({focused}) => {
+        tabBarIcon: ({ focused }) => {
           let iconName;
           let color = Color.theme2;
           let size = moderateScale(20, 0.3);
@@ -219,12 +341,12 @@ export const TabNavigation = () => {
         },
         tabBarShowLabel: false,
         tabBarBackground: () => (
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <LinearGradient
-              start={{x: 0, y: 0}}
-              end={{x: 0, y: 1}}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
               colors={Color.tabBarGradient}
-              style={{height: windowHeight * 0.1}}
+              style={{ height: windowHeight * 0.1 }}
             />
           </View>
         ),
@@ -241,7 +363,7 @@ export const TabNavigation = () => {
 
 export const MyDrawer = () => {
   const DrawerNavigation = createDrawerNavigator();
-  const {user_type} = useSelector(state => state.authReducer);
+  const { user_type } = useSelector(state => state.authReducer);
   console.log("🚀 ~ MyDrawer ~ user_type:", user_type)
   const firstScreen = user_type === 'Rider' ? 'DashBoard' : 'HomeScreen';
 
@@ -252,7 +374,7 @@ export const MyDrawer = () => {
         initialRouteName={firstScreen}
         screenOptions={{
           headerShown: false,
-          drawerStyle: {width: '80%'},
+          drawerStyle: { width: '80%' },
         }}>
         <DrawerNavigation.Screen
           name={user_type === 'Rider' ? 'DashBoard' : 'HomeScreen'}

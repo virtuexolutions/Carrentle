@@ -1,28 +1,28 @@
-import {StyleSheet, View, Platform, ToastAndroid, Alert} from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { StyleSheet, View, Platform, ToastAndroid, Alert } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 import Header from '../Components/Header';
 import Color from '../Assets/Utilities/Color';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import MapView, {Circle, Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import MapView, { Circle, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import LottieView from 'lottie-react-native';
 import RippleEffect from '../Components/RippleEffect';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import CustomText from '../Components/CustomText';
 import AcceptRideModal from '../Components/AcceptRideModal';
 import MapViewDirections from 'react-native-maps-directions';
-import {setUserEventData} from '../Store/slices/socket';
+import { setUserEventData } from '../Store/slices/socket';
 
-const WaitingScreen = ({route}) => {
-  const {data, type} = route.params;
+const WaitingScreen = ({ route }) => {
+  const { data, type } = route.params;
   const navigation = useNavigation();
   const userData = useSelector(state => state.commonReducer?.userData);
   console.log("🚀 ~ WaitingScreen ~ userData:", userData)
   const token = useSelector(state => state.authReducer.token);
   const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
   const mapRef = useRef(null);
-  const circleCenter = {latitude: 24.8607333, longitude: 67.001135};
+  const circleCenter = { latitude: 24.8607333, longitude: 67.001135 };
   const [loading, setLoading] = useState(false);
   const [rideData, setRideData] = useState(null);
   console.log('🚀 ~ WaitingScreen ~ rideData:', rideData);
@@ -96,7 +96,7 @@ const WaitingScreen = ({route}) => {
       <Header
         index
         title={'Hello  ' + userData?.name}
-        textstyle={{color: Color.black, fontSize: moderateScale(22, 0.6)}}
+        textstyle={{ color: Color.black, fontSize: moderateScale(22, 0.6) }}
         headerColor={['white', 'white']}
         hideUser={true}
         navigation={navigation}
@@ -211,13 +211,13 @@ const WaitingScreen = ({route}) => {
                   source={require('../Assets/animations/waiting.json')}
                 />
               </View>
-              <CustomText isBold style={{fontSize: moderateScale(18, 0.6)}}>
+              <CustomText isBold style={{ fontSize: moderateScale(18, 0.6) }}>
                 Wating Rider to Accept Your Ride
               </CustomText>
             </View>
           </View>
           <AcceptRideModal
-            visible={Object.keys(userEventData || {}).length > 0}
+            visible={userEventData?.status === 'accept'}
             data={userEventData?.rider}
             // setVisible={setModalVisible}
             username={userEventData?.rider?.name}
@@ -236,9 +236,9 @@ const WaitingScreen = ({route}) => {
             onPressMessageBtn={() =>
               Platform.OS == 'android'
                 ? ToastAndroid.show(
-                    `We are Currently unavailable`,
-                    ToastAndroid.SHORT,
-                  )
+                  `We are Currently unavailable`,
+                  ToastAndroid.SHORT,
+                )
                 : Alert.alert(`We are Currently unavailable`)
             }
             onpressSeeLocation={() => {

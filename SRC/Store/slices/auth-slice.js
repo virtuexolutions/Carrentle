@@ -14,6 +14,7 @@ const initialState = {
   auth_loading_type: '',
   user: ""
 };
+console.log("🚀 ~ initialState.user_type:", initialState.user_type)
 
 export const AuthSlice = createSlice({
   name: 'authReducer',

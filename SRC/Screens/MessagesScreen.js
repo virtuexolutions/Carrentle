@@ -1,17 +1,8 @@
-import {
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, {useCallback, useState, useEffect} from 'react';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import Color from '../Assets/Utilities/Color';
-import CustomText from '../Components/CustomText';
-import {useDispatch, useSelector} from 'react-redux';
+import {Pusher} from '@pusher/pusher-websocket-react-native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {Icon} from 'native-base';
+import React, {useCallback, useEffect, useState} from 'react';
+import {SafeAreaView, View} from 'react-native';
 import {
   Actions,
   Bubble,
@@ -20,15 +11,17 @@ import {
   InputToolbar,
   Send,
 } from 'react-native-gifted-chat';
-import CustomImage from '../Components/CustomImage';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
-import Header from '../Components/Header';
-import {Icon} from 'native-base';
+import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Pusher} from '@pusher/pusher-websocket-react-native';
-import {baseUrl} from '../Config';
+import {useDispatch, useSelector} from 'react-redux';
+import Color from '../Assets/Utilities/Color';
 import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import CustomImage from '../Components/CustomImage';
+import CustomText from '../Components/CustomText';
+import Header from '../Components/Header';
+import {baseUrl} from '../Config';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
 const MessagesScreen = ({route}) => {
   const focused = useIsFocused();
@@ -52,7 +45,6 @@ const MessagesScreen = ({route}) => {
       try {
         await pusher.init({
           apiKey: '2cbabf5fca8e6316ecfe',
-          // apiKey: 'd5e997fedecaac8d7961',
           cluster: 'ap2',
         });
         myChannel = await pusher.subscribe({
@@ -75,10 +67,11 @@ const MessagesScreen = ({route}) => {
               setMessages(previousMessages =>
                 GiftedChat.append(previousMessages, dataString?.message),
               );
-              // ReadMessages();
             }
+            
           },
         });
+        console.log(pusher.connectionState, 'pusherrrrrrrstate');
         await pusher.connect();
         console.log('hello from pusher');
       } catch (e) {

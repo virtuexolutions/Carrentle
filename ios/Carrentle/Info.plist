@@ -26,6 +26,12 @@
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+<string>App needs access to location always</string>
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>App needs access to location when in use</string>
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>App requires location access in background</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>

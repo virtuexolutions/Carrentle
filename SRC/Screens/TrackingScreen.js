@@ -1,6 +1,5 @@
 import Geolocation from '@react-native-community/geolocation';
-import database from '@react-native-firebase/database';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {Link, useIsFocused, useNavigation} from '@react-navigation/native';
 import haversineDistance from 'haversine-distance';
 import LottieView from 'lottie-react-native';
 import {Icon} from 'native-base';
@@ -14,35 +13,32 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import BackgroundService from 'react-native-background-actions';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
 import {Rating} from 'react-native-ratings';
 import {moderateScale} from 'react-native-size-matters';
-import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import BackgroundService from 'react-native-background-actions';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
-import {setRideStart} from '../Store/slices/common';
-import {baseUrl} from '../Config';
-import MapViewDirections from 'react-native-maps-directions';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Loader from '../Components/Loader';
-import {customMapStyle} from '../Utillity/mapstyle';
+import {baseUrl} from '../Config';
 import navigationService from '../navigationService';
+import {setRideStart} from '../Store/slices/common';
 import {setUserEventData} from '../Store/slices/socket';
+import {customMapStyle} from '../Utillity/mapstyle';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
 const TrackingScreen = ({route}) => {
   const focused = useIsFocused();
   const {data, rider_data, description, ride_id} = route.params;
-  console.log('🚀 ~ TrackingScreen ~ data:', data);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const currentPossitionRef = useRef(currentPossition);
@@ -53,11 +49,12 @@ const TrackingScreen = ({route}) => {
   const user_type = useSelector(state => state.authReducer.user_type);
   const [currentPossition, setCurrentPossition] = useState({});
   const [time, setTime] = useState(15);
-  console.log('🚀 ~ TrackingScreen ~ time:', time);
   const [startRide, setStartRide] = useState(false);
   const [RiderRideComplete, setRiderRideComplete] = useState(false);
   const [showCancelRide, setshowCancelRide] = useState(false);
   const [reviewModalVisible, setReviewModalVisible] = useState(true);
+  const [startNavigation, setStartNavigation] = useState(false);
+  const [startWaiting, setStartWaiting] = useState(false);
   const userEventData = useSelector(state => state.socketReducer.userEventData);
 
   const latitude = parseFloat(currentPossition?.latitude) || 0;
@@ -68,21 +65,14 @@ const TrackingScreen = ({route}) => {
   const [startTime, setStartTime] = useState(null);
   const [cancelride, setcancelRide] = useState(false);
   const [origin, setOrigin] = useState({
-    latitude: 0,
-    longitude: 0,
+    latitude: latitude,
+    longitude: longitude,
   });
   const channelRef = useRef(null);
-  console.log('🚀 ~ TrackingScreen ~ origin:', origin);
   const [destinations, setDestination] = useState({
-    latitude: 0,
-    longitude: 0,
+    latitude: parseFloat(data?.pickup_location_lat),
+    longitude: parseFloat(data?.pickup_location_lng),
   });
-
-  console.log(
-    data?.pickup_location_lat,
-    data?.pickup_location_lng,
-    'ata?.pickup_location_lat && data?.pickup_location_lng',
-  );
   useEffect(() => {
     setOrigin({
       latitude: parseFloat(latitude),
@@ -106,13 +96,11 @@ const TrackingScreen = ({route}) => {
     setshowCancelRide(false);
   }, 5 * 60 * 1000);
 
-  console.log('🚀 ~ updateStatus ~ data?.id:', data?.id);
-
   const updateStatus = async status => {
     const body = {
       lat: currentPossition?.latitude,
       lng: currentPossition?.longitude,
-      status: 'OnTheWay',
+      status: status,
     };
     const url = `auth/rider/ride_update/${data?.id}`;
     console.log('bodyyyyyyyy', body, url);
@@ -130,7 +118,6 @@ const TrackingScreen = ({route}) => {
           latitude,
           longitude,
         }));
-        tracklocation(latitude, longitude);
         const isLocationClose = (lat1, lon1, lat2, lon2, threshold = 0.0001) =>
           Math.abs(lat1 - lat2) < threshold &&
           Math.abs(lon1 - lon2) < threshold;
@@ -170,15 +157,6 @@ const TrackingScreen = ({route}) => {
     };
   }, [focused]);
 
-  const tracklocation = async ({latitude, longitude}) => {
-    const url = `auth/rider/update_location/${ride_id}`;
-    const body = {
-      lat: latitude,
-      lng: longitude,
-    };
-    const response = await Post(url, body, apiHeader(token));
-    return console.log('🚀 ~ tracklocation ~ response:', response?.data);
-  };
 
   useEffect(() => {
     if (
@@ -368,10 +346,24 @@ const TrackingScreen = ({route}) => {
     }
   };
 
-  // const RiderArrived = async () => {
-  //   const url = `auth/rider-arrived/${ride_id}`;
-  //   const reponse = await Post(url, {}, apiHeader(token));
-  // };
+  const onPressStartNavigation = async () => {
+    updateStatus('OnGoing');
+    setStartNavigation(true);
+    const pickup = {
+      latitude: parseFloat(data?.pickup_location_lat),
+      longitude: parseFloat(data?.pickup_location_lng),
+    };
+    const dropoff = {
+      latitude: parseFloat(data?.dropoff_location_lat),
+      longitude: parseFloat(data?.dropoff_location_lng),
+    };
+    const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving`;
+    // Linking.openURL(url).catch(err => console.error('An error occurred', err));
+  };
+
+  const onPressEndRide = () => {
+    updateStatus('Completed');
+  };
 
   return (
     <>
@@ -503,6 +495,7 @@ const TrackingScreen = ({route}) => {
                 selectedColor="red"
                 unSelectedColor="blue"
                 ratingContainerStyle={{backgroundColor: 'red'}}
+                isDisabled={true}
               />
             )}
             <View style={[styles.btn_view]}>
@@ -598,24 +591,26 @@ const TrackingScreen = ({route}) => {
                 </CustomText>
               </View>
             </View>
-            <CustomButton
-              text={'cancel ride'}
-              textColor={Color.white}
-              width={windowWidth * 0.8}
-              height={windowHeight * 0.06}
-              marginTop={moderateScale(10, 0.3)}
-              bgColor={Color.cartheme}
-              borderColor={Color.white}
-              borderWidth={1}
-              borderRadius={moderateScale(30, 0.3)}
-              isGradient
-              onPress={() => CancelRide()}
-            />
             {startRide != true && (
+              <CustomButton
+                text={'cancel ride'}
+                textColor={Color.white}
+                width={windowWidth * 0.8}
+                height={windowHeight * 0.06}
+                marginTop={moderateScale(10, 0.3)}
+                bgColor={Color.cartheme}
+                borderColor={Color.white}
+                borderWidth={1}
+                borderRadius={moderateScale(30, 0.3)}
+                isGradient
+                onPress={() => CancelRide()}
+              />
+            )}
+            {startRide != true ? (
               <View>
                 <CustomButton
                   textColor={Color.white}
-                  text={'Start'}
+                  text={'Start Navigate to pickup'}
                   width={windowWidth * 0.8}
                   height={windowHeight * 0.06}
                   bgColor={Color.cartheme}
@@ -625,11 +620,71 @@ const TrackingScreen = ({route}) => {
                   borderRadius={moderateScale(30, 0.3)}
                   isGradient
                   onPress={() => {
+                    const url = `https://www.google.com/maps/dir/?api=1&origin=${currentPossition?.latitude},${currentPossition?.longitude}&destination=${destinations?.latitude},${destinations?.longitude}&travelmode=driving`;
+                    Linking.openURL(url).catch(err =>
+                      console.error('An error occurred', err),
+                    );
                     setStartRide(true);
-                    // updateStatus('OnTheWay');
-                    // watchPosition();
+                    updateStatus('OnTheWay');
                   }}
                 />
+              </View>
+            ) : (
+              <View>
+                {startWaiting != true ? (
+                  <CustomButton
+                    textColor={Color.white}
+                    text={'Start Waiting'}
+                    width={windowWidth * 0.8}
+                    height={windowHeight * 0.06}
+                    bgColor={Color.cartheme}
+                    borderColor={Color.white}
+                    borderWidth={1}
+                    marginTop={moderateScale(6, 0.6)}
+                    borderRadius={moderateScale(30, 0.3)}
+                    isGradient
+                    onPress={() => {
+                      setStartWaiting(true);
+                      updateStatus('Arrived');
+                    }}
+                  />
+                ) : (
+                  <>
+                    {startNavigation != true ? (
+                      <CustomButton
+                        textColor={Color.white}
+                        text={'Start Ride'}
+                        width={windowWidth * 0.8}
+                        height={windowHeight * 0.06}
+                        bgColor={Color.cartheme}
+                        borderColor={Color.white}
+                        borderWidth={1}
+                        marginTop={moderateScale(6, 0.6)}
+                        borderRadius={moderateScale(30, 0.3)}
+                        isGradient
+                        onPress={() => {
+                          onPressStartNavigation();
+                        }}
+                      />
+                    ) : (
+                      <CustomButton
+                        textColor={Color.white}
+                        text={'End Ride'}
+                        width={windowWidth * 0.8}
+                        height={windowHeight * 0.06}
+                        bgColor={Color.cartheme}
+                        borderColor={Color.white}
+                        borderWidth={1}
+                        marginTop={moderateScale(12, 0.6)}
+                        borderRadius={moderateScale(30, 0.3)}
+                        isGradient
+                        onPress={() => {
+                          onPressEndRide();
+                        }}
+                      />
+                    )}
+                  </>
+                )}
               </View>
             )}
           </View>

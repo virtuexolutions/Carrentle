@@ -25,7 +25,11 @@ import ImagePickerModal from '../Components/ImagePickerModal';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import authAction from '../Store/auth-action';
-import {SetFCMToken, setUserToken} from '../Store/slices/auth-slice';
+import {
+  SetFCMToken,
+  setUserToken,
+  setUserType,
+} from '../Store/slices/auth-slice';
 import {setUserData} from '../Store/slices/common';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
@@ -81,7 +85,7 @@ const LoginScreen = ({props, route}) => {
         setLoading(false);
         dispatch(setUserToken({token: response?.data?.token}));
         dispatch(setUserData(response?.data?.user_info));
-        dispatch(type);
+        dispatch(setUserType(type));
         Platform.OS == 'android'
           ? ToastAndroid.show(`Login SuccessFully`, ToastAndroid.SHORT)
           : Alert.alert(`Login SuccessFully`);
@@ -238,7 +242,7 @@ const LoginScreen = ({props, route}) => {
             <CustomText style={styles.text}>don't have an ancount ?</CustomText>
             <CustomText
               isBold
-              onPress={() => navigation.navigate('Signup')}
+              onPress={() => navigation.navigate('Signup', {type: type})}
               style={styles.signup_btn}>
               Sign up
             </CustomText>

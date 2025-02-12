@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice, current } from '@reduxjs/toolkit';
 import moment from 'moment';
 
 const initialState = {
@@ -10,8 +10,11 @@ const initialState = {
   riderEventData: {},
   userEventData: {},
   riderModalVisible: false,
+  appIsInBackground: false,
+  currentLocation: null
 };
-console.log('🚀 ~ pusherInstance:', initialState.pusherInstance);
+console.log("🚀 ~ currentLocation:", initialState?.currentLocation)
+console.log('🚀 ~ userData:', initialState.userData);
 
 const CommonSlice = createSlice({
   name: 'commonReducer',
@@ -25,7 +28,7 @@ const CommonSlice = createSlice({
     },
     setUserData(state, action) {
       state.userData = action?.payload;
-      console.log("🚀 ~ setUserData ~ action?.payload:", action?.payload)
+      console.log('🚀 ~ setUserData ~ action?.payload:', action?.payload);
       // state.userData = action?.payload?.userData;
     },
     setUserLogOut(state, action) {
@@ -36,6 +39,13 @@ const CommonSlice = createSlice({
       state.riderEventData = action.payload;
       console.log('🚀 ~ setEventDataRider ~ action.payload:', action.payload);
     },
+    setAppIsInBackground(state, action) {
+      console.log("🚀 ~ setAppIsInBackground ~ action:", action.payload)
+      state.appIsInBackground = action.payload
+    },
+    setCurrentLocation(state, action) {
+      state.currentLocation = action.payload
+    }
   },
 });
 
@@ -46,6 +56,8 @@ export const {
   setRideData,
   setEventDataRider,
   setUserEventData,
+  setAppIsInBackground,
+  setCurrentLocation
 } = CommonSlice.actions;
 
 export default CommonSlice.reducer;
