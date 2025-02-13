@@ -1,4 +1,4 @@
-import { createSlice, current } from '@reduxjs/toolkit';
+import {createSlice, current} from '@reduxjs/toolkit';
 import moment from 'moment';
 
 const initialState = {
@@ -11,9 +11,10 @@ const initialState = {
   userEventData: {},
   riderModalVisible: false,
   appIsInBackground: false,
-  currentLocation: null
+  currentLocation: null,
+  currentRideId: null,
 };
-console.log("🚀 ~ currentLocation:", initialState?.currentLocation)
+console.log('🚀 ~ currentLocation:', initialState?.currentLocation);
 console.log('🚀 ~ userData:', initialState.userData);
 
 const CommonSlice = createSlice({
@@ -40,12 +41,15 @@ const CommonSlice = createSlice({
       console.log('🚀 ~ setEventDataRider ~ action.payload:', action.payload);
     },
     setAppIsInBackground(state, action) {
-      console.log("🚀 ~ setAppIsInBackground ~ action:", action.payload)
-      state.appIsInBackground = action.payload
+      console.log('🚀 ~ setAppIsInBackground ~ action:', action.payload);
+      state.appIsInBackground = action.payload;
     },
     setCurrentLocation(state, action) {
-      state.currentLocation = action.payload
-    }
+      state.currentLocation = action.payload;
+    },
+    setCurrentRideId(state, action) {
+      state.currentRideId = action.payload;
+    },
   },
 });
 
@@ -57,7 +61,8 @@ export const {
   setEventDataRider,
   setUserEventData,
   setAppIsInBackground,
-  setCurrentLocation
+  setCurrentLocation,
+  setCurrentRideId,
 } = CommonSlice.actions;
 
 export default CommonSlice.reducer;

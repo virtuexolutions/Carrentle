@@ -254,7 +254,7 @@ const BoardingPointScreen = ({ navigation, route }) => {
     for (let key in body) {
       formData.append(key, body[key]);
     }
-    // setLoading(true);
+    setLoading(true);
     console.log("🚀 ~ requestforRide ~ body:", formData)
     const response = await Post(url, formData, apiHeader(token));
     console.log('🚀  requestforRide  response:', response?.data);

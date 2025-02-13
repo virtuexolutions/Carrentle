@@ -1,7 +1,7 @@
-import { Pusher } from '@pusher/pusher-websocket-react-native';
-import { useIsFocused } from '@react-navigation/native';
-import { Icon } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import {Pusher} from '@pusher/pusher-websocket-react-native';
+import {useIsFocused} from '@react-navigation/native';
+import {Icon} from 'native-base';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -11,12 +11,12 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Get, Post } from '../Axios/AxiosInterceptorFunction';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import HistoryComponent from '../Components/HistoryComponent';
@@ -27,11 +27,11 @@ import {
   setPusherInstance,
   setriderChannelName,
 } from '../Store/slices/socket';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
-import { setEventDataRider } from '../Store/slices/common';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import {setEventDataRider} from '../Store/slices/common';
 import CustomImage from '../Components/CustomImage';
 import moment from 'moment';
-import { baseUrl } from '../Config';
+import {baseUrl} from '../Config';
 import Feather from 'react-native-vector-icons/Feather';
 import CustomButton from '../Components/CustomButton';
 
@@ -81,10 +81,18 @@ const DashBoard = () => {
   const isSubscribed = useSelector(
     state => state.socketReducer.riderIsSubscribed,
   );
-  const riderEventData = useSelector(state => state.commonReducer.riderEventData)
-  const currentLocation = useSelector(state => state.commonReducer.currentLocation)
-  console.log("🚀 ~ DashBoard ~ currentLocation:", currentLocation)
+  const riderEventData = useSelector(
+    state => state.commonReducer.riderEventData,
+  );
+  const currentLocation = useSelector(
+    state => state.commonReducer.currentLocation,
+  );
+
+  console.log('🚀 ~ DashBoard ~ currentLocation:', currentLocation);
   const [history, setHistory] = useState();
+  const [current_ride, setCurrentRide] = useState({});
+  console.log('🚀 ~ DashBoard ~ current_ride:', current_ride);
+  console.log('🚀 ~ DashBoard ~ history:', history);
   const [loading, setLoading] = useState(false);
   const [Transactionhistory, setTransactionHistory] = useState([]);
   const [loadMore, setLoadMore] = useState(false);
@@ -92,13 +100,20 @@ const DashBoard = () => {
   const [getMore, setGetMore] = useState(false);
   const pusher = Pusher.getInstance();
   const dispatch = useDispatch();
+  const currentRideId = useSelector(state => state.commonReducer.currentRideId);
+  console.log('🚀 ~ DashBoard ~ currentRideId:', currentRideId);
 
   const getRideHistory = async () => {
     const url = 'auth/rider/ride_history';
     const reponse = await Get(url, token);
-    console.log("🚀 ~ getRideHistory ~ reponse:", reponse?.data)
+    console.log('🚀 ~ getRideHistory ~ reponse:', reponse?.data);
     if (reponse != undefined) {
-      setHistory(reponse?.data)
+      setHistory(reponse?.data);
+      const ongoingRide = reponse?.data?.ride_lists.find(
+        ride => ride.id === currentRideId,
+      );
+      setCurrentRide(ongoingRide);
+      console.log('🚀 ~ getRideHistory ~ ongoingRide:', ongoingRide);
     }
   };
 
@@ -194,7 +209,7 @@ const DashBoard = () => {
   //   }
   // };
 
-  const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+  const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
     const paddingToBottom = 10;
     return (
       layoutMeasurement.height + contentOffset.y >=
@@ -215,8 +230,8 @@ const DashBoard = () => {
           height: windowHeight,
         }}>
         <LinearGradient
-          start={{ x: 1, y: 0.2 }}
-          end={{ x: 1, y: 0.9 }}
+          start={{x: 1, y: 0.2}}
+          end={{x: 1, y: 0.9}}
           colors={['#00309E', '#4680D1']}
           style={styles.sub_view}>
           <View style={styles.card_view}>
@@ -253,12 +268,12 @@ const DashBoard = () => {
               }}>
               <View>
                 <CustomText
-                  style={{ fontSize: moderateScale(12, 0.6), color: Color.grey }}>
+                  style={{fontSize: moderateScale(12, 0.6), color: Color.grey}}>
                   Wallet Balance
                 </CustomText>
                 <CustomText
                   isBold={true}
-                  style={{ fontSize: moderateScale(14, 0.6) }}>
+                  style={{fontSize: moderateScale(14, 0.6)}}>
                   $ 1,291
                 </CustomText>
               </View>
@@ -288,7 +303,7 @@ const DashBoard = () => {
                 />
               </TouchableOpacity>
             </View>
-            <View style={[styles.lines, { width: '100%' }]} />
+            <View style={[styles.lines, {width: '100%'}]} />
             <TouchableOpacity
               onPress={() => navigationService.navigate('MyWallet')}
               style={{
@@ -298,7 +313,7 @@ const DashBoard = () => {
                 width: '100%',
                 marginTop: moderateScale(15, 0.6),
               }}>
-              <CustomText style={{ fontSize: moderateScale(13, 0.6) }}>
+              <CustomText style={{fontSize: moderateScale(13, 0.6)}}>
                 Payment History
               </CustomText>
               <View>
@@ -336,7 +351,7 @@ const DashBoard = () => {
           <FlatList
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={() => (
-              <CustomText style={{ color: 'red', textAlign: 'center' }}>
+              <CustomText style={{color: 'red', textAlign: 'center'}}>
                 No data Found yet
               </CustomText>
             )}
@@ -344,7 +359,7 @@ const DashBoard = () => {
               paddingBottom: moderateScale(10, 0.6),
             }}
             data={Transactionhistory}
-            onScrollEndDrag={({ nativeEvent }) => {
+            onScrollEndDrag={({nativeEvent}) => {
               {
                 if (isCloseToBottom(nativeEvent)) {
                   setPageNum(prev => prev + 1);
@@ -374,12 +389,12 @@ const DashBoard = () => {
           />
         )}
       </ScrollView>
-      {history?.status === ('accept' || 'onGoing') && (
+      {Object.keys(current_ride).length > 0 && (
         <View style={styles.latest_ride_view}>
           <View style={styles.latest_ride_subView}>
             <View style={styles.latest_ride_image_view}>
               <CustomImage
-                source={{ uri: `${baseUrl}/${history?.user?.photo}` }}
+                source={{uri: `${baseUrl}/${history?.user?.photo}`}}
                 style={{
                   width: '100%',
                   height: '100%',
@@ -398,9 +413,9 @@ const DashBoard = () => {
                   fontSize: moderateScale(16, 0.6),
                   color: Color.black,
                 }}>
-                {history?.user?.name}
+                {current_ride?.user?.name}
               </CustomText>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <CustomText
                   isBold
                   style={{
@@ -415,11 +430,11 @@ const DashBoard = () => {
                     color: Color.veryLightGray,
                     marginLeft: moderateScale(8, 0.6),
                   }}>
-                  {history?.status}
+                  {current_ride?.status}
                 </CustomText>
               </View>
             </View>
-            <CustomText isBold style={{ fontSize: moderateScale(12, 0.6) }}>
+            <CustomText isBold style={{fontSize: moderateScale(12, 0.6)}}>
               Date :
             </CustomText>
             <CustomText
@@ -427,12 +442,12 @@ const DashBoard = () => {
                 fontSize: moderateScale(11, 0.6),
                 marginLeft: moderateScale(10, 0.6),
               }}>
-              {moment(history?.created_at).format('MM-DD-YYYY')}
+              {moment(current_ride?.created_at).format('MM-DD-YYYY')}
             </CustomText>
           </View>
           <View style={styles.text_view2}>
             <View>
-              <View style={{ flexDirection: 'row' }}>
+              <View style={{flexDirection: 'row'}}>
                 <Icon name="map-pin" as={Feather} color={Color.orange} />
                 <CustomText
                   isBold={true}
@@ -452,7 +467,7 @@ const DashBoard = () => {
                       paddingVertical: moderateScale(10, 0.6),
                       top: 11,
                       // marginLeft: moderateScale(-3, 0.6),
-                      transform: [{ rotate: '-90deg' }],
+                      transform: [{rotate: '-90deg'}],
                     },
                   ]}>
                   - - -
@@ -465,7 +480,7 @@ const DashBoard = () => {
                   width: windowWidth * 0.8,
                   marginLeft: moderateScale(18, 0.6),
                 }}>
-                {history?.location_from}
+                {current_ride?.location_from}
               </CustomText>
               <View
                 style={{
@@ -489,7 +504,7 @@ const DashBoard = () => {
                   width: windowWidth * 0.8,
                   marginLeft: moderateScale(18, 0.6),
                 }}>
-                {history?.location_to}
+                {current_ride?.location_to}
               </CustomText>
             </View>
           </View>
@@ -504,11 +519,13 @@ const DashBoard = () => {
             borderWidth={1}
             borderRadius={moderateScale(30, 0.3)}
             isGradient
-          // onPress={navigationService.navigate('CabTracking', {
-          //   data: latest_ride,
-          //   description: latest_ride,
-          //   ride_id: latest_ride?.id,
-          // })}
+            onPress={() =>
+              navigationService.navigate('TrackingScreen', {
+                data: current_ride,
+                description: current_ride,
+                ride_id: current_ride?.id,
+              })
+            }
           />
         </View>
       )}
@@ -572,9 +589,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  today_text: { fontSize: moderateScale(16, 0.6), color: Color.grey },
-  price_text: { fontSize: moderateScale(25, 0.6), color: Color.black },
-  text: { fontSize: moderateScale(12, 0.6), marginLeft: moderateScale(5, 0.6) },
+  today_text: {fontSize: moderateScale(16, 0.6), color: Color.grey},
+  price_text: {fontSize: moderateScale(25, 0.6), color: Color.black},
+  text: {fontSize: moderateScale(12, 0.6), marginLeft: moderateScale(5, 0.6)},
   wallet_card: {
     width: windowWidth * 0.9,
     backgroundColor: Color.white,

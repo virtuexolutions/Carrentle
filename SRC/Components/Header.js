@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Icon } from 'native-base';
+import React, {useEffect, useState} from 'react';
+import {Icon} from 'native-base';
 import {
   View,
   Platform,
@@ -8,26 +8,30 @@ import {
   ToastAndroid,
   Alert,
 } from 'react-native';
-import { DrawerActions, useNavigation } from '@react-navigation/native';
+import {DrawerActions, useNavigation} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { moderateScale, ScaledSheet } from 'react-native-size-matters';
+import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import Color from '../Assets/Utilities/Color';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import CustomText from './CustomText';
 import CustomImage from './CustomImage';
-const { height, width } = Dimensions.get('window');
+const {height, width} = Dimensions.get('window');
 import Feather from 'react-native-vector-icons/Feather';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { imageUrl } from '../Config';
-import { setUserLogout, setUserLogoutAuth } from '../Store/slices/auth-slice';
+import {useDispatch, useSelector} from 'react-redux';
+import {imageUrl} from '../Config';
+import {setUserLogout, setUserLogoutAuth} from '../Store/slices/auth-slice';
 import LinearGradient from 'react-native-linear-gradient';
-import { setEventDataRider, setUserLogOut } from '../Store/slices/common';
+import {
+  setCurrentRideId,
+  setEventDataRider,
+  setUserLogOut,
+} from '../Store/slices/common';
 import navigationService from '../navigationService';
 import AcceptRideModal from './AcceptRideModal';
 import Geolocation from '@react-native-community/geolocation';
-import { Post } from '../Axios/AxiosInterceptorFunction';
-import { getDistance } from 'geolib';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import {getDistance} from 'geolib';
 
 const Header = props => {
   const dispatch = useDispatch();
@@ -61,12 +65,12 @@ const Header = props => {
   console.log('🚀 ~ Header ~ token: ', token, user_type);
   // console.log('🚀 ~ Header ~ token:', token);
   const [currentPossition, setcurrentPossition] = useState({});
-  const [time, setTime] = useState(0)
+  const [time, setTime] = useState(0);
   const statusArray = [
-    { label: 'Change Password', value: 'ChangePassword' },
-    { label: 'Terms & Conditions', value: 'TermsAndConditions' },
-    { label: 'Financial Breakdown', value: 'FinancialBreakDown' },
-    { label: 'Logout', value: 'Logout' },
+    {label: 'Change Password', value: 'ChangePassword'},
+    {label: 'Terms & Conditions', value: 'TermsAndConditions'},
+    {label: 'Financial Breakdown', value: 'FinancialBreakDown'},
+    {label: 'Logout', value: 'Logout'},
   ];
 
   const Confirm = () => {
@@ -118,14 +122,13 @@ const Header = props => {
     }
   };
 
-
   useEffect(() => {
-    console.log('yahaaa a rha ha')
+    console.log('yahaaa a rha ha');
     if (currentPossition && riderEvent?.pickup_location_lat != null) {
       const dropLocation = {
         latitude: parseFloat(riderEvent?.pickup_location_lat),
-        longitude: parseFloat(riderEvent?.pickup_location_lng)
-      }
+        longitude: parseFloat(riderEvent?.pickup_location_lng),
+      };
       const checkDistanceBetween = getDistance(currentPossition, dropLocation);
       let km = Math.round(checkDistanceBetween / 1000);
       const distanceInMiles = km / 1.60934;
@@ -153,19 +156,19 @@ const Header = props => {
     }
   }, [currentPossition]);
 
-
-
   const onpressAccept = async currentStatus => {
     const body = {
       lat: currentPossition?.latitude,
       lng: currentPossition?.longitude,
       status: currentStatus,
-      rider_arrived_time: time
+      rider_arrived_time: time,
     };
     const url = `auth/rider/ride_update/${riderEvent?.id}`;
     const response = await Post(url, body, apiHeader(token));
+    console.log('🚀 ~ onpressAccept response:', response?.data?.ride_info);
     if (response?.data?.ride_info?.status === 'accept') {
       dispatch(setEventDataRider({}));
+      dispatch(setCurrentRideId(response?.data?.ride_info?.id));
       navigationService.navigate('TrackingScreen', {
         data: response?.data?.ride_info,
         rider_data: response?.data?.ride_info?.rider,
@@ -181,9 +184,9 @@ const Header = props => {
 
   return (
     <LinearGradient
-      style={[styles.header2, index && { zIndex: 1 }]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
+      style={[styles.header2, index && {zIndex: 1}]}
+      start={{x: 0, y: 0}}
+      end={{x: 1, y: 1}}
       colors={headerColor ? headerColor : Color.themeBgColor}>
       <View
         style={{
@@ -302,7 +305,7 @@ const Header = props => {
           }}>
           <CustomImage
             source={require('../Assets/Images/Group13.png')}
-            style={{ width: windowHeight * 0.04, height: windowHeight * 0.04 }}
+            style={{width: windowHeight * 0.04, height: windowHeight * 0.04}}
           />
         </View>
       )}
