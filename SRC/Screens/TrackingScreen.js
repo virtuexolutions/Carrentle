@@ -38,8 +38,8 @@ import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
 const TrackingScreen = ({ route }) => {
   const focused = useIsFocused();
-  const { data, rider_data, description, ride_id } = route.params;
-  console.log("🚀 ~ TrackingScreen ~ data:", data)
+  const {data, rider_data, description, ride_id} = route.params;
+  console.log('🚀 ~ TrackingScreen ~ data:', data);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const currentPossitionRef = useRef(currentPossition);
@@ -49,6 +49,7 @@ const TrackingScreen = ({ route }) => {
   const token = useSelector(state => state.authReducer.token);
   const user_type = useSelector(state => state.authReducer.user_type);
   const [currentPossition, setCurrentPossition] = useState({});
+  console.log('🚀 ~ TrackingScreen ~ currentPossition:', currentPossition);
   const [time, setTime] = useState(15);
   const [startRide, setStartRide] = useState(false);
   const [RiderRideComplete, setRiderRideComplete] = useState(false);
@@ -57,14 +58,13 @@ const TrackingScreen = ({ route }) => {
   const [startNavigation, setStartNavigation] = useState(false);
   const [startWaiting, setStartWaiting] = useState(false);
   const userEventData = useSelector(state => state.socketReducer.userEventData);
+  const currentRideId = useSelector(state => state.commonReducer.currentRideId);
+  console.log('🚀 ~ DashBoard ~ currentRideId:', currentRideId);
 
   const latitude = parseFloat(currentPossition?.latitude) || 0;
   const longitude = parseFloat(currentPossition?.longitude) || 0;
 
   const [isRiderHere, setIsRiderHere] = useState(false);
-
-  console.log("🚀 ~ TrackingScreen ~ isRiderHere:", isRiderHere)
-  const [currentState, setCurrentState] = useState('active');
   const [isModalShown, setIsModalShown] = useState(false);
   const [startTime, setStartTime] = useState(null);
   const [cancelride, setcancelRide] = useState(false);
@@ -77,6 +77,7 @@ const TrackingScreen = ({ route }) => {
     latitude: parseFloat(data?.pickup_location_lat),
     longitude: parseFloat(data?.pickup_location_lng),
   });
+  console.log('🚀 ~ TrackingScreen ~ destinations:', destinations);
   useEffect(() => {
     setOrigin({
       latitude: parseFloat(latitude),
@@ -160,7 +161,6 @@ const TrackingScreen = ({ route }) => {
       clearInterval(interval);
     };
   }, [focused]);
-
 
   useEffect(() => {
     if (
@@ -255,86 +255,6 @@ const TrackingScreen = ({ route }) => {
     });
   };
 
-  const trackLocationAndTime = async taskData => {
-    const { delay } = taskData;
-    while (BackgroundService.isRunning()) {
-      try {
-        const currentLocation = await getCurrentLocation();
-        const travelTime = calculateTravelTime();
-        setTime(travelTime);
-        // watchPosition();
-      } catch (error) {
-        console.error('Error in tracking task:', error);
-      }
-      await new Promise(r => setTimeout(r, delay));
-    }
-  };
-
-  const _handleAppStateChange = nextAppState => {
-    if (
-      currentState.match(/inactive|background/) &&
-      nextAppState === 'active'
-    ) {
-    }
-    setCurrentState(nextAppState);
-  };
-
-  const options = {
-    taskName: 'Tracking Time and Location',
-    taskTitle: 'Tracking Your Ride',
-    taskDesc: 'Updating location and travel time',
-    taskIcon: {
-      name: 'ic_launcher',
-      type: 'mipmap',
-    },
-    color: '#ff00ff',
-    linkingURI: 'myapp://TrackingScreen',
-    parameters: {
-      delay: 30000,
-    },
-  };
-
-  BackgroundService.on('expiration', () => {
-    console.log('IOS : i am being closed ');
-  });
-
-  let playing = BackgroundService.isRunning();
-
-  const sleep = time =>
-    new Promise(resolve => setTimeout(() => resolve(), time));
-
-  BackgroundService.on('expiration', () => {
-    console.log('IOS : i am being closed ');
-  });
-
-  const toggleBackground = async () => {
-    if (!playing) {
-      try {
-        await BackgroundService.start(trackLocationAndTime, options);
-        playing = true;
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      await BackgroundService.stop();
-      playing = false;
-    }
-  };
-
-  useEffect(() => {
-    if (currentState == 'background') {
-      toggleBackground();
-    }
-  }, [currentState]);
-
-  useEffect(() => {
-    const subscription = AppState.addEventListener(
-      'change',
-      _handleAppStateChange,
-    );
-    return () => subscription.remove();
-  }, []);
-
   useEffect(() => {
     setStartTime(new Date());
     dispatch(setUserEventData({}));
@@ -406,14 +326,15 @@ const TrackingScreen = ({ route }) => {
           showBack
           username={userData?.name}
         />
+
         {Object.keys(currentPossition).length > 0 ? (
           <MapView
             customMapStyle={customMapStyle}
             initialRegion={{
-              latitude: parseFloat(currentPossition?.latitude),
-              longitude: parseFloat(currentPossition?.longitude),
-              latitudeDelta: 0.05,
-              longitudeDelta: 0.05,
+              latitude: parseFloat(currentPossition?.latitude) || 0,
+              longitude: parseFloat(currentPossition?.longitude) || 0,
+              latitudeDelta: 0.0522,
+              longitudeDelta: 0.0521,
             }}
             provider={PROVIDER_GOOGLE}
             ref={mapRef}
@@ -484,6 +405,7 @@ const TrackingScreen = ({ route }) => {
         ) : (
           <Loader />
         )}
+
         <View
           style={[
             styles.card_main_view,
@@ -492,7 +414,7 @@ const TrackingScreen = ({ route }) => {
                 startRide != true ? windowHeight * 0.42 : windowHeight * 0.35,
             },
           ]}>
-          <View style={styles.image_view}>
+          {/* <View style={styles.image_view}>
             <CustomImage
               source={
                 {
@@ -505,8 +427,8 @@ const TrackingScreen = ({ route }) => {
                 borderRadius: windowWidth,
               }}
             />
-          </View>
-          <View style={{ top: moderateScale(-1, 0.6) }}>
+          </View> */}
+          <View style={{top: moderateScale(-1, 0.6)}}>
             <CustomText
               isBold
               style={{
