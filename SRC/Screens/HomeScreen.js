@@ -230,17 +230,20 @@ const HomeScreen = ({ navigation }) => {
           {isLoading ? (
             <Loader style={{ width: 70, height: 70 }} />
           ) : (
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              style={{
-                paddingTop: moderateScale(10, 0.6),
-                paddingHorizontal: moderateScale(18, 0.6),
-              }}
-              data={cablist}
-              renderItem={({ item, index }) => {
-                return <BookYourCapComponent item={item} pending_ride={pending_ride} />;
-              }}
-            />
+            <>
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                style={{
+                  paddingTop: moderateScale(10, 0.6),
+                  paddingHorizontal: moderateScale(18, 0.6),
+                }}
+                data={cablist}
+                renderItem={({ item, index }) => {
+                  return <BookYourCapComponent item={item} pending_ride={pending_ride} />;
+                }}
+              />
+              <View style={{ marginBottom: moderateScale(60, 0.6) }} />
+            </>
           )}
         </View>
       </ScrollView>

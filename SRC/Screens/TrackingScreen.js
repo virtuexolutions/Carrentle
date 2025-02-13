@@ -1,9 +1,9 @@
 import Geolocation from '@react-native-community/geolocation';
-import {Link, useIsFocused, useNavigation} from '@react-navigation/native';
+import { Link, useIsFocused, useNavigation } from '@react-navigation/native';
 import haversineDistance from 'haversine-distance';
 import LottieView from 'lottie-react-native';
-import {Icon} from 'native-base';
-import React, {useEffect, useRef, useState} from 'react';
+import { Icon } from 'native-base';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   AppState,
@@ -14,31 +14,32 @@ import {
   View,
 } from 'react-native';
 import BackgroundService from 'react-native-background-actions';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import {Rating} from 'react-native-ratings';
-import {moderateScale} from 'react-native-size-matters';
+import { Rating } from 'react-native-ratings';
+import { moderateScale } from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import Loader from '../Components/Loader';
-import {baseUrl} from '../Config';
+import { baseUrl } from '../Config';
 import navigationService from '../navigationService';
-import {setRideStart} from '../Store/slices/common';
-import {setUserEventData} from '../Store/slices/socket';
-import {customMapStyle} from '../Utillity/mapstyle';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { setRideStart } from '../Store/slices/common';
+import { setUserEventData } from '../Store/slices/socket';
+import { customMapStyle } from '../Utillity/mapstyle';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
-const TrackingScreen = ({route}) => {
+const TrackingScreen = ({ route }) => {
   const focused = useIsFocused();
-  const {data, rider_data, description, ride_id} = route.params;
+  const { data, rider_data, description, ride_id } = route.params;
+  console.log("🚀 ~ TrackingScreen ~ data:", data)
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const currentPossitionRef = useRef(currentPossition);
@@ -59,7 +60,10 @@ const TrackingScreen = ({route}) => {
 
   const latitude = parseFloat(currentPossition?.latitude) || 0;
   const longitude = parseFloat(currentPossition?.longitude) || 0;
+
   const [isRiderHere, setIsRiderHere] = useState(false);
+
+  console.log("🚀 ~ TrackingScreen ~ isRiderHere:", isRiderHere)
   const [currentState, setCurrentState] = useState('active');
   const [isModalShown, setIsModalShown] = useState(false);
   const [startTime, setStartTime] = useState(null);
@@ -112,7 +116,7 @@ const TrackingScreen = ({route}) => {
     getCurrentLocation();
     const watchId = Geolocation.watchPosition(
       position => {
-        const {latitude, longitude} = position.coords;
+        const { latitude, longitude } = position.coords;
         setCurrentPossition(prevLocation => ({
           ...prevLocation,
           latitude,
@@ -198,6 +202,30 @@ const TrackingScreen = ({route}) => {
         );
       });
       setCurrentPossition(position);
+      const latitude = data?.pickup_location_lat
+      const longitude = data?.pickup_location_lng
+      const isLocationClose = (lat1, lon1, lat2, lon2, threshold = 0.0001) =>
+        Math.abs(lat1 - lat2) < threshold &&
+        Math.abs(lon1 - lon2) < threshold;
+      console.log("🚀 ~ getCurrentLocation ~ isLocationClose:", isLocationClose(
+        latitude,
+        origin.latitude,
+        position?.longitude,
+        longitude,
+      ))
+      console.log("🚀 ~ getCurrentLocation ~ latitude:", latitude, longitude)
+      console.log("🚀 ~ getCurrentLocation ~ origin.latitude:", origin.latitude, origin.longitude)
+
+      if (
+        isLocationClose(
+          latitude,
+          origin.latitude,
+          longitude,
+          origin.longitude,
+        )
+      ) {
+        setIsRiderHere(true);
+      }
       return position;
     } catch (error) {
       console.error('Error getting location:', error);
@@ -228,7 +256,7 @@ const TrackingScreen = ({route}) => {
   };
 
   const trackLocationAndTime = async taskData => {
-    const {delay} = taskData;
+    const { delay } = taskData;
     while (BackgroundService.isRunning()) {
       try {
         const currentLocation = await getCurrentLocation();
@@ -322,7 +350,7 @@ const TrackingScreen = ({route}) => {
         [
           {
             text: 'Ok',
-            onPress: navigationService.navigate('CencalTexi', {id: data?.id}),
+            onPress: navigationService.navigate('CencalTexi', { id: data?.id }),
             style: 'Ok',
           },
         ],
@@ -338,7 +366,7 @@ const TrackingScreen = ({route}) => {
         [
           {
             text: 'Ok',
-            onPress: navigationService.navigate('CencalTexi', {id: data?.id}),
+            onPress: navigationService.navigate('CencalTexi', { id: data?.id }),
             style: 'Ok',
           },
         ],
@@ -357,10 +385,10 @@ const TrackingScreen = ({route}) => {
       latitude: parseFloat(data?.dropoff_location_lat),
       longitude: parseFloat(data?.dropoff_location_lng),
     };
-    const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving`;
+    // const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving`;
+    const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving&waypoints=24.8138,67.0325|24.7471,67.9235`
     // Linking.openURL(url).catch(err => console.error('An error occurred', err));
   };
-
   const onPressEndRide = () => {
     updateStatus('Completed');
   };
@@ -371,7 +399,7 @@ const TrackingScreen = ({route}) => {
         <Header
           index
           title={'Hello  ' + userData?.name}
-          textstyle={{color: Color.black, fontSize: moderateScale(22, 0.6)}}
+          textstyle={{ color: Color.black, fontSize: moderateScale(22, 0.6) }}
           headerColor={['white', 'white']}
           hideUser={true}
           navigation={navigation}
@@ -412,7 +440,7 @@ const TrackingScreen = ({route}) => {
                 {description?.stop.map((stop, index) => (
                   <Marker
                     key={index}
-                    coordinate={{latitude: stop.lat, longitude: stop.lng}}
+                    coordinate={{ latitude: stop.lat, longitude: stop.lng }}
                     title={`Stop ${index + 1}`}
                     description={
                       stop.name ||
@@ -446,7 +474,7 @@ const TrackingScreen = ({route}) => {
                       height: moderateScale(50, 0.6),
                     }}>
                     <CustomImage
-                      style={{width: '100%', height: '100%'}}
+                      style={{ width: '100%', height: '100%' }}
                       source={require('../Assets/Images/destination_icon.png')}
                     />
                   </View>
@@ -478,7 +506,7 @@ const TrackingScreen = ({route}) => {
               }}
             />
           </View>
-          <View style={{top: moderateScale(-1, 0.6)}}>
+          <View style={{ top: moderateScale(-1, 0.6) }}>
             <CustomText
               isBold
               style={{
@@ -491,10 +519,10 @@ const TrackingScreen = ({route}) => {
               <Rating
                 ratingCount={description?.rider?.rating}
                 imageSize={20}
-                style={{marginTop: moderateScale(10, 0.6)}}
+                style={{ marginTop: moderateScale(10, 0.6) }}
                 selectedColor="red"
                 unSelectedColor="blue"
-                ratingContainerStyle={{backgroundColor: 'red'}}
+                ratingContainerStyle={{ backgroundColor: 'red' }}
                 isDisabled={true}
               />
             )}
@@ -529,7 +557,7 @@ const TrackingScreen = ({route}) => {
             </View>
             <View style={styles.text_view2}>
               <View>
-                <View style={{flexDirection: 'row'}}>
+                <View style={{ flexDirection: 'row' }}>
                   <Icon name="map-pin" as={Feather} color={Color.orange} />
                   <CustomText
                     isBold={true}
@@ -549,7 +577,7 @@ const TrackingScreen = ({route}) => {
                         paddingVertical: moderateScale(10, 0.6),
                         top: 11,
                         // marginLeft: moderateScale(-3, 0.6),
-                        transform: [{rotate: '-90deg'}],
+                        transform: [{ rotate: '-90deg' }],
                       },
                     ]}>
                     - - -
@@ -798,18 +826,18 @@ const TrackingScreen = ({route}) => {
                 marginBottom: moderateScale(20, 0.6),
               }}>
               <CustomImage
-                style={{width: '100%', height: '100%'}}
+                style={{ width: '100%', height: '100%' }}
                 source={require('../Assets/Images/sad_face.png')}
               />
             </View>
             <CustomText
               isBold
-              style={{fontSize: moderateScale(18, 0.6), textAlign: 'center'}}>
+              style={{ fontSize: moderateScale(18, 0.6), textAlign: 'center' }}>
               {user_type === 'Rider' ? 'User ' : 'Rider ' + 'Cancel the Rider'}
             </CustomText>
             <CustomText
               isBold
-              style={{fontSize: moderateScale(15, 0.6), textAlign: 'center'}}>
+              style={{ fontSize: moderateScale(15, 0.6), textAlign: 'center' }}>
               we're so sad about your cancellation
             </CustomText>
             <CustomText

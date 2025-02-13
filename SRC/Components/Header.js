@@ -33,6 +33,7 @@ const Header = props => {
   const dispatch = useDispatch();
   const notification = useSelector(state => state.commonReducer.notification);
   const riderEvent = useSelector(state => state.commonReducer.riderEventData);
+  console.log("🚀 ~ riderEvent:", riderEvent)
   const cartData = useSelector(state => state.commonReducer.cart);
   const navigationN = useNavigation();
   // const navigation = useNavigation();

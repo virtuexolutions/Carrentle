@@ -1,10 +1,10 @@
+import { Pusher } from '@pusher/pusher-websocket-react-native';
 import Geolocation from '@react-native-community/geolocation';
-import database, {update} from '@react-native-firebase/database';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import haversineDistance from 'haversine-distance';
 import LottieView from 'lottie-react-native';
-import {Icon} from 'native-base';
-import React, {useEffect, useRef, useState} from 'react';
+import { Icon } from 'native-base';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   AppState,
@@ -16,38 +16,33 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Rating} from 'react-native-ratings';
-import {moderateScale} from 'react-native-size-matters';
+import BackgroundService from 'react-native-background-actions';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
+import { Rating } from 'react-native-ratings';
+import { moderateScale } from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
-import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useDispatch, useSelector} from 'react-redux';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useDispatch, useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import BackgroundService from 'react-native-background-actions';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
-import {setRideStart} from '../Store/slices/common';
-import {baseUrl} from '../Config';
-import MapViewDirections from 'react-native-maps-directions';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Loader from '../Components/Loader';
-import {customMapStyle} from '../Utillity/mapstyle';
+import { baseUrl } from '../Config';
+import { setUserEventData } from '../Store/slices/socket';
+import { customMapStyle } from '../Utillity/mapstyle';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 import navigationService from '../navigationService';
-import {Pusher} from '@pusher/pusher-websocket-react-native';
-import {getPusherInstance} from '../Store/pusherService';
-import {setUserEventData} from '../Store/slices/socket';
-import {color} from 'native-base/lib/typescript/theme/styled-system';
 
-const CabTracking = ({route}) => {
+const CabTracking = ({ route }) => {
   const focused = useIsFocused();
-  const {data, ride_id} = route.params;
-  console.log('🚀 ~ CabTracking ~ data:', data);
+  const { data, ride_id } = route.params;
+  console.log("🚀 ~ CabTracking ~ data:", data)
   // const data = {
   //   amount: 58,
   //   carId: 1,
@@ -131,6 +126,7 @@ const CabTracking = ({route}) => {
   const [showCancelRide, setshowCancelRide] = useState(false);
   const [reviewModalVisible, setReviewModalVisible] = useState(true);
   const userEventData = useSelector(state => state.socketReducer.userEventData);
+  console.log("🚀 ~ CabTracking ~ userEventData:", userEventData)
   const pusher = Pusher.getInstance();
   const [isRiderHere, setIsRiderHere] = useState(false);
   const latitude = parseFloat(data?.rider?.lat) || 0;
@@ -148,6 +144,7 @@ const CabTracking = ({route}) => {
     latitude: 0,
     longitude: 0,
   });
+  console.log("🚀 ~ useEffect ~ data?.pickup_location_lat:", data?.pickup_location_lat, data?.pickup_location_lng)
 
   useEffect(() => {
     if (userEventData?.status === 'OnTheWay') {
@@ -158,9 +155,9 @@ const CabTracking = ({route}) => {
       setIsRiderHere(true);
       Platform.OS == 'android'
         ? ToastAndroid.show(
-            `Your Cab is on your pickup location`,
-            ToastAndroid.SHORT,
-          )
+          `Your Cab is on your pickup location`,
+          ToastAndroid.SHORT,
+        )
         : Alert.alert(`Your Cab is on your pickup location`);
     } else if (userEventData?.status === 'OnGoing') {
       setIsRiderHere(false);
@@ -180,8 +177,8 @@ const CabTracking = ({route}) => {
       longitude: parseFloat(longitude),
     });
     setDestination({
-      latitude: parseFloat(data?.pickup_location_lat),
-      longitude: parseFloat(data?.pickup_location_lng),
+      latitude: parseFloat(userEventData?.status === 'Arrived' ? userEventData?.rider?.lat : data?.pickup_location_lat),
+      longitude: parseFloat(userEventData?.status === 'Arrived' ? userEventData?.rider?.lng : data?.pickup_location_lng),
     });
   }, []);
 
@@ -333,7 +330,7 @@ const CabTracking = ({route}) => {
   };
 
   const trackLocationAndTime = async taskData => {
-    const {delay} = taskData;
+    const { delay } = taskData;
     while (BackgroundService.isRunning()) {
       try {
         const currentLocation = await getCurrentLocation();
@@ -449,7 +446,7 @@ const CabTracking = ({route}) => {
         [
           {
             text: 'Ok',
-            onPress: navigationService.navigate('CencalTexi', {id: data?.id}),
+            onPress: navigationService.navigate('CencalTexi', { id: data?.id }),
             style: 'Ok',
           },
         ],
@@ -465,7 +462,7 @@ const CabTracking = ({route}) => {
         [
           {
             text: 'Ok',
-            onPress: navigationService.navigate('CencalTexi', {id: data?.id}),
+            onPress: navigationService.navigate('CencalTexi', { id: data?.id }),
             style: 'Ok',
           },
         ],
@@ -479,7 +476,7 @@ const CabTracking = ({route}) => {
         <Header
           index
           title={'Hello  ' + userData?.name}
-          textstyle={{color: Color.black, fontSize: moderateScale(22, 0.6)}}
+          textstyle={{ color: Color.black, fontSize: moderateScale(22, 0.6) }}
           headerColor={['white', 'white']}
           hideUser={true}
           navigation={navigation}
@@ -520,7 +517,7 @@ const CabTracking = ({route}) => {
                 {data?.stop.map((stop, index) => (
                   <Marker
                     key={index}
-                    coordinate={{latitude: stop.lat, longitude: stop.lng}}
+                    coordinate={{ latitude: stop.lat, longitude: stop.lng }}
                     title={`Stop ${index + 1}`}
                     description={
                       stop.name ||
@@ -554,7 +551,7 @@ const CabTracking = ({route}) => {
                       height: moderateScale(50, 0.6),
                     }}>
                     <CustomImage
-                      style={{width: '100%', height: '100%'}}
+                      style={{ width: '100%', height: '100%' }}
                       source={require('../Assets/Images/destination_icon.png')}
                     />
                   </View>
@@ -568,7 +565,7 @@ const CabTracking = ({route}) => {
           style={[
             styles.card_main_view,
             {
-              height: windowHeight * 0.37,
+              height: windowHeight * 0.45,
             },
           ]}>
           <View style={styles.image_view}>
@@ -602,10 +599,10 @@ const CabTracking = ({route}) => {
             <Rating
               ratingCount={data?.rider?.rating}
               imageSize={20}
-              style={{marginTop: moderateScale(10, 0.6)}}
+              style={{ marginTop: moderateScale(10, 0.6) }}
               selectedColor="red"
               unSelectedColor="blue"
-              ratingContainerStyle={{backgroundColor: 'red'}}
+              ratingContainerStyle={{ backgroundColor: 'red' }}
             />
             <View style={[styles.btn_view]}>
               <TouchableOpacity
@@ -657,7 +654,7 @@ const CabTracking = ({route}) => {
                   size={moderateScale(15, 0.6)}
                 />
                 <View style={styles.text_view}>
-                  <CustomText isBold style={{fontSize: moderateScale(18, 0.6)}}>
+                  <CustomText isBold style={{ fontSize: moderateScale(18, 0.6) }}>
                     4.7
                   </CustomText>
                   <CustomText
@@ -678,7 +675,7 @@ const CabTracking = ({route}) => {
                   size={moderateScale(15, 0.6)}
                 />
                 <View style={styles.text_view}>
-                  <CustomText isBold style={{fontSize: moderateScale(18, 0.6)}}>
+                  <CustomText isBold style={{ fontSize: moderateScale(18, 0.6) }}>
                     {time}
                   </CustomText>
                   <CustomText
@@ -712,7 +709,7 @@ const CabTracking = ({route}) => {
                   size={moderateScale(15, 0.6)}
                 />
                 <View style={styles.text_view}>
-                  <CustomText isBold style={{fontSize: moderateScale(18, 0.6)}}>
+                  <CustomText isBold style={{ fontSize: moderateScale(18, 0.6) }}>
                     {data?.carinfo?.price}
                   </CustomText>
                   <CustomText
@@ -828,18 +825,18 @@ const CabTracking = ({route}) => {
                 marginBottom: moderateScale(20, 0.6),
               }}>
               <CustomImage
-                style={{width: '100%', height: '100%'}}
+                style={{ width: '100%', height: '100%' }}
                 source={require('../Assets/Images/sad_face.png')}
               />
             </View>
             <CustomText
               isBold
-              style={{fontSize: moderateScale(18, 0.6), textAlign: 'center'}}>
+              style={{ fontSize: moderateScale(18, 0.6), textAlign: 'center' }}>
               {'Rider ' + 'Cancel the Rider'}
             </CustomText>
             <CustomText
               isBold
-              style={{fontSize: moderateScale(15, 0.6), textAlign: 'center'}}>
+              style={{ fontSize: moderateScale(15, 0.6), textAlign: 'center' }}>
               we're so sad about your cancellation
             </CustomText>
             <CustomText

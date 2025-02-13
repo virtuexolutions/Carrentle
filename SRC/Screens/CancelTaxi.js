@@ -1,5 +1,5 @@
-import {Icon} from 'native-base';
-import React, {useEffect, useState} from 'react';
+import { Icon } from 'native-base';
+import React, { useEffect, useState } from 'react';
 import {
   FlatList,
   Modal,
@@ -8,21 +8,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 import CustomButton from '../Components/CustomButton';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import CustomImage from '../Components/CustomImage';
 import navigationService from '../navigationService';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
-import {useSelector} from 'react-redux';
+import { Get, Post } from '../Axios/AxiosInterceptorFunction';
+import { useSelector } from 'react-redux';
 import Loader from '../Components/Loader';
 
-const CencalTexi = ({route}) => {
-  const {id} = route.params;
+const CencalTexi = ({ route }) => {
+  const { id } = route.params;
   const [groupValue, setGroupValue] = useState('');
   console.log('🚀 ~ CencalTexi ~ groupValue:', groupValue);
 
@@ -61,9 +61,11 @@ const CencalTexi = ({route}) => {
       status: 'cancel',
       reason: groupValue,
     };
+    console.log("🚀 ~ onPressCancleRide ~ body:", body)
     setRideloading(true);
     const url = `auth/rider/ride_update/${id}`;
     const response = await Post(url, body, apiHeader(token));
+    console.log("🚀 ~ onPressCancleRide ~ response:", response?.data)
     if (response?.data?.ride_info?.status === 'cancel') {
       setRideloading(false);
       setisModal_visible(true);
@@ -96,8 +98,8 @@ const CencalTexi = ({route}) => {
       />
       <View style={styles.main_view}>
         {loading ? (
-          <View style={{width: windowWidth}}>
-            <Loader style={{alignSelf: 'center'}} />
+          <View style={{ width: windowWidth }}>
+            <Loader style={{ alignSelf: 'center' }} />
           </View>
         ) : (
           <>
@@ -107,7 +109,7 @@ const CencalTexi = ({route}) => {
             <FlatList
               data={reason}
               keyExtractor={item => item.id}
-              renderItem={({item}) => {
+              renderItem={({ item }) => {
                 return (
                   <>
                     <View
@@ -117,7 +119,7 @@ const CencalTexi = ({route}) => {
                         marginTop: moderateScale(20, 0.6),
                       }}>
                       <TouchableOpacity
-                        onPress={() => setGroupValue(item?.id)}
+                        onPress={() => setGroupValue(item?.description)}
                         style={[
                           styles.checked,
                           {
@@ -127,13 +129,13 @@ const CencalTexi = ({route}) => {
                                 : Color.white,
                           },
                         ]}>
-                        {item?.id === groupValue && (
+                        {item?.description === groupValue && (
                           <Icon
                             name="check"
                             size={3}
                             as={AntDesign}
                             color={Color.white}
-                            style={{alignSelf: 'center'}}
+                            style={{ alignSelf: 'center' }}
                           />
                         )}
                       </TouchableOpacity>
@@ -159,7 +161,7 @@ const CencalTexi = ({route}) => {
               <TextInput
                 onChangeText={text => setReason(text)}
                 placeholder="Other Reason"
-                style={{color: Color.black, width: '100%', height: '100%'}}
+                style={{ color: Color.black, width: '100%', height: '100%' }}
               />
             </View>
           </>
@@ -219,13 +221,13 @@ const CencalTexi = ({route}) => {
                 marginBottom: moderateScale(20, 0.6),
               }}>
               <CustomImage
-                style={{width: '100%', height: '100%'}}
+                style={{ width: '100%', height: '100%' }}
                 source={require('../Assets/Images/sad_face.png')}
               />
             </View>
             <CustomText
               isBold
-              style={{fontSize: moderateScale(15, 0.6), textAlign: 'center'}}>
+              style={{ fontSize: moderateScale(15, 0.6), textAlign: 'center' }}>
               we're so sad about your cancellation
             </CustomText>
             <CustomText

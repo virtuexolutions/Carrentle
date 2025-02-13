@@ -123,6 +123,17 @@ const AppNavigator = () => {
   //   }
   // };
 
+  const tracklocation = async ({ latitude, longitude }) => {
+    const url = `auth/rider/update_location/${ride_id}`;
+    const body = {
+      lat: latitude,
+      lng: longitude,
+    };
+    const response = await Post(url, body, apiHeader(token));
+    return console.log('🚀 ~ tracklocation ~ response:', response?.data);
+  };
+
+
   const startLocationTracking = async () => {
     console.log('funcationn me ha')
     // let permissionResult = await requestPermissions()
@@ -136,10 +147,7 @@ const AppNavigator = () => {
           latitude,
           longitude,
         }));
-        dispatch(setCurrentLocation({
-          latitude: latitude,
-          longitude: longitude,
-        }))
+        tracklocation({ latitude, longitude })
       },
       error => console.log('Error getting location:', error),
       {
