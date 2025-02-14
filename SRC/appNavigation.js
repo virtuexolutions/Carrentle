@@ -69,6 +69,7 @@ const AppNavigator = () => {
   console.log("🚀 ~ AppNavigator ~ currentPosition:", currentPosition)
   console.log("🚀 ~ AppNavigator ~ appIsInBackground:", appIsInBackground)
   const dispatch = useDispatch();
+  let watchId = null;
 
   const _handleAppStateChange = async nextAppState => {
     console.log("🚀 ~ App ~ nextAppState:", nextAppState)
@@ -134,37 +135,57 @@ const AppNavigator = () => {
   };
 
 
-  const startLocationTracking = async () => {
-    console.log('funcationn me ha')
-    // let permissionResult = await requestPermissions()
-    // console.log("🚀 ~ startLocationTracking ~ permissionResult:", permissionResult)
-    watchId = Geolocation.watchPosition(
-      position => {
-        const { latitude, longitude } = position.coords;
-        console.log("🚀 ~ startLocationTracking ~ latitude:", latitude, longitude)
-        setCurrentPosition(prevLocation => ({
-          ...prevLocation,
-          latitude,
-          longitude,
-        }));
-        tracklocation({ latitude, longitude })
-      },
-      error => console.log('Error getting location:', error),
-      {
-        enableHighAccuracy: true,
-        distanceFilter: 1000,
-        timeout: 30000,
-        maximumAge: 10000,
-        interval: 20000,
-      }
-    );
-    return new Promise(resolve => { })
-  };
+  const backgroundLocationTask = async (taskData) => {
+    while (BackgroundService.isRunning()) {
+      Geolocation.getCurrentPosition(
+        (position) => {
+          console.log("Location retrieved:", position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+          console.log("Error getting location:", error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 60000,
+          maximumAge: 10000
+        }
+      );
+
+      await sleep(5000);
+    }
+  }
+
+  // const startLocationTracking = async () => {
+  //   console.log('funcationn me ha')
+  //   // let permissionResult = await requestPermissions()
+  //   // console.log("🚀 ~ startLocationTracking ~ permissionResult:", permissionResult)
+  //   watchId = Geolocation.watchPosition(
+  //     position => {
+  //       const { latitude, longitude } = position.coords;
+  //       console.log("🚀 ~ startLocationTracking ~ latitude:", latitude, longitude)
+  //       setCurrentPosition(prevLocation => ({
+  //         ...prevLocation,
+  //         latitude,
+  //         longitude,
+  //       }));
+  //       tracklocation({ latitude, longitude })
+  //     },
+  //     error => console.log('Error getting location:', error),
+  //     {
+  //       enableHighAccuracy: true,
+  //       distanceFilter: 1000,
+  //       timeout: 30000,
+  //       maximumAge: 10000,
+  //       interval: 20000,
+  //     }
+  //   );
+  //   return new Promise(resolve => { })
+  // };
 
   const toggleBackground = async () => {
     if (!BackgroundService.isRunning()) {
       try {
-        await BackgroundService.start(startLocationTracking, options);
+        await BackgroundService.start(backgroundLocationTask, options);
       } catch (error) {
         console.log(error);
       }
@@ -174,21 +195,20 @@ const AppNavigator = () => {
     }
   };
 
-  useEffect(() => {
-    if (user_type === 'Rider') {
+  // useEffect(() => {
+  //   if (user_type === 'Rider') {
 
-      if (appIsInBackground) {
-        console.log("BG ACTIONS Should be run......", appIsInBackground);
-        toggleBackground()
-      } else {
-        console.log('background stop')
-        BackgroundService.stop()
-      }
-    }
-  }, [appIsInBackground, user_type === 'Rider'])
+  //     if (appIsInBackground) {
+  //       console.log("BG ACTIONS Should be run......", appIsInBackground);
+  //       toggleBackground()
+  //     } else {
+  //       console.log('background stop')
+  //       BackgroundService.stop()
+  //     }
+  //   }
+  // }, [appIsInBackground, user_type === 'Rider'])
 
 
-  let watchId = null;
 
   const AppNavigatorContainer = () => {
     const firstScreen =

@@ -38,7 +38,7 @@ import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
 const TrackingScreen = ({ route }) => {
   const focused = useIsFocused();
-  const {data, rider_data, description, ride_id} = route.params;
+  const { data, rider_data, description, ride_id } = route.params;
   console.log('🚀 ~ TrackingScreen ~ data:', data);
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -112,6 +112,44 @@ const TrackingScreen = ({ route }) => {
     const response = await Post(url, body, apiHeader(token));
     console.log('🚀 ~ updateStatus ~ response:', response);
   };
+
+
+  useEffect(() => {
+    if (riderEvent?.status === 'OnTheWay') {
+      Platform.OS == 'android'
+        ? ToastAndroid.show(`Your Cab is On the way`, ToastAndroid.SHORT)
+        : Alert.alert(`Your Cab is On the way`);
+    } else if (riderEvent?.status === 'Arrived') {
+      setIsRiderHere(true);
+      Platform.OS == 'android'
+        ? ToastAndroid.show(
+          `Your Cab is on your pickup location`,
+          ToastAndroid.SHORT,
+        )
+        : Alert.alert(`Your Cab is on your pickup location`);
+    } else if (riderEvent?.status === 'OnGoing') {
+      setIsRiderHere(false);
+      Platform.OS == 'android'
+        ? ToastAndroid.show(`Your Ride is start now`, ToastAndroid.SHORT)
+        : Alert.alert(`Your Ride is start now`);
+    } else if (riderEvent?.status === 'Completed') {
+      setReviewModalVisible(true);
+      Platform.OS == 'android'
+        ? ToastAndroid.show(`Your Ride is completed`, ToastAndroid.SHORT)
+        : Alert.alert(`Your Ride is Completed`);
+    } else if (riderEvent?.status === 'Cancel') {
+      showCancelRide(true);
+    }
+    setOrigin({
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+    });
+    setDestination({
+      latitude: parseFloat(riderEvent?.status === 'Arrived' ? riderEvent?.rider?.lat : data?.pickup_location_lat),
+      longitude: parseFloat(riderEvent?.status === 'Arrived' ? riderEvent?.rider?.lng : data?.pickup_location_lng),
+    });
+  }, []);
+
 
   useEffect(() => {
     getCurrentLocation();
@@ -428,7 +466,7 @@ const TrackingScreen = ({ route }) => {
               }}
             />
           </View> */}
-          <View style={{top: moderateScale(-1, 0.6)}}>
+          <View style={{ top: moderateScale(-1, 0.6) }}>
             <CustomText
               isBold
               style={{

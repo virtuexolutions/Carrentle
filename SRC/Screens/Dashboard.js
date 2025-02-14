@@ -1,7 +1,7 @@
-import {Pusher} from '@pusher/pusher-websocket-react-native';
-import {useIsFocused} from '@react-navigation/native';
-import {Icon} from 'native-base';
-import React, {useEffect, useState} from 'react';
+import { Pusher } from '@pusher/pusher-websocket-react-native';
+import { useIsFocused } from '@react-navigation/native';
+import { Icon } from 'native-base';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -11,12 +11,12 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import { Get, Post } from '../Axios/AxiosInterceptorFunction';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import HistoryComponent from '../Components/HistoryComponent';
@@ -27,11 +27,11 @@ import {
   setPusherInstance,
   setriderChannelName,
 } from '../Store/slices/socket';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import {setEventDataRider} from '../Store/slices/common';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import { setEventDataRider } from '../Store/slices/common';
 import CustomImage from '../Components/CustomImage';
 import moment from 'moment';
-import {baseUrl} from '../Config';
+import { baseUrl } from '../Config';
 import Feather from 'react-native-vector-icons/Feather';
 import CustomButton from '../Components/CustomButton';
 
@@ -209,7 +209,7 @@ const DashBoard = () => {
   //   }
   // };
 
-  const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+  const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     const paddingToBottom = 10;
     return (
       layoutMeasurement.height + contentOffset.y >=
@@ -230,8 +230,8 @@ const DashBoard = () => {
           height: windowHeight,
         }}>
         <LinearGradient
-          start={{x: 1, y: 0.2}}
-          end={{x: 1, y: 0.9}}
+          start={{ x: 1, y: 0.2 }}
+          end={{ x: 1, y: 0.9 }}
           colors={['#00309E', '#4680D1']}
           style={styles.sub_view}>
           <View style={styles.card_view}>
@@ -268,12 +268,12 @@ const DashBoard = () => {
               }}>
               <View>
                 <CustomText
-                  style={{fontSize: moderateScale(12, 0.6), color: Color.grey}}>
+                  style={{ fontSize: moderateScale(12, 0.6), color: Color.grey }}>
                   Wallet Balance
                 </CustomText>
                 <CustomText
                   isBold={true}
-                  style={{fontSize: moderateScale(14, 0.6)}}>
+                  style={{ fontSize: moderateScale(14, 0.6) }}>
                   $ 1,291
                 </CustomText>
               </View>
@@ -303,7 +303,7 @@ const DashBoard = () => {
                 />
               </TouchableOpacity>
             </View>
-            <View style={[styles.lines, {width: '100%'}]} />
+            <View style={[styles.lines, { width: '100%' }]} />
             <TouchableOpacity
               onPress={() => navigationService.navigate('MyWallet')}
               style={{
@@ -313,7 +313,7 @@ const DashBoard = () => {
                 width: '100%',
                 marginTop: moderateScale(15, 0.6),
               }}>
-              <CustomText style={{fontSize: moderateScale(13, 0.6)}}>
+              <CustomText style={{ fontSize: moderateScale(13, 0.6) }}>
                 Payment History
               </CustomText>
               <View>
@@ -351,7 +351,7 @@ const DashBoard = () => {
           <FlatList
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={() => (
-              <CustomText style={{color: 'red', textAlign: 'center'}}>
+              <CustomText style={{ color: 'red', textAlign: 'center' }}>
                 No data Found yet
               </CustomText>
             )}
@@ -359,7 +359,7 @@ const DashBoard = () => {
               paddingBottom: moderateScale(10, 0.6),
             }}
             data={Transactionhistory}
-            onScrollEndDrag={({nativeEvent}) => {
+            onScrollEndDrag={({ nativeEvent }) => {
               {
                 if (isCloseToBottom(nativeEvent)) {
                   setPageNum(prev => prev + 1);
@@ -389,7 +389,7 @@ const DashBoard = () => {
           />
         )}
       </ScrollView>
-      {Object.keys(current_ride).length > 0 && (
+      {/* {Object.keys(current_ride).length > 0 && (
         <View style={styles.latest_ride_view}>
           <View style={styles.latest_ride_subView}>
             <View style={styles.latest_ride_image_view}>
@@ -528,7 +528,7 @@ const DashBoard = () => {
             }
           />
         </View>
-      )}
+      )} */}
     </View>
   );
 };
@@ -589,9 +589,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  today_text: {fontSize: moderateScale(16, 0.6), color: Color.grey},
-  price_text: {fontSize: moderateScale(25, 0.6), color: Color.black},
-  text: {fontSize: moderateScale(12, 0.6), marginLeft: moderateScale(5, 0.6)},
+  today_text: { fontSize: moderateScale(16, 0.6), color: Color.grey },
+  price_text: { fontSize: moderateScale(25, 0.6), color: Color.black },
+  text: { fontSize: moderateScale(12, 0.6), marginLeft: moderateScale(5, 0.6) },
   wallet_card: {
     width: windowWidth * 0.9,
     backgroundColor: Color.white,
