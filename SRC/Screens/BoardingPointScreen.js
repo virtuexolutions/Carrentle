@@ -1,4 +1,3 @@
-import database from '@react-native-firebase/database';
 import { getDistance, isValidCoordinate } from 'geolib';
 import LottieView from 'lottie-react-native';
 import moment from 'moment';
@@ -255,12 +254,10 @@ const BoardingPointScreen = ({ navigation, route }) => {
       formData.append(key, body[key]);
     }
     setLoading(true);
-    console.log("🚀 ~ requestforRide ~ body:", formData)
     const response = await Post(url, formData, apiHeader(token));
     console.log('🚀  requestforRide  response:', response?.data);
     setLoading(false);
     if (response?.data?.data != null) {
-
       const paramsData = {
         currentLocationLatitude: currentPossition,
         pickupLocation: pickupLocation,
@@ -505,17 +502,11 @@ const BoardingPointScreen = ({ navigation, route }) => {
                 numberOfLines={3}
                 style={{
                   width: windowWidth * 0.6,
-                  // backgroundColor : 'red'
                 }}>
                 {pickupLocation?.name
                   ? pickupLocation?.name
                   : (isYourLocation && ' Your Live Location') ||
                   'Choose Pickup Location'}
-                {/* {Object.keys(pickupLocation).length > 0
-                  ? pickupLocation?.name || isYourLocation
-                    ? 'Pick Location'
-                    : 'Choose Pickup Location'
-                  : 'Pick Location'} */}
               </CustomText>
               <Icon
                 as={AntDesign}
@@ -532,14 +523,12 @@ const BoardingPointScreen = ({ navigation, route }) => {
                 name="dots-two-vertical"
                 size={moderateScale(24, 0.2)}
                 style={{ color: '#fcf36b' }}
-              // color={}
               />
               <Icon
                 as={Entypo}
                 name="dots-two-vertical"
                 size={moderateScale(24, 0.2)}
                 style={{ color: '#fcf36b' }}
-              // color={}
               />
             </View>
             <Divider

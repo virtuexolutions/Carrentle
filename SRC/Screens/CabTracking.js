@@ -151,7 +151,10 @@ const CabTracking = ({ route }) => {
       Platform.OS == 'android'
         ? ToastAndroid.show(`Your Cab is On the way`, ToastAndroid.SHORT)
         : Alert.alert(`Your Cab is On the way`);
-    } else if (userEventData?.status === 'Arrived') {
+    } else if (userEventData?.status === 'Cancelled') {
+      setcancelRide(true);
+    }
+    else if (userEventData?.status === 'Waiting') {
       setIsRiderHere(true);
       Platform.OS == 'android'
         ? ToastAndroid.show(
@@ -159,7 +162,7 @@ const CabTracking = ({ route }) => {
           ToastAndroid.SHORT,
         )
         : Alert.alert(`Your Cab is on your pickup location`);
-    } else if (userEventData?.status === 'OnGoing') {
+    } else if (userEventData?.status === 'OnRide') {
       setIsRiderHere(false);
       Platform.OS == 'android'
         ? ToastAndroid.show(`Your Ride is start now`, ToastAndroid.SHORT)
@@ -180,7 +183,7 @@ const CabTracking = ({ route }) => {
       latitude: parseFloat(userEventData?.status === 'Arrived' ? userEventData?.rider?.lat : data?.pickup_location_lat),
       longitude: parseFloat(userEventData?.status === 'Arrived' ? userEventData?.rider?.lng : data?.pickup_location_lng),
     });
-  }, []);
+  }, [userEventData]);
 
   useEffect(() => {
     calculateTravelTime();
@@ -450,7 +453,7 @@ const CabTracking = ({ route }) => {
             style: 'Ok',
           },
         ],
-        // () => navigationService.navigate('CenCalTaxi', {id: data?.id}),
+        () => navigationService.navigate('CenCalTaxi', { id: data?.id }),
       );
     } else {
       const cancellationFee = data?.carinfo?.price * 0.1;

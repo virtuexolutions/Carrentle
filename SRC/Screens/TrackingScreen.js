@@ -1,5 +1,5 @@
 import Geolocation from '@react-native-community/geolocation';
-import { Link, useIsFocused, useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import haversineDistance from 'haversine-distance';
 import LottieView from 'lottie-react-native';
 import { Icon } from 'native-base';
@@ -13,7 +13,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import BackgroundService from 'react-native-background-actions';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import { Rating } from 'react-native-ratings';
@@ -29,7 +28,6 @@ import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import Loader from '../Components/Loader';
-import { baseUrl } from '../Config';
 import navigationService from '../navigationService';
 import { setRideStart } from '../Store/slices/common';
 import { setUserEventData } from '../Store/slices/socket';
@@ -45,9 +43,17 @@ const TrackingScreen = ({ route }) => {
   const currentPossitionRef = useRef(currentPossition);
   const timeRef = useRef(time);
   const mapRef = useRef(null);
+
   const userData = useSelector(state => state.commonReducer?.userData);
   const token = useSelector(state => state.authReducer.token);
+  const userEventData = useSelector(state => state.socketReducer.userEventData);
+  const currentRideId = useSelector(state => state.commonReducer.currentRideId);
+  console.log('🚀 ~ DashBoard ~ currentRideId:', currentRideId);
+  const riderEvent = useSelector(state => state.commonReducer.riderEventData);
+  const currentStatus = useSelector(state => state.commonReducer.currentStatus);
+  console.log("🚀 ~ TrackingScreen ~ currentStatus:", currentStatus)
   const user_type = useSelector(state => state.authReducer.user_type);
+
   const [currentPossition, setCurrentPossition] = useState({});
   console.log('🚀 ~ TrackingScreen ~ currentPossition:', currentPossition);
   const [time, setTime] = useState(15);
@@ -57,13 +63,8 @@ const TrackingScreen = ({ route }) => {
   const [reviewModalVisible, setReviewModalVisible] = useState(true);
   const [startNavigation, setStartNavigation] = useState(false);
   const [startWaiting, setStartWaiting] = useState(false);
-  const userEventData = useSelector(state => state.socketReducer.userEventData);
-  const currentRideId = useSelector(state => state.commonReducer.currentRideId);
-  console.log('🚀 ~ DashBoard ~ currentRideId:', currentRideId);
-
   const latitude = parseFloat(currentPossition?.latitude) || 0;
   const longitude = parseFloat(currentPossition?.longitude) || 0;
-
   const [isRiderHere, setIsRiderHere] = useState(false);
   const [isModalShown, setIsModalShown] = useState(false);
   const [startTime, setStartTime] = useState(null);
@@ -110,7 +111,6 @@ const TrackingScreen = ({ route }) => {
     const url = `auth/rider/ride_update/${data?.id}`;
     console.log('bodyyyyyyyy', body, url);
     const response = await Post(url, body, apiHeader(token));
-    console.log('🚀 ~ updateStatus ~ response:', response);
   };
 
 
@@ -312,7 +312,7 @@ const TrackingScreen = ({ route }) => {
             style: 'Ok',
           },
         ],
-        // () => navigationService.navigate('CenCalTaxi', {id: data?.id}),
+        () => navigationService.navigate('CenCalTaxi', { id: data?.id }),
       );
     } else {
       const cancellationFee = data?.carinfo?.price * 0.1;
@@ -343,12 +343,15 @@ const TrackingScreen = ({ route }) => {
       latitude: parseFloat(data?.dropoff_location_lat),
       longitude: parseFloat(data?.dropoff_location_lng),
     };
-    // const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving`;
-    const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving&waypoints=24.8138,67.0325|24.7471,67.9235`
-    // Linking.openURL(url).catch(err => console.error('An error occurred', err));
-  };
-  const onPressEndRide = () => {
-    updateStatus('Completed');
+    if (data?.stop === null) {
+      const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving`;
+      Linking.openURL(url).catch(err => console.error('An error occurred', err));
+
+    } {
+      const waypoints = data?.stop.map(stop => `${stop.lat},${stop.lng}`).join('|');
+      const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving&waypoints=${waypoints}`
+      Linking.openURL(url).catch(err => console.error('An error occurred', err));
+    }
   };
 
   return (
@@ -579,26 +582,24 @@ const TrackingScreen = ({ route }) => {
                 </CustomText>
               </View>
             </View>
-            {startRide != true && (
-              <CustomButton
-                text={'cancel ride'}
-                textColor={Color.white}
-                width={windowWidth * 0.8}
-                height={windowHeight * 0.06}
-                marginTop={moderateScale(10, 0.3)}
-                bgColor={Color.cartheme}
-                borderColor={Color.white}
-                borderWidth={1}
-                borderRadius={moderateScale(30, 0.3)}
-                isGradient
-                onPress={() => CancelRide()}
-              />
-            )}
-            {startRide != true ? (
-              <View>
+            {currentStatus === "accept" && (
+              <>
                 <CustomButton
+                  text={'Cancel Ride'}
                   textColor={Color.white}
-                  text={'Start Navigate to pickup'}
+                  width={windowWidth * 0.8}
+                  height={windowHeight * 0.06}
+                  marginTop={moderateScale(10, 0.3)}
+                  bgColor={Color.cartheme}
+                  borderColor={Color.white}
+                  borderWidth={1}
+                  borderRadius={moderateScale(30, 0.3)}
+                  isGradient
+                  onPress={() => CancelRide()}
+                />
+                <CustomButton
+                  text={'Start Navigate to Pickup'}
+                  textColor={Color.white}
                   width={windowWidth * 0.8}
                   height={windowHeight * 0.06}
                   bgColor={Color.cartheme}
@@ -608,72 +609,67 @@ const TrackingScreen = ({ route }) => {
                   borderRadius={moderateScale(30, 0.3)}
                   isGradient
                   onPress={() => {
-                    const url = `https://www.google.com/maps/dir/?api=1&origin=${currentPossition?.latitude},${currentPossition?.longitude}&destination=${destinations?.latitude},${destinations?.longitude}&travelmode=driving`;
-                    Linking.openURL(url).catch(err =>
-                      console.error('An error occurred', err),
-                    );
+                    // const url = `https://www.google.com/maps/dir/?api=1&origin=${currentPossition?.latitude},${currentPossition?.longitude}&destination=${destinations?.latitude},${destinations?.longitude}&travelmode=driving`;
+                    // Linking.openURL(url).catch(err => console.error('An error occurred', err));
                     setStartRide(true);
                     updateStatus('OnTheWay');
                   }}
                 />
-              </View>
-            ) : (
-              <View>
-                {startWaiting != true ? (
-                  <CustomButton
-                    textColor={Color.white}
-                    text={'Start Waiting'}
-                    width={windowWidth * 0.8}
-                    height={windowHeight * 0.06}
-                    bgColor={Color.cartheme}
-                    borderColor={Color.white}
-                    borderWidth={1}
-                    marginTop={moderateScale(6, 0.6)}
-                    borderRadius={moderateScale(30, 0.3)}
-                    isGradient
-                    onPress={() => {
-                      setStartWaiting(true);
-                      updateStatus('Arrived');
-                    }}
-                  />
-                ) : (
-                  <>
-                    {startNavigation != true ? (
-                      <CustomButton
-                        textColor={Color.white}
-                        text={'Start Ride'}
-                        width={windowWidth * 0.8}
-                        height={windowHeight * 0.06}
-                        bgColor={Color.cartheme}
-                        borderColor={Color.white}
-                        borderWidth={1}
-                        marginTop={moderateScale(6, 0.6)}
-                        borderRadius={moderateScale(30, 0.3)}
-                        isGradient
-                        onPress={() => {
-                          onPressStartNavigation();
-                        }}
-                      />
-                    ) : (
-                      <CustomButton
-                        textColor={Color.white}
-                        text={'End Ride'}
-                        width={windowWidth * 0.8}
-                        height={windowHeight * 0.06}
-                        bgColor={Color.cartheme}
-                        borderColor={Color.white}
-                        borderWidth={1}
-                        marginTop={moderateScale(12, 0.6)}
-                        borderRadius={moderateScale(30, 0.3)}
-                        isGradient
-                        onPress={() => {
-                          onPressEndRide();
-                        }}
-                      />
-                    )}
-                  </>
-                )}
-              </View>
+              </>
+            )}
+            {currentStatus === "OnTheWay" && (
+              <CustomButton
+                text={'Arrived to Pickup'}
+                textColor={Color.white}
+                width={windowWidth * 0.8}
+                height={windowHeight * 0.06}
+                bgColor={Color.cartheme}
+                borderColor={Color.white}
+                borderWidth={1}
+                marginTop={moderateScale(20, 0.6)}
+                borderRadius={moderateScale(30, 0.3)}
+                isGradient
+                onPress={() => {
+                  setStartWaiting(true);
+                  updateStatus('Waiting');
+                }}
+              />
+            )}
+            {currentStatus === "Waiting" && (
+              <CustomButton
+                text={'Start Ride'}
+                textColor={Color.white}
+                width={windowWidth * 0.8}
+                height={windowHeight * 0.06}
+                bgColor={Color.cartheme}
+                borderColor={Color.white}
+                borderWidth={1}
+                marginTop={moderateScale(6, 0.6)}
+                borderRadius={moderateScale(30, 0.3)}
+                isGradient
+                onPress={() => {
+                  // onPressStartNavigation();
+                  updateStatus('OnRide');
+                }}
+              />
+            )}
+            {currentStatus === "OnRide" && (
+              <CustomButton
+                text={'End Ride'}
+                textColor={Color.white}
+                width={windowWidth * 0.8}
+                height={windowHeight * 0.06}
+                bgColor={Color.cartheme}
+                borderColor={Color.white}
+                borderWidth={1}
+                marginTop={moderateScale(12, 0.6)}
+                borderRadius={moderateScale(30, 0.3)}
+                isGradient
+                onPress={() => {
+                  updateStatus('Completed');
+                  navigationService.navigate('Dashboard')
+                }}
+              />
             )}
           </View>
         </View>

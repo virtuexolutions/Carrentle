@@ -24,11 +24,10 @@ import Loader from '../Components/Loader';
 import navigationService from '../navigationService';
 import {
   setRiderIsSubscribed,
-  setPusherInstance,
   setriderChannelName,
 } from '../Store/slices/socket';
 import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
-import { setEventDataRider } from '../Store/slices/common';
+import { setCurrentStatus, setEventDataRider } from '../Store/slices/common';
 import CustomImage from '../Components/CustomImage';
 import moment from 'moment';
 import { baseUrl } from '../Config';
@@ -87,12 +86,8 @@ const DashBoard = () => {
   const currentLocation = useSelector(
     state => state.commonReducer.currentLocation,
   );
-
-  console.log('🚀 ~ DashBoard ~ currentLocation:', currentLocation);
   const [history, setHistory] = useState();
   const [current_ride, setCurrentRide] = useState({});
-  console.log('🚀 ~ DashBoard ~ current_ride:', current_ride);
-  console.log('🚀 ~ DashBoard ~ history:', history);
   const [loading, setLoading] = useState(false);
   const [Transactionhistory, setTransactionHistory] = useState([]);
   const [loadMore, setLoadMore] = useState(false);
@@ -101,19 +96,15 @@ const DashBoard = () => {
   const pusher = Pusher.getInstance();
   const dispatch = useDispatch();
   const currentRideId = useSelector(state => state.commonReducer.currentRideId);
-  console.log('🚀 ~ DashBoard ~ currentRideId:', currentRideId);
-
   const getRideHistory = async () => {
     const url = 'auth/rider/ride_history';
     const reponse = await Get(url, token);
-    console.log('🚀 ~ getRideHistory ~ reponse:', reponse?.data);
     if (reponse != undefined) {
       setHistory(reponse?.data);
       const ongoingRide = reponse?.data?.ride_lists.find(
         ride => ride.id === currentRideId,
       );
       setCurrentRide(ongoingRide);
-      console.log('🚀 ~ getRideHistory ~ ongoingRide:', ongoingRide);
     }
   };
 
@@ -125,7 +116,6 @@ const DashBoard = () => {
   //       lng: longitude,
   //     };
   //     const response = await Post(url, body, apiHeader(token));
-  //     return console.log('🚀 ~ tracklocation ~ response:', response?.data);
   //   };
   // }, [currentLocation])
 
@@ -151,9 +141,14 @@ const DashBoard = () => {
             console.error('Subscription error:', error);
           },
           onEvent: event => {
-            console.log('Event received:', event.data);
+            console.log('Event received: rider', event.data);
             const data = JSON.parse(event.data);
-            dispatch(setEventDataRider(data.message.ride_info));
+            if (data.message.ride_info?.status === 'in process') {
+              dispatch(setEventDataRider(data.message.ride_info));
+            } else {
+              dispatch(setEventDataRider({}));
+            }
+            dispatch(setCurrentStatus(data.message.ride_info?.status))
           },
         });
         await pusher.connect();
@@ -389,12 +384,15 @@ const DashBoard = () => {
           />
         )}
       </ScrollView>
-      {/* {Object.keys(current_ride).length > 0 && (
-        <View style={styles.latest_ride_view}>
+      {Object.keys(current_ride).length > 0 && current_ride.status != 'Completed' || "Reject" && (
+        <View style={[styles.latest_ride_view, {
+          bottom: 20
+        }
+        ]}>
           <View style={styles.latest_ride_subView}>
             <View style={styles.latest_ride_image_view}>
               <CustomImage
-                source={{uri: `${baseUrl}/${history?.user?.photo}`}}
+                source={{ uri: `${baseUrl}/${history?.user?.photo}` }}
                 style={{
                   width: '100%',
                   height: '100%',
@@ -415,7 +413,7 @@ const DashBoard = () => {
                 }}>
                 {current_ride?.user?.name}
               </CustomText>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <CustomText
                   isBold
                   style={{
@@ -434,7 +432,7 @@ const DashBoard = () => {
                 </CustomText>
               </View>
             </View>
-            <CustomText isBold style={{fontSize: moderateScale(12, 0.6)}}>
+            <CustomText isBold style={{ fontSize: moderateScale(12, 0.6) }}>
               Date :
             </CustomText>
             <CustomText
@@ -447,7 +445,7 @@ const DashBoard = () => {
           </View>
           <View style={styles.text_view2}>
             <View>
-              <View style={{flexDirection: 'row'}}>
+              <View style={{ flexDirection: 'row' }}>
                 <Icon name="map-pin" as={Feather} color={Color.orange} />
                 <CustomText
                   isBold={true}
@@ -467,7 +465,7 @@ const DashBoard = () => {
                       paddingVertical: moderateScale(10, 0.6),
                       top: 11,
                       // marginLeft: moderateScale(-3, 0.6),
-                      transform: [{rotate: '-90deg'}],
+                      transform: [{ rotate: '-90deg' }],
                     },
                   ]}>
                   - - -
@@ -528,7 +526,7 @@ const DashBoard = () => {
             }
           />
         </View>
-      )} */}
+      )}
     </View>
   );
 };
