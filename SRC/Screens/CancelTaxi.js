@@ -28,6 +28,7 @@ const CencalTexi = ({ route }) => {
 
   const [modal_visibe, setisModal_visible] = useState(false);
   const [reason, setReason] = useState('');
+  console.log("🚀 ~ CencalTexi ~ reason:", reason)
   const token = useSelector(state => state.authReducer.token);
   console.log('🚀 ~ CencalTexi ~ token:', token);
   const [loading, setLoading] = useState(false);
@@ -124,7 +125,7 @@ const CencalTexi = ({ route }) => {
                           styles.checked,
                           {
                             backgroundColor:
-                              item?.id === groupValue
+                              item?.description === groupValue
                                 ? Color.blue
                                 : Color.white,
                           },

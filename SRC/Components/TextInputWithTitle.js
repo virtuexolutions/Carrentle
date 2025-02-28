@@ -147,7 +147,7 @@ const TextInputWithTitle = props => {
                           ? props?.fontSize
                           : moderateScale(12, 0.6),
                         fontWeight: '400',
-                        color:Color.white
+                        color:Color.black
                       },
                     ]
                   : [
@@ -199,6 +199,7 @@ const TextInputWithTitle = props => {
               style={[
                 {
                   width: windowWidth * props.inputWidth,
+                  color: Color.black
                 },
                 Platform.OS === 'android'
                   ? styles.inputBox
@@ -218,7 +219,7 @@ const TextInputWithTitle = props => {
                   marginLeft: moderateScale(15, 0.3),
                 },
                 props.color && {
-                  color: Color.white,
+                  color: Color.black,
                 },
                 props.inputColor && {
                   color: props.inputColor,

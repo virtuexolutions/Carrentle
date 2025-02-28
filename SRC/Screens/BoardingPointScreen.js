@@ -236,7 +236,7 @@ const BoardingPointScreen = ({ navigation, route }) => {
       location_from: pickupLocation?.name || address,
       location_to: dropOffLocation?.name,
       pickup_location_lat: pickupLocation?.lat || currentPossition?.latitude,
-      pickup_location_lng: pickupLocation?.lat || currentPossition?.longitude,
+      pickup_location_lng: pickupLocation?.lng || currentPossition?.longitude,
       dropoff_location_lat: dropOffLocation?.lat,
       dropoff_location_lng: dropOffLocation?.lng,
       distance: distance,

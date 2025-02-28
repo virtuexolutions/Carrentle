@@ -16,7 +16,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Get, Post } from '../Axios/AxiosInterceptorFunction';
+import { Get } from '../Axios/AxiosInterceptorFunction';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import HistoryComponent from '../Components/HistoryComponent';
@@ -26,7 +26,7 @@ import {
   setRiderIsSubscribed,
   setriderChannelName,
 } from '../Store/slices/socket';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 import { setCurrentStatus, setEventDataRider } from '../Store/slices/common';
 import CustomImage from '../Components/CustomImage';
 import moment from 'moment';
@@ -86,8 +86,12 @@ const DashBoard = () => {
   const currentLocation = useSelector(
     state => state.commonReducer.currentLocation,
   );
+  const currentRideId = useSelector(state => state.commonReducer.currentRideId);
+
   const [history, setHistory] = useState();
+  console.log("🚀 ~ DashBoard ~ history:", history)
   const [current_ride, setCurrentRide] = useState({});
+  console.log("🚀 ~ DashBoard ~ current_ride:", current_ride)
   const [loading, setLoading] = useState(false);
   const [Transactionhistory, setTransactionHistory] = useState([]);
   const [loadMore, setLoadMore] = useState(false);
@@ -95,12 +99,13 @@ const DashBoard = () => {
   const [getMore, setGetMore] = useState(false);
   const pusher = Pusher.getInstance();
   const dispatch = useDispatch();
-  const currentRideId = useSelector(state => state.commonReducer.currentRideId);
+  console.log("🚀 ~ DashBoard ~ currentRideId:", currentRideId)
+
   const getRideHistory = async () => {
     const url = 'auth/rider/ride_history';
     const reponse = await Get(url, token);
     if (reponse != undefined) {
-      setHistory(reponse?.data);
+      setHistory(reponse?.data?.ride_lists);
       const ongoingRide = reponse?.data?.ride_lists.find(
         ride => ride.id === currentRideId,
       );
@@ -191,18 +196,6 @@ const DashBoard = () => {
       }
     }
   };
-
-  // const getRideHistory = async type => {
-  //   const url = `auth/rider/assign-ride`;
-  //   setLoading(true);
-  //   const response = await Get(url, token);
-  //   setLoading(false);
-  //   console.log(response?.data, 'resoinseeeeeeeeeeee');
-  //   if (response != undefined) {
-  //     setLoading(false);
-  //     setlatestRide(response?.data);
-  //   }
-  // };
 
   const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     const paddingToBottom = 10;
@@ -331,7 +324,7 @@ const DashBoard = () => {
             color: Color.blue_color,
             marginLeft: moderateScale(15, 0.6),
           }}>
-          Latest Assign Rides
+          Ride history
         </CustomText>
         {loading ? (
           <Loader
@@ -353,7 +346,7 @@ const DashBoard = () => {
             contentContainerStyle={{
               paddingBottom: moderateScale(10, 0.6),
             }}
-            data={Transactionhistory}
+            data={history}
             onScrollEndDrag={({ nativeEvent }) => {
               {
                 if (isCloseToBottom(nativeEvent)) {
@@ -384,7 +377,7 @@ const DashBoard = () => {
           />
         )}
       </ScrollView>
-      {Object.keys(current_ride).length > 0 && current_ride.status != 'Completed' || "Reject" && (
+      {["accept", "OnTheWay", "OnRide", "Waiting"].includes(current_ride?.status) && (
         <View style={[styles.latest_ride_view, {
           bottom: 20
         }

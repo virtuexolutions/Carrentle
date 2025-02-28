@@ -43,6 +43,9 @@ const HomeScreen = ({ navigation }) => {
   console.log("🚀 ~ HomeScreen ~ latest_ride:", latest_ride)
   const pusher = Pusher.getInstance();
   const [pending_ride, setPendingRide] = useState(false)
+  console.log("🚀 ~ HomeScreen ~ pending_ride:", pending_ride)
+  const currentRideId = useSelector(state => state.commonReducer.currentRideId);
+  console.log("🚀 ~ HomeScreen ~ currentRideId:", currentRideId)
 
   const getRideHistory = async () => {
     const url = 'auth/customer/ride_history';
@@ -52,7 +55,6 @@ const HomeScreen = ({ navigation }) => {
       // setHistory(reponse?.data);
     }
   };
-
   useEffect(() => {
     getRideHistory();
     async function connectPusher() {
@@ -113,11 +115,6 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
-  // console.log(
-  //   '🚀 ~ connectPusher ~ pusher.connectionState:',
-  //   pusherInstance.connectionState,
-  // );
-
   const getLatestRide = async () => {
     const url = 'auth/customer/ride_history';
     const response = await Get(url, token);
@@ -126,6 +123,7 @@ const HomeScreen = ({ navigation }) => {
       const ongoingRide = response?.data?.ride_lists.find(
         (ride) => ride.status === "accept" || ride.status === "OnTheWay"
       );
+      console.log("🚀 ~ getLatestRide ~ ongoingRide:", ongoingRide)
       setlatestRide(ongoingRide);
       setPendingRide(Object.keys(ongoingRide).length > 0 ? true : false)
     }
@@ -247,7 +245,7 @@ const HomeScreen = ({ navigation }) => {
           )}
         </View>
       </ScrollView>
-      {latest_ride?.status === ('accept' || 'onGoing') && (
+      {["accept", "OnTheWay", "OnRide", "Waiting"].includes(latest_ride?.status) && (
         <View style={styles.latest_ride_view}>
           <View style={styles.latest_ride_subView}>
             <View style={styles.latest_ride_image_view}>

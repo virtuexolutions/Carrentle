@@ -38,86 +38,22 @@ import { setUserEventData } from '../Store/slices/socket';
 import { customMapStyle } from '../Utillity/mapstyle';
 import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 import navigationService from '../navigationService';
+import { setCurrentRideId } from '../Store/slices/common';
+import ReviewModal from '../Components/ReviewModal';
 
 const CabTracking = ({ route }) => {
   const focused = useIsFocused();
   const { data, ride_id } = route.params;
   console.log("🚀 ~ CabTracking ~ data:", data)
-  // const data = {
-  //   amount: 58,
-  //   carId: 1,
-  //   carInfo: {
-  //     createdAt: '2024-09-10T11:13:09.000000Z',
-  //     id: 1,
-  //     image: '/storage/photos/shares/images.jfif',
-  //     model: 22,
-  //     name: 'Suzuki',
-  //     number: 'khi7854',
-  //     price: 13,
-  //     seats: 4,
-  //     status: 'active',
-  //     updatedAt: '2024-09-10T11:21:31.000000Z',
-  //   },
-  //   createdAt: '2024-12-18T13:32:21.000000Z',
-  //   date: null,
-  //   distance: '40',
-  //   dropoff_location_lat: 41.0391283,
-  //   dropoff_location_lng: -83.6502309,
-  //   id: 675,
-  //   locationFrom: '97XX+WG Bowling Green, OH, USA',
-  //   locationTo: 'Findlay, OH, USA',
-  //   pickup_location_lat: 41.399865,
-  //   pickup_location_lng: -83.7011683,
-  //   rider: {
-  //     assign: 0,
-  //     createdAt: '2024-09-16T14:53:49.000000Z',
-  //     deviceToken:
-  //       'dlb-U6pZQB-Mzj27cewfG4:APA91bER0L7NoFOQ0aPfTXm9M8nzeG0sAmvJ3FHypUX_ziFUNesLGaK44Voxh1AZYO4pXDqxeu-nwYTVmzI_yze4Qlw7aAJw5T6OqXG-gLuitBPCWaqc6jY',
-  //     dob: null,
-  //     email: 'rider@gmail.com',
-  //     emailVerifiedAt: '2024-09-16T14:53:49.000000Z',
-  //     gender: null,
-  //     id: 13,
-  //     lat: '41.390491666667',
-  //     lng: '-83.665243333333',
-  //     name: 'rider',
-  //     phone: '13458793566',
-  //     photo: '/uploads/user/profiles/',
-  //     role: 'rider',
-  //     status: 'active',
-  //     updatedAt: '2024-12-18T11:44:30.000000Z',
-  //   },
-  //   status: 'accept',
-  //   stop: null,
-  //   time: null,
-  //   updatedAt: '2024-12-18T13:33:00.000000Z',
-  //   user: {
-  //     assign: 0,
-  //     createdAt: '2024-08-30T09:59:05.000000Z',
-  //     deviceToken:
-  //       'ejaFKtm4Rr6D6kOyaUmn_U:APA91bGsq-92mrAIBgDE7jzI3pqR6aKQHR4QZ3AWywnE_IvsA6CiEOY48T00jNaMkDQ_FIoaKeJdGl2Y8Y_rkjfqOo7TqKAPNhm8WTb_xfc1szrMbvFX5Tw',
-  //     dob: null,
-  //     email: 'user@gmail.com',
-  //     emailVerifiedAt: '2024-08-30T09:59:05.000000Z',
-  //     gender: null,
-  //     id: 4,
-  //     name: 'newuser',
-  //     phone: '1234567899',
-  //     photo: '/uploads/user/profiles/',
-  //     role: 'customer',
-  //     status: 'active',
-  //     updatedAt: '2024-12-18T11:44:02.000000Z',
-  //   },
-  //   userId: 4,
-  // };
-
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const currentPossitionRef = useRef(currentPossition);
   const timeRef = useRef(time);
   const mapRef = useRef(null);
+  const rbSheetRef = useRef(null);
   const userData = useSelector(state => state.commonReducer?.userData);
   const token = useSelector(state => state.authReducer.token);
+  console.log("🚀 ~ CabTracking ~ token:", token)
   const user_type = useSelector(state => state.authReducer.user_type);
   const [currentPossition, setCurrentPossition] = useState({});
   const [time, setTime] = useState(0);
@@ -126,7 +62,6 @@ const CabTracking = ({ route }) => {
   const [showCancelRide, setshowCancelRide] = useState(false);
   const [reviewModalVisible, setReviewModalVisible] = useState(true);
   const userEventData = useSelector(state => state.socketReducer.userEventData);
-  console.log("🚀 ~ CabTracking ~ userEventData:", userEventData)
   const pusher = Pusher.getInstance();
   const [isRiderHere, setIsRiderHere] = useState(false);
   const latitude = parseFloat(data?.rider?.lat) || 0;
@@ -139,12 +74,15 @@ const CabTracking = ({ route }) => {
     latitude: 0,
     longitude: 0,
   });
-  console.log('🚀 ~ CabTracking ~ origin:', origin);
   const [destinations, setDestination] = useState({
     latitude: 0,
     longitude: 0,
   });
-  console.log("🚀 ~ useEffect ~ data?.pickup_location_lat:", data?.pickup_location_lat, data?.pickup_location_lng)
+  const currentRideId = useSelector(state => state.commonReducer.currentRideId);
+  useEffect(() => {
+    console.log('chl rha ha')
+    dispatch(setCurrentRideId(data?.id));
+  }, [focused])
 
   useEffect(() => {
     if (userEventData?.status === 'OnTheWay') {
@@ -168,7 +106,9 @@ const CabTracking = ({ route }) => {
         ? ToastAndroid.show(`Your Ride is start now`, ToastAndroid.SHORT)
         : Alert.alert(`Your Ride is start now`);
     } else if (userEventData?.status === 'Completed') {
-      setReviewModalVisible(true);
+      if (rbSheetRef.current) {
+        rbSheetRef.current.open();
+      }
       Platform.OS == 'android'
         ? ToastAndroid.show(`Your Ride is completed`, ToastAndroid.SHORT)
         : Alert.alert(`Your Ride is Completed`);
@@ -324,7 +264,6 @@ const CabTracking = ({ route }) => {
     const distance = haversineDistance(origin, destinations);
     const timeInSeconds = distance / (averageSpeed / 3.6);
     let timeInMinutes = Math.round(timeInSeconds / 60);
-    console.log('🚀 ~ calculateTravelTime ~ timeInMinutes:', timeInMinutes);
     if (timeInMinutes % 5 !== 0) {
       timeInMinutes = Math.ceil(timeInMinutes / 5) * 5;
     }
@@ -436,7 +375,6 @@ const CabTracking = ({ route }) => {
     const url = `auth/rider/ride_update/${data?.id}`;
     console.log('bodyyyyyyyy', body, url);
     const response = await Post(url, body, apiHeader(token));
-    console.log('🚀 ~ updateStatus ~ response:', response);
   };
 
   const CancelRide = async () => {
@@ -742,6 +680,7 @@ const CabTracking = ({ route }) => {
           </View>
         </View>
       </View>
+      <ReviewModal item={data?.rider} rbRef={rbSheetRef} ride_id={data?.id} />
       <Modal
         swipeDirection="up"
         transparent

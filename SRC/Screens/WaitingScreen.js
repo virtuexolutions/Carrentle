@@ -13,31 +13,34 @@ import CustomText from '../Components/CustomText';
 import AcceptRideModal from '../Components/AcceptRideModal';
 import MapViewDirections from 'react-native-maps-directions';
 import { setUserEventData } from '../Store/slices/socket';
+import { setCurrentRideId } from '../Store/slices/common';
 
 const WaitingScreen = ({ route }) => {
   const { data, type } = route.params;
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const userData = useSelector(state => state.commonReducer?.userData);
-  console.log("🚀 ~ WaitingScreen ~ userData:", userData)
+  const userEventData = useSelector(state => state.socketReducer.userEventData);
+  const requestModalVisible = useSelector(
+    state => state.socketReducer.requestModalVisible,
+  );
   const token = useSelector(state => state.authReducer.token);
+
   const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
   const mapRef = useRef(null);
   const circleCenter = { latitude: 24.8607333, longitude: 67.001135 };
   const [loading, setLoading] = useState(false);
   const [rideData, setRideData] = useState(null);
-  console.log('🚀 ~ WaitingScreen ~ rideData:', rideData);
   const [modalVisible, setModalVisible] = useState(false);
   const [riderDate, setRiderDate] = useState(false);
-  console.log('🚀 ~ WaitingScreen ~ riderDate:', riderDate);
-  const userEventData = useSelector(state => state.socketReducer.userEventData);
   const [evenrData, setEventData] = useState({});
+
+  console.log("🚀 ~ WaitingScreen ~ userData:", userData)
+  console.log('🚀 ~ WaitingScreen ~ rideData:', rideData);
+  console.log('🚀 ~ WaitingScreen ~ riderDate:', riderDate);
   console.log('🚀 ~ WaitingScreen ~ evenrData:', evenrData);
-  const requestModalVisible = useSelector(
-    state => state.socketReducer.requestModalVisible,
-  );
   console.log('🚀 ~ WaitingScreen ~ requestModalVisible:', requestModalVisible);
   console.log('🚀 ~ WaitingScreen ~ userEventData:', userEventData);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (type === 'fromBoardingPoints') {
@@ -54,23 +57,8 @@ const WaitingScreen = ({ route }) => {
 
   useEffect(() => {
     setEventData(userEventData);
+    dispatch(setCurrentRideId(userEventData?.ride_id))
   }, [userEventData]);
-
-  // const getRiderInfo = async () => {
-  //   try {
-  //     const url = `auth/ride/${data?.ride_id}`;
-  //     const response = await Get(url, token);
-  //     setLoading(false);
-  //     if (response?.data?.ride_info?.status === 'OnTheWay') {
-  //       setRideData(response.data.ride_info);
-  //       setRiderDate(response.data);
-  //       setModalVisible(true);
-  //     }
-  //   } catch (error) {
-  //     setLoading(false);
-  //     console.error('Error fetching rider info:', error);
-  //   }
-  // };
 
   const origin = {
     latitude: parseFloat(data?.currentLocationLatitude?.latitude) || 0,
@@ -233,16 +221,9 @@ const WaitingScreen = ({ route }) => {
               console.log('object');
               dispatch(setUserEventData({}));
             }}
-            onPressMessageBtn={() =>
-              Platform.OS == 'android'
-                ? ToastAndroid.show(
-                  `We are Currently unavailable`,
-                  ToastAndroid.SHORT,
-                )
-                : Alert.alert(`We are Currently unavailable`)
-            }
             onpressSeeLocation={() => {
               dispatch(setUserEventData({}));
+              dispatch(setCurrentRideId(evenrData?.ride_id));
               navigation.navigate('TrackingScreen', {
                 data: evenrData,
                 description: evenrData,

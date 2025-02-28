@@ -9,7 +9,9 @@ import {
   AppState,
   Linking,
   Modal,
+  Platform,
   StyleSheet,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -73,6 +75,7 @@ const TrackingScreen = ({ route }) => {
     latitude: latitude,
     longitude: longitude,
   });
+  console.log("🚀 ~ TrackingScreen ~ origin:", origin)
   const channelRef = useRef(null);
   const [destinations, setDestination] = useState({
     latitude: parseFloat(data?.pickup_location_lat),
@@ -89,6 +92,7 @@ const TrackingScreen = ({ route }) => {
       longitude: parseFloat(data?.pickup_location_lng),
     });
   }, []);
+
 
   useEffect(() => {
     currentPossitionRef.current = currentPossition;
@@ -111,8 +115,15 @@ const TrackingScreen = ({ route }) => {
     const url = `auth/rider/ride_update/${data?.id}`;
     console.log('bodyyyyyyyy', body, url);
     const response = await Post(url, body, apiHeader(token));
+    if (response?.data && status === 'Completed') {
+      navigation.navigate('DashBoard')
+      Platform.OS == 'android'
+        ? ToastAndroid.show(`Your Ride is completed`, ToastAndroid.SHORT)
+        : Alert.alert(`Your Ride is Completed`);
+    }
   };
 
+  console.log("🚀 ~ useEffect ~ riderEvent?.status:", riderEvent?.status)
 
   useEffect(() => {
     if (riderEvent?.status === 'OnTheWay') {
@@ -120,7 +131,7 @@ const TrackingScreen = ({ route }) => {
         ? ToastAndroid.show(`Your Cab is On the way`, ToastAndroid.SHORT)
         : Alert.alert(`Your Cab is On the way`);
     } else if (riderEvent?.status === 'Arrived') {
-      setIsRiderHere(true);
+      // setIsRiderHere(true);
       Platform.OS == 'android'
         ? ToastAndroid.show(
           `Your Cab is on your pickup location`,
@@ -150,7 +161,6 @@ const TrackingScreen = ({ route }) => {
     });
   }, []);
 
-
   useEffect(() => {
     getCurrentLocation();
     const watchId = Geolocation.watchPosition(
@@ -164,6 +174,7 @@ const TrackingScreen = ({ route }) => {
         const isLocationClose = (lat1, lon1, lat2, lon2, threshold = 0.0001) =>
           Math.abs(lat1 - lat2) < threshold &&
           Math.abs(lon1 - lon2) < threshold;
+        console.log("🚀 ~ useEffect ~ isLocationClose:", isLocationClose)
         if (
           isLocationClose(
             latitude,
@@ -172,7 +183,7 @@ const TrackingScreen = ({ route }) => {
             origin.longitude,
           )
         ) {
-          setIsRiderHere(true);
+          // setIsRiderHere(true);
         }
       },
       error => console.log('Error getting location:', error),
@@ -262,7 +273,7 @@ const TrackingScreen = ({ route }) => {
           origin.longitude,
         )
       ) {
-        setIsRiderHere(true);
+        // setIsRiderHere(true);
       }
       return position;
     } catch (error) {
@@ -339,19 +350,20 @@ const TrackingScreen = ({ route }) => {
       latitude: parseFloat(data?.pickup_location_lat),
       longitude: parseFloat(data?.pickup_location_lng),
     };
+    console.log("🚀 ~ onPressStartNavigation ~ pickup:", pickup)
     const dropoff = {
       latitude: parseFloat(data?.dropoff_location_lat),
       longitude: parseFloat(data?.dropoff_location_lng),
     };
-    if (data?.stop === null) {
-      const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving`;
-      Linking.openURL(url).catch(err => console.error('An error occurred', err));
-
-    } {
-      const waypoints = data?.stop.map(stop => `${stop.lat},${stop.lng}`).join('|');
-      const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving&waypoints=${waypoints}`
-      Linking.openURL(url).catch(err => console.error('An error occurred', err));
-    }
+    console.log("🚀 ~ onPressStartNavigation ~ dropoff:", dropoff)
+    // if (data?.pickup === null) {
+    const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving`;
+    Linking.openURL(url).catch(err => console.error('An error occurred', err));
+    // } else {
+    //   const waypoints = data?.pickup.map(point => `${point.pickup_lat},${point.pickup_lng}`).join('|');
+    //   const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving&waypoints=${waypoints}`
+    //   Linking.openURL(url).catch(err => console.error('An error occurred', err));
+    // }
   };
 
   return (
@@ -452,7 +464,7 @@ const TrackingScreen = ({ route }) => {
             styles.card_main_view,
             {
               height:
-                startRide != true ? windowHeight * 0.42 : windowHeight * 0.35,
+                currentStatus === "accept" ? windowHeight * 0.42 : windowHeight * 0.35,
             },
           ]}>
           {/* <View style={styles.image_view}>
@@ -609,8 +621,8 @@ const TrackingScreen = ({ route }) => {
                   borderRadius={moderateScale(30, 0.3)}
                   isGradient
                   onPress={() => {
-                    // const url = `https://www.google.com/maps/dir/?api=1&origin=${currentPossition?.latitude},${currentPossition?.longitude}&destination=${destinations?.latitude},${destinations?.longitude}&travelmode=driving`;
-                    // Linking.openURL(url).catch(err => console.error('An error occurred', err));
+                    const url = `https://www.google.com/maps/dir/?api=1&origin=${currentPossition?.latitude},${currentPossition?.longitude}&destination=${destinations?.latitude},${destinations?.longitude}&travelmode=driving`;
+                    Linking.openURL(url).catch(err => console.error('An error occurred', err));
                     setStartRide(true);
                     updateStatus('OnTheWay');
                   }}
@@ -619,7 +631,7 @@ const TrackingScreen = ({ route }) => {
             )}
             {currentStatus === "OnTheWay" && (
               <CustomButton
-                text={'Arrived to Pickup'}
+                text={'Arrived at Pickup'}
                 textColor={Color.white}
                 width={windowWidth * 0.8}
                 height={windowHeight * 0.06}
@@ -644,11 +656,11 @@ const TrackingScreen = ({ route }) => {
                 bgColor={Color.cartheme}
                 borderColor={Color.white}
                 borderWidth={1}
-                marginTop={moderateScale(6, 0.6)}
+                marginTop={moderateScale(20, 0.6)}
                 borderRadius={moderateScale(30, 0.3)}
                 isGradient
                 onPress={() => {
-                  // onPressStartNavigation();
+                  onPressStartNavigation();
                   updateStatus('OnRide');
                 }}
               />
@@ -667,13 +679,78 @@ const TrackingScreen = ({ route }) => {
                 isGradient
                 onPress={() => {
                   updateStatus('Completed');
-                  navigationService.navigate('Dashboard')
                 }}
               />
             )}
           </View>
         </View>
       </View>
+      {/* <Modal
+        swipeDirection="up"
+        transparent
+        visible={currentStatus?.status === 'Completed' ? true : false}
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <View
+          style={{
+            height: windowHeight,
+            width: windowWidth,
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <View
+            style={{
+              height: windowHeight * 0.2,
+              width: windowWidth * 0.8,
+              backgroundColor: Color.white,
+              borderRadius: moderateScale(20, 0.6),
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <CustomText
+              isBold
+              style={{
+                textAlign: 'center',
+                paddingHorizontal: moderateScale(12, 0.6),
+                fontSize: moderateScale(20, 0.6),
+                marginBottom: moderateScale(10, 0.6)
+              }}>
+              Ride Completed
+            </CustomText>
+            <CustomText
+              style={{
+                textAlign: 'center',
+                paddingHorizontal: moderateScale(20, 0.6),
+                fontSize: moderateScale(15, 0.6),
+              }}>
+              your ride end go back to home and fine another
+            </CustomText>
+            <CustomButton
+              text={'Go To DashBoard'}
+              textColor={Color.white}
+              borderWidth={2}
+              borderColor={Color.white}
+              borderRadius={moderateScale(30, 0.3)}
+              width={windowWidth * 0.6}
+              height={windowHeight * 0.05}
+              marginTop={moderateScale(10, 0.3)}
+              bgColor={Color.cartheme}
+              isBold
+              isGradient
+              textTransform={'capitalize'}
+              onPress={() => {
+                const url = `https://www.google.com/maps/dir/?api=1&origin=${origin?.latitude},${origin?.longitude}&destination=${destinations?.latitude},${destinations?.longitude}&travelmode=driving`;
+                Linking.openURL(url).catch(err =>
+                  console.error('An error occurred', err),
+                );
+              }}
+            />
+          </View>
+        </View>
+      </Modal> */}
       <Modal
         swipeDirection="up"
         transparent
@@ -692,9 +769,8 @@ const TrackingScreen = ({ route }) => {
           }}>
           <View
             style={{
-              height: windowHeight * 0.3,
+              height: windowHeight * 0.35,
               width: windowWidth * 0.9,
-              marginBottom: moderateScale(20, 0.6),
               backgroundColor: Color.white,
               borderRadius: moderateScale(20, 0.6),
               alignItems: 'center',
@@ -740,7 +816,7 @@ const TrackingScreen = ({ route }) => {
               isGradient
               textTransform={'capitalize'}
               onPress={() => {
-                const url = `https://www.google.com/maps/dir/?api=1&origin=${origin?.latitude},${origin?.longitude}&destination=${origin?.latitude},${origin?.longitude}&travelmode=driving`;
+                const url = `https://www.google.com/maps/dir/?api=1&origin=${origin?.latitude},${origin?.longitude}&destination=${destinations?.latitude},${destinations?.longitude}&travelmode=driving`;
                 Linking.openURL(url).catch(err =>
                   console.error('An error occurred', err),
                 );
@@ -1001,6 +1077,6 @@ const styles = StyleSheet.create({
     marginTop: moderateScale(10, 0.6),
   },
   text1: {
-    fontSize: moderateScale(9, 0.6),
+    fontSize: moderateScale(10, 0.6),
   },
 });

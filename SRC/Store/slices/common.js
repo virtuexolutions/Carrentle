@@ -50,6 +50,7 @@ const CommonSlice = createSlice({
     },
     setCurrentRideId(state, action) {
       state.currentRideId = action.payload;
+      console.log("🚀 ~ setCurrentRideId ~ action.payload:", action.payload)
     },
     setCurrentStatus(state, action) {
       state.currentStatus = action.payload
