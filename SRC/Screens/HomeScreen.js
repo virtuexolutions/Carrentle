@@ -118,7 +118,6 @@ const HomeScreen = ({ navigation }) => {
   const getLatestRide = async () => {
     const url = 'auth/customer/ride_history';
     const response = await Get(url, token);
-    console.log("🚀 ~ getLatestRide ~ response:", response?.data?.ride_lists)
     if (response?.data?.ride_lists != null) {
       const ongoingRide = response?.data?.ride_lists.find(
         (ride) => ride.status === "accept" || ride.status === "OnTheWay"

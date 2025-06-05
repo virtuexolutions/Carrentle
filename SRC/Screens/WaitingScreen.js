@@ -222,6 +222,7 @@ const WaitingScreen = ({ route }) => {
               dispatch(setUserEventData({}));
             }}
             onpressSeeLocation={() => {
+              a
               dispatch(setUserEventData({}));
               dispatch(setCurrentRideId(evenrData?.ride_id));
               navigation.navigate('TrackingScreen', {

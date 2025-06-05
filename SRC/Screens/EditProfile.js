@@ -1,5 +1,5 @@
-import {Icon} from 'native-base';
-import React, {useState} from 'react';
+import { Icon } from 'native-base';
+import React, { useState } from 'react';
 import {
   Alert,
   Platform,
@@ -9,20 +9,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import {setUserToken} from '../Store/slices/auth-slice';
-import {setUserData} from '../Store/slices/common';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { setUserToken } from '../Store/slices/auth-slice';
+import { setUserData } from '../Store/slices/common';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import { imageUrl } from '../Config';
 
 const EditProfile = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -33,6 +34,8 @@ const EditProfile = () => {
   const [image, setImage] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const token = useSelector(state => state.authReducer.token);
+  const userData = useSelector(state => state.commonReducer.userData);
+  console.log("🚀 ~ EditProfile ~ userData:", userData)
 
   const onpressSubmit = async () => {
     const url = 'auth/profile  ';
@@ -59,7 +62,7 @@ const EditProfile = () => {
       Platform.OS == 'android'
         ? ToastAndroid.show(`Profile Update Succesfully`, ToastAndroid.SHORT)
         : Alert.alert(`Profile Update Succesfully`);
-      dispatch(setUserToken({token: response?.data?.token}));
+      dispatch(setUserToken({ token: response?.data?.token }));
       dispatch(setUserData(response?.data?.user_info));
     }
   };
@@ -83,7 +86,8 @@ const EditProfile = () => {
       <View style={styles.info}>
         <View style={styles.imageContainer}>
           <CustomImage
-            source={require('../Assets/Images/dummyUser1.png')}
+            // source={require('../Assets/Images/dummyUser1.png')}
+            source={{ uri: imageUrl + userData?.photo }}
             style={styles.image}
           />
         </View>
@@ -103,8 +107,8 @@ const EditProfile = () => {
           />
         </TouchableOpacity>
         <View style={styles.names}>
-          <CustomText style={styles.text}>Parsley Montana</CustomText>
-          <CustomText style={styles.subText}>San Francisco</CustomText>
+          <CustomText style={styles.text}>{userData?.name}</CustomText>
+          <CustomText style={styles.subText}>{userData?.email}</CustomText>
         </View>
       </View>
       <View style={styles.profileDetails}>
@@ -117,11 +121,13 @@ const EditProfile = () => {
             fontWeight: 'bold',
           }}
           title={'Name'}
-          placeholder={'Name'}
+          placeholder={userData?.name
+            ? userData?.name : 'enter your name'
+          }
           setText={setName}
           value={name}
           secureText={false}
-          viewHeight={0.08}
+          viewHeight={0.06}
           viewWidth={0.85}
           inputWidth={0.55}
           borderBottomWidth={1}
@@ -149,11 +155,11 @@ const EditProfile = () => {
             fontWeight: 'bold',
           }}
           title={'Phone Number'}
-          placeholder={'Phone Number'}
+          placeholder={userData?.phone ? userData?.phone : 'enter mobile number'}
           setText={setPhonenumber}
           value={phonenumber}
           secureText={false}
-          viewHeight={0.08}
+          viewHeight={0.06}
           viewWidth={0.85}
           inputWidth={0.55}
           borderBottomWidth={1}
@@ -185,7 +191,7 @@ const EditProfile = () => {
           setText={setGender}
           value={gender}
           secureText={false}
-          viewHeight={0.08}
+          viewHeight={0.06}
           viewWidth={0.85}
           inputWidth={0.55}
           borderBottomWidth={1}
@@ -217,7 +223,7 @@ const EditProfile = () => {
           setText={setDOB}
           value={DOB}
           secureText={false}
-          viewHeight={0.08}
+          viewHeight={0.06}
           viewWidth={0.85}
           inputWidth={0.55}
           borderBottomWidth={1}
